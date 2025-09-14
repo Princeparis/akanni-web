@@ -69,6 +69,9 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    categories: Category;
+    tags: Tag;
+    journals: Journal;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,6 +80,9 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
+    journals: JournalsSelect<false> | JournalsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -158,6 +164,128 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  /**
+   * Category name (must be unique)
+   */
+  name: string;
+  /**
+   * URL-friendly version of the name
+   */
+  slug: string;
+  /**
+   * Brief description of the category (optional)
+   */
+  description?: string | null;
+  /**
+   * Hex color code for category styling (e.g., #FF5733)
+   */
+  color?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  /**
+   * Tag name (must be unique)
+   */
+  name: string;
+  /**
+   * URL-friendly version of the name (auto-generated)
+   */
+  slug: string;
+  /**
+   * Number of journals using this tag (auto-calculated)
+   */
+  journalCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journals".
+ */
+export interface Journal {
+  id: number;
+  /**
+   * Journal entry title (required, max 100 characters)
+   */
+  title: string;
+  /**
+   * URL-friendly version of the title (auto-generated)
+   */
+  slug: string;
+  /**
+   * Main content of the journal entry (rich text)
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Brief description for previews and SEO (max 300 characters)
+   */
+  excerpt?: string | null;
+  /**
+   * Cover image for the journal entry
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * URL to audio file (mp3, wav, ogg, m4a, aac, flac)
+   */
+  audioUrl?: string | null;
+  /**
+   * Publication status of the journal entry
+   */
+  status: 'draft' | 'published';
+  /**
+   * Date when the entry was published (auto-set when publishing)
+   */
+  publishedAt?: string | null;
+  /**
+   * Primary category for this journal entry
+   */
+  category?: (number | null) | Category;
+  /**
+   * Tags associated with this journal entry
+   */
+  tags?: (number | Tag)[] | null;
+  /**
+   * Search engine optimization settings
+   */
+  seo?: {
+    /**
+     * SEO title (max 60 characters, defaults to journal title)
+     */
+    title?: string | null;
+    /**
+     * SEO meta description (max 160 characters, defaults to excerpt)
+     */
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -170,6 +298,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
+        relationTo: 'journals';
+        value: number | Journal;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -252,6 +392,53 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  color?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  journalCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journals_select".
+ */
+export interface JournalsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  content?: T;
+  excerpt?: T;
+  coverImage?: T;
+  audioUrl?: T;
+  status?: T;
+  publishedAt?: T;
+  category?: T;
+  tags?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
