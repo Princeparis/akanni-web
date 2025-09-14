@@ -1,0 +1,25 @@
+.shuffle-text {
+  display: block;
+}
+
+.shuffle-text .line {
+  display: block;
+  width: 100%;
+}
+
+.shuffle-text .word {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  margin-right: 0.25em;
+}
+
+.shuffle-text .word:last-child {
+  margin-right: 0;
+}
+
+.shuffle-text .char {
+  display: inline-block !important;
+  text-align: center;
+  position: relative;
+  white-space: nowrap !important;
+}

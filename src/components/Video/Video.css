@@ -1,0 +1,18 @@
+.vid-cont {
+  width: 100vw;
+  height: 100svh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.vid {
+  width: 108%;
+  height: 108%;
+  object-fit: cover;
+  object-position: center;
+}
