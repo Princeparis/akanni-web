@@ -4,7 +4,7 @@ This directory contains the custom API routes for the journal system, providing 
 
 ## Implemented Routes
 
-### 1. GET /api/journals
+### 1. GET /api/public/journals
 
 Retrieves paginated journal entries with filtering capabilities.
 
@@ -50,7 +50,7 @@ Retrieves paginated journal entries with filtering capabilities.
 - Response caching headers
 - ETag generation for cache validation
 
-### 2. GET /api/journals/[slug]
+### 2. GET /api/public/journals/[slug]
 
 Retrieves a single journal entry by its slug.
 
@@ -94,7 +94,7 @@ Retrieves a single journal entry by its slug.
 - Last-Modified headers
 - ETag generation
 
-### 3. GET /api/categories
+### 3. GET /api/public/categories
 
 Retrieves all categories with journal counts.
 
@@ -131,7 +131,7 @@ Retrieves all categories with journal counts.
 - Long-term caching
 - Only counts published journals
 
-### 4. GET /api/tags
+### 4. GET /api/public/tags
 
 Retrieves all tags with usage statistics.
 

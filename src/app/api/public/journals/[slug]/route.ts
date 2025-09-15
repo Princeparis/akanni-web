@@ -5,15 +5,15 @@
 
 import { NextRequest } from 'next/server'
 import { getPayload } from 'payload'
-import config from '../../../../payload.config'
+import config from '../../../../../payload.config'
 import {
   withErrorHandling,
   validateRequestMethod,
   createSuccessResponse,
-} from '../../../../utils/error-handler'
-import { APIError, ErrorCodes } from '../../../../types/errors'
-import { Journal } from '../../../../payload-types'
-import { HTTP_STATUS, CACHE_DURATION } from '../../../../utils/constants'
+} from '../../../../../utils/error-handler'
+import { APIError, ErrorCodes } from '../../../../../types/errors'
+import { Journal } from '../../../../../payload-types'
+import { HTTP_STATUS, CACHE_DURATION } from '../../../../../utils/constants'
 
 interface RouteParams {
   params: {

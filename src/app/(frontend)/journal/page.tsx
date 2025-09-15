@@ -13,13 +13,8 @@ interface JournalPageProps {
 
 function JournalContent() {
   return (
-    <section className="journal">
-      <div className="journal-header">
-        <h5>
-          Explore thoughts, insights, and stories from my creative journey. A collection of
-          experiences, learnings, and reflections on design, technology, and life.
-        </h5>
-      </div>
+    <section className="journal-content">
+      <div className="journal-separator"></div>
       <JournalList />
     </section>
   )

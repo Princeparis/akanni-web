@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useJournals } from '../../hooks/useJournals'
 import { useJournalFilters } from '../../hooks/useJournalFilters'
 import { JournalQueryParams } from '../../types/api'
@@ -161,24 +161,27 @@ function Pagination({
 }
 
 export default function JournalList({ initialParams = {}, className = '' }: JournalListProps) {
+  // Memoize initialParams to prevent unnecessary re-renders
+  const memoizedInitialParams = useMemo(() => initialParams, [JSON.stringify(initialParams)])
+
   const { entries, pagination, loading, error, fetchJournals } = useJournals({
     autoFetch: true,
-    initialParams,
+    initialParams: memoizedInitialParams,
   })
 
   const { filters } = useJournalFilters()
-  const [currentParams, setCurrentParams] = useState<JournalQueryParams>(initialParams)
+  const [currentParams, setCurrentParams] = useState<JournalQueryParams>(memoizedInitialParams)
 
   // Update params when filters change
   useEffect(() => {
     const newParams: JournalQueryParams = {
-      ...initialParams,
+      ...memoizedInitialParams,
       ...filters,
       page: 1, // Reset to first page when filters change
     }
     setCurrentParams(newParams)
     fetchJournals(newParams)
-  }, [filters, initialParams, fetchJournals])
+  }, [filters, memoizedInitialParams, fetchJournals])
 
   const handlePageChange = (page: number) => {
     const newParams = { ...currentParams, page }

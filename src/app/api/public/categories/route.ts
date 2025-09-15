@@ -5,16 +5,16 @@
 
 import { NextRequest } from 'next/server'
 import { getPayload } from 'payload'
-import config from '../../../payload.config'
+import config from '../../../../payload.config'
 import {
   withErrorHandling,
   validateRequestMethod,
   parseQueryParams,
   createSuccessResponse,
-} from '../../../utils/error-handler'
-import { APIError, ErrorCodes } from '../../../types/errors'
-import { Category } from '../../../payload-types'
-import { HTTP_STATUS, CACHE_DURATION } from '../../../utils/constants'
+} from '../../../../utils/error-handler'
+import { APIError, ErrorCodes } from '../../../../types/errors'
+import { Category } from '../../../../payload-types'
+import { HTTP_STATUS, CACHE_DURATION } from '../../../../utils/constants'
 
 /**
  * GET /api/categories - Retrieve categories with journal counts and sorting options

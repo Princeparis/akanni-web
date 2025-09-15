@@ -48,7 +48,7 @@ export function useTags(options: UseTagsOptions = {}): UseTagsReturn {
       if (sortBy) searchParams.set('sortBy', sortBy)
       if (sortOrder) searchParams.set('sortOrder', sortOrder)
 
-      const response = await fetch(`/api/tags?${searchParams.toString()}`)
+      const response = await fetch(`/api/public/tags?${searchParams.toString()}`)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

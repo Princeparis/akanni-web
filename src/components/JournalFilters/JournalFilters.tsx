@@ -46,14 +46,14 @@ export default function JournalFilters({ className = '', onFiltersChange }: Jour
     if (debouncedSearch !== filters.search) {
       updateFilters({ search: debouncedSearch || undefined })
     }
-  }, [debouncedSearch, filters.search, updateFilters])
+  }, [debouncedSearch, filters.search]) // Remove updateFilters from dependencies
 
   // Notify parent component of filter changes
   useEffect(() => {
     if (onFiltersChange) {
       onFiltersChange(filters)
     }
-  }, [filters, onFiltersChange])
+  }, [filters]) // Remove onFiltersChange from dependencies
 
   const handleCategoryChange = useCallback(
     (categoryId: string) => {

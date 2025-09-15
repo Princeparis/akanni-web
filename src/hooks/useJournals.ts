@@ -91,7 +91,7 @@ export function useJournals(options: UseJournalsOptions = {}): UseJournalsReturn
         if (mergedParams.sortBy) searchParams.set('sortBy', mergedParams.sortBy)
         if (mergedParams.sortOrder) searchParams.set('sortOrder', mergedParams.sortOrder)
 
-        const response = await fetch(`/api/journals?${searchParams.toString()}`)
+        const response = await fetch(`/api/public/journals?${searchParams.toString()}`)
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)

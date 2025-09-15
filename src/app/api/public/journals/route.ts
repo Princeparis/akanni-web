@@ -5,24 +5,24 @@
 
 import { NextRequest } from 'next/server'
 import { getPayload } from 'payload'
-import config from '../../../payload.config'
+import config from '../../../../payload.config'
 import {
   withErrorHandling,
   validateRequestMethod,
   parseQueryParams,
   validatePaginationParams,
   createSuccessResponse,
-} from '../../../utils/error-handler'
-import { APIError, ErrorCodes } from '../../../types/errors'
-import { JournalQueryParams } from '../../../types/api'
-import { Journal, Category, Tag } from '../../../payload-types'
+} from '../../../../utils/error-handler'
+import { APIError, ErrorCodes } from '../../../../types/errors'
+import { JournalQueryParams } from '../../../../types/api'
+import { Journal, Category, Tag } from '../../../../payload-types'
 import {
   HTTP_STATUS,
   CACHE_DURATION,
   SORT_OPTIONS,
   SORT_ORDER,
   DEFAULTS,
-} from '../../../utils/constants'
+} from '../../../../utils/constants'
 
 /**
  * GET /api/journals - Retrieve paginated journal entries with filtering

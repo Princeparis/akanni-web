@@ -56,3 +56,15 @@
 .retry-button:hover {
   background: #2980b9;
 }
+
+.journal-content {
+  width: 100%;
+}
+
+.journal-separator {
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+  margin-top: 80px;
+  margin-bottom: 20px;
+}

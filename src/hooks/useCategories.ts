@@ -48,7 +48,7 @@ export function useCategories(options: UseCategoriesOptions = {}): UseCategories
       if (sortBy) searchParams.set('sortBy', sortBy)
       if (sortOrder) searchParams.set('sortOrder', sortOrder)
 
-      const response = await fetch(`/api/categories?${searchParams.toString()}`)
+      const response = await fetch(`/api/public/categories?${searchParams.toString()}`)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

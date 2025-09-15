@@ -50,7 +50,7 @@ export function useJournalEntry(options: UseJournalEntryOptions = {}): UseJourna
       dispatch({ type: 'SET_ERROR', payload: null })
 
       try {
-        const response = await fetch(`/api/journals/${encodeURIComponent(slug)}`)
+        const response = await fetch(`/api/public/journals/${encodeURIComponent(slug)}`)
 
         if (!response.ok) {
           if (response.status === 404) {
