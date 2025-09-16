@@ -1,9 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { memo } from 'react'
 import Link from 'next/link'
 import { JournalEntry } from '../../types/journal'
+import OptimizedImage from '../OptimizedImage'
+import { usePerformanceMonitor } from '../../utils/performance'
 import './JournalCard.css'
+import ShuffleText from '../ShuffleText/ShuffleText'
 
 interface JournalCardProps {
   entry: JournalEntry
@@ -54,32 +57,40 @@ function extractTextFromRichText(content: any): string {
   }
 }
 
-export default function JournalCard({
+const JournalCard = memo(function JournalCard({
   entry,
   className = '',
   showExcerpt = true,
   showAudioIndicator = true,
 }: JournalCardProps) {
-  const publishedDate = entry.publishedAt || entry.createdAt
+  const { measureRender } = usePerformanceMonitor('JournalCard')
+
+  const publishedDate = new Date(entry.publishedAt || entry.createdAt)
   const excerpt = entry.excerpt || extractTextFromRichText(entry.content)
   const truncatedExcerpt = excerpt.length > 150 ? excerpt.substring(0, 150) + '...' : excerpt
 
-  return (
+  return measureRender(() => (
     <article className={`journal-card ${className}`}>
       <Link href={`/journal/${entry.slug}`} className="journal-card-link">
         {/* Cover Image */}
         <div className="journal-card-image">
           {entry.coverImage ? (
-            <img
-              src={typeof entry.coverImage === 'string' ? entry.coverImage : entry.coverImage.url}
+            <OptimizedImage
+              src={
+                typeof entry.coverImage === 'string' ? entry.coverImage : entry.coverImage.url || ''
+              }
               alt={entry.title}
-              loading="lazy"
+              width={400}
+              height={240}
+              className="journal-card-img"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              placeholder="blur"
             />
           ) : (
             <div className="journal-card-placeholder-image">
               <svg
-                width="48"
-                height="48"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -93,7 +104,7 @@ export default function JournalCard({
           )}
 
           {/* Audio Indicator */}
-          {showAudioIndicator && entry.audioUrl && (
+          {/* {showAudioIndicator && entry.audioUrl && (
             <div className="audio-indicator" aria-label="Audio content available">
               <svg
                 width="20"
@@ -107,7 +118,7 @@ export default function JournalCard({
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
               </svg>
             </div>
-          )}
+          )} */}
 
           {/* Status Badge for Draft */}
           {entry.status === 'draft' && <div className="status-badge draft-badge">Draft</div>}
@@ -117,9 +128,6 @@ export default function JournalCard({
         <div className="journal-card-content">
           {/* Meta Information */}
           <div className="journal-card-meta">
-            <time className="journal-card-date" dateTime={publishedDate.toString()}>
-              {formatDate(publishedDate)}
-            </time>
             {entry.category && (
               <span
                 className="journal-card-category"
@@ -131,12 +139,17 @@ export default function JournalCard({
           </div>
 
           {/* Title */}
-          <h3 className="journal-card-title">{entry.title}</h3>
+          <div className="title-time">
+            <ShuffleText as="h3" text={entry.title} className="journal-card-title" />
+            <time className="journal-card-date" dateTime={publishedDate.toISOString()}>
+              {formatDate(publishedDate)}
+            </time>
+          </div>
 
           {/* Excerpt */}
-          {showExcerpt && truncatedExcerpt && (
+          {/* {showExcerpt && truncatedExcerpt && (
             <p className="journal-card-excerpt">{truncatedExcerpt}</p>
-          )}
+          )} */}
 
           {/* Tags */}
           {entry.tags && entry.tags.length > 0 && (
@@ -151,22 +164,10 @@ export default function JournalCard({
               )}
             </div>
           )}
-
-          {/* Read More Indicator */}
-          <div className="journal-card-read-more">
-            <span>Read more</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M6 4L10 8L6 12"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
         </div>
       </Link>
     </article>
-  )
-}
+  ))
+})
+
+export default JournalCard

@@ -101,7 +101,7 @@ const Copy = ({ children, animateOnScroll = true, delay = 0 }: CopyProps): React
   )
 
   if (React.Children.count(children) === 1 && React.isValidElement(children)) {
-    return React.cloneElement(children, { ref: containerRef })
+    return React.cloneElement(children as ReactElement<any>, { ref: containerRef })
   }
 
   return (

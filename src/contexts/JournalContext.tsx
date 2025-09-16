@@ -5,6 +5,18 @@ import { JournalState, JournalAction, initialJournalState } from '../types/state
 
 // Journal reducer function
 function journalReducer(state: JournalState, action: JournalAction): JournalState {
+  // Small helper to shallow-compare filter objects to avoid unnecessary state updates
+  const shallowEqual = (a: Record<string, any>, b: Record<string, any>) => {
+    const aKeys = Object.keys(a || {})
+    const bKeys = Object.keys(b || {})
+    if (aKeys.length !== bKeys.length) return false
+    for (let i = 0; i < aKeys.length; i++) {
+      const key = aKeys[i]
+      if (a[key] !== b[key]) return false
+    }
+    return true
+  }
+
   switch (action.type) {
     case 'SET_ENTRIES':
       return {
@@ -57,22 +69,39 @@ function journalReducer(state: JournalState, action: JournalAction): JournalStat
           categories: false,
           tags: false,
           currentEntry: false,
+          filters: false,
+          pagination: false,
+          search: false,
+          retry: false,
         },
       }
 
-    case 'SET_FILTERS':
+    case 'SET_FILTERS': // Merge incoming payload with existing filters
+    {
+      const merged = { ...state.filters, ...action.payload }
+      // If filters would be identical, return the same state reference to avoid rerenders
+      if (shallowEqual(merged, state.filters)) return state
       return {
         ...state,
-        filters: {
-          ...state.filters,
-          ...action.payload,
-        },
+        filters: merged,
       }
+    }
 
     case 'CLEAR_FILTERS':
+      // Only clear if there are actually filters present
+      if (!state.filters || Object.keys(state.filters).length === 0) return state
       return {
         ...state,
         filters: {},
+      }
+
+    case 'SET_MULTIPLE_LOADING':
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          ...action.payload,
+        },
       }
 
     case 'RESET_STATE':

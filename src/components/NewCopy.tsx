@@ -30,7 +30,7 @@ export default function Copy({
   markers = false,
   className,
 }: NewCopyProps): ReactElement {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLElement | null>(null)
   const splitRefs = useRef<any[]>([])
   const lineEls = useRef<Element[]>([])
 
@@ -122,12 +122,12 @@ export default function Copy({
 
   // Single non-element child (e.g., string): wrap so we can target it
   if (count === 1 && !isValidElement(children)) {
-    return <span ref={containerRef}>{children}</span>
+    return <span ref={containerRef as any}>{children}</span>
   }
 
   // Multiple children: wrap so each direct child can be split
   return (
-    <div ref={containerRef} data-copy-wrapper="true" className={className || 'copy'}>
+    <div ref={containerRef as any} data-copy-wrapper="true" className={className || 'copy'}>
       {children}
     </div>
   )

@@ -10,5 +10,14 @@ export { useTags } from './useTags'
 export { useJournalFilters } from './useJournalFilters'
 export { useJournalData } from './useJournalData'
 
+// Loading state management hooks
+export {
+  useLoadingStates,
+  useEntriesLoading,
+  useEntryLoading,
+  useFiltersLoading,
+  useSearchLoading,
+} from './useLoadingStates'
+
 // Re-export context hook for convenience
 export { useJournalContext } from '../contexts/JournalContext'

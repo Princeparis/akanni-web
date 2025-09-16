@@ -1,12 +1,17 @@
 'use client'
 
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useCallback, Suspense } from 'react'
 import { useJournals } from '../../hooks/useJournals'
 import { useJournalFilters } from '../../hooks/useJournalFilters'
 import { JournalQueryParams } from '../../types/api'
-import JournalCard from '../JournalCard'
-import JournalFilters from '../JournalFilters'
+import { usePerformanceMonitor, debounce } from '../../utils/performance'
+import { preloadJournalComponents } from '../../utils/dynamic-imports'
+import VirtualScroll from '../VirtualScroll'
 import './JournalList.css'
+
+// Lazy load components for better performance
+const JournalCard = React.lazy(() => import('../JournalCard'))
+const JournalFilters = React.lazy(() => import('../JournalFilters'))
 
 interface JournalListProps {
   initialParams?: JournalQueryParams
@@ -161,6 +166,9 @@ function Pagination({
 }
 
 export default function JournalList({ initialParams = {}, className = '' }: JournalListProps) {
+  // Performance monitoring
+  const { measureRender, measureAsync } = usePerformanceMonitor('JournalList')
+
   // Memoize initialParams to prevent unnecessary re-renders
   const memoizedInitialParams = useMemo(() => initialParams, [JSON.stringify(initialParams)])
 
@@ -171,6 +179,36 @@ export default function JournalList({ initialParams = {}, className = '' }: Jour
 
   const { filters } = useJournalFilters()
   const [currentParams, setCurrentParams] = useState<JournalQueryParams>(memoizedInitialParams)
+  const [useVirtualScroll, setUseVirtualScroll] = useState(false)
+
+  // Preload components on mount
+  useEffect(() => {
+    preloadJournalComponents()
+  }, [])
+
+  // Keep latest callbacks in refs so the debounced function can be created once
+  const fetchJournalsRef = React.useRef(fetchJournals)
+  React.useEffect(() => {
+    fetchJournalsRef.current = fetchJournals
+  }, [fetchJournals])
+
+  const measureAsyncRef = React.useRef(measureAsync)
+  React.useEffect(() => {
+    measureAsyncRef.current = measureAsync
+  }, [measureAsync])
+
+  // Debounced fetch function for better performance (created once)
+  const debouncedFetchJournals = useMemo(() => {
+    return debounce((params: JournalQueryParams) => {
+      // call the latest implementations
+      measureAsyncRef.current(() => fetchJournalsRef.current(params))
+    }, 300)
+    // We intentionally create this once and rely on refs to forward the latest funcs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Keep track of the last params we requested to avoid re-requesting the same params
+  const lastRequestedParamsRef = React.useRef<string | null>(null)
 
   // Update params when filters change
   useEffect(() => {
@@ -179,21 +217,105 @@ export default function JournalList({ initialParams = {}, className = '' }: Jour
       ...filters,
       page: 1, // Reset to first page when filters change
     }
-    setCurrentParams(newParams)
-    fetchJournals(newParams)
-  }, [filters, memoizedInitialParams, fetchJournals])
+    // Debug: log filter-driven param updates (guarded)
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const win = (globalThis as any).window as any
+      if (win && win.__DEBUG_JOURNALS__) {
+        win.___journal_list_counter = (win.___journal_list_counter || 0) + 1
+        if (win.___journal_list_counter <= 30) {
+          // eslint-disable-next-line no-console
+          console.debug(
+            '[JournalList] [origin:filters-effect] filters changed, newParams:',
+            newParams,
+            'count:',
+            win.___journal_list_counter,
+          )
+        } else if (win.___journal_list_counter === 31) {
+          // eslint-disable-next-line no-console
+          console.debug(
+            '[JournalList] [origin:filters-effect] logging suppressed after 30 messages',
+          )
+        }
+      }
+    } catch (e) {}
 
-  const handlePageChange = (page: number) => {
-    const newParams = { ...currentParams, page }
-    setCurrentParams(newParams)
-    fetchJournals(newParams)
+    // Only update currentParams if they actually changed to avoid redundant renders.
+    // Return the previous state reference when structurally equal so React doesn't
+    // treat it as a state change (which would cause extra renders/effects).
+    setCurrentParams((prev) => {
+      try {
+        const prevSerialized = JSON.stringify(prev)
+        const newSerialized = JSON.stringify(newParams)
+        if (prevSerialized === newSerialized) {
+          return prev
+        }
+      } catch (e) {
+        // If serialization fails for some reason, fall back to setting new params
+      }
+      return newParams
+    })
 
-    // Scroll to top of journal list
-    const journalList = document.querySelector('.journal-list')
-    if (journalList) {
-      journalList.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    try {
+      const serialized = JSON.stringify(newParams)
+      if (lastRequestedParamsRef.current !== serialized) {
+        lastRequestedParamsRef.current = serialized
+        debouncedFetchJournals(newParams)
+      }
+    } catch (e) {
+      // If serialization fails for some reason, fall back to calling fetch
+      debouncedFetchJournals(newParams)
     }
-  }
+  }, [filters, memoizedInitialParams, debouncedFetchJournals])
+
+  // Enable virtual scrolling for large datasets
+  useEffect(() => {
+    // Debug: entries length changed (guarded)
+    try {
+      const win = (globalThis as any).window as any
+      if (win && win.__DEBUG_JOURNALS__ && (win.___journal_list_counter || 0) <= 30) {
+        // eslint-disable-next-line no-console
+        console.debug('[JournalList] [origin:entries-effect] entries.length', entries.length)
+      }
+    } catch (e) {}
+
+    setUseVirtualScroll(entries.length > 20)
+  }, [entries.length])
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const newParams = { ...currentParams, page }
+      setCurrentParams(newParams)
+      try {
+        const serialized = JSON.stringify(newParams)
+        lastRequestedParamsRef.current = serialized
+      } catch (e) {}
+      measureAsync(() => fetchJournals(newParams))
+
+      // Scroll to top of journal list
+      const journalList = document.querySelector('.journal-list')
+      if (journalList) {
+        journalList.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    },
+    [currentParams, fetchJournals, measureAsync],
+  )
+
+  // Render journal card with performance optimization
+  const renderJournalCard = useCallback((entry: any, index: number) => {
+    return (
+      <Suspense key={entry.id} fallback={<div className="journal-card-skeleton" />}>
+        <JournalCard entry={entry} />
+      </Suspense>
+    )
+  }, [])
+
+  // Load more function for virtual scrolling
+  const loadMore = useCallback(() => {
+    if (pagination.hasNextPage && !loading) {
+      handlePageChange(pagination.currentPage + 1)
+    }
+  }, [pagination.hasNextPage, pagination.currentPage, loading, handlePageChange])
 
   if (error) {
     return (
@@ -209,10 +331,12 @@ export default function JournalList({ initialParams = {}, className = '' }: Jour
     )
   }
 
-  return (
+  return measureRender(() => (
     <div className={`journal-list ${className}`}>
       {/* Filters */}
-      <JournalFilters />
+      <Suspense fallback={<div className="filters-skeleton" />}>
+        <JournalFilters />
+      </Suspense>
 
       {loading && entries.length === 0 ? (
         <JournalListSkeleton />
@@ -240,26 +364,44 @@ export default function JournalList({ initialParams = {}, className = '' }: Jour
                     <span className="filtered-indicator">filtered</span>
                   )}
                 </div>
+                {useVirtualScroll && (
+                  <div className="performance-indicator">
+                    <span className="virtual-scroll-badge">Virtual Scrolling Enabled</span>
+                  </div>
+                )}
               </div>
 
-              <div className="journal-grid">
-                {entries.map((entry) => (
-                  <JournalCard key={entry.id} entry={entry} />
-                ))}
-              </div>
+              {useVirtualScroll ? (
+                <VirtualScroll
+                  items={entries}
+                  itemHeight={320} // Approximate height of journal card
+                  containerHeight={800} // Container height
+                  renderItem={renderJournalCard}
+                  loadMore={loadMore}
+                  hasMore={pagination.hasNextPage}
+                  loading={loading}
+                  className="journal-virtual-grid"
+                />
+              ) : (
+                <>
+                  <div className="journal-grid">
+                    {entries.map((entry, idx) => renderJournalCard(entry, idx))}
+                  </div>
 
-              <Pagination
-                currentPage={pagination.currentPage}
-                totalPages={pagination.totalPages}
-                hasNextPage={pagination.hasNextPage}
-                hasPrevPage={pagination.hasPrevPage}
-                onPageChange={handlePageChange}
-                loading={loading}
-              />
+                  <Pagination
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    hasNextPage={pagination.hasNextPage}
+                    hasPrevPage={pagination.hasPrevPage}
+                    onPageChange={handlePageChange}
+                    loading={loading}
+                  />
+                </>
+              )}
             </>
           )}
         </>
       )}
     </div>
-  )
+  ))
 }

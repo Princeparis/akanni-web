@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import { useJournalContext } from '../contexts/JournalContext'
+import { useEntryLoading } from './useLoadingStates'
 import { JournalEntry } from '../types/journal'
 import { APIResponse } from '../types/api'
 
@@ -21,6 +22,7 @@ interface UseJournalEntryReturn {
 export function useJournalEntry(options: UseJournalEntryOptions = {}): UseJournalEntryReturn {
   const { autoFetch = false } = options
   const { state, dispatch } = useJournalContext()
+  const { withEntryLoading } = useEntryLoading()
   const lastSlugRef = useRef<string | null>(null)
   const cacheRef = useRef<Map<string, { data: JournalEntry; timestamp: number }>>(new Map())
 
@@ -38,18 +40,15 @@ export function useJournalEntry(options: UseJournalEntryOptions = {}): UseJourna
         return
       }
 
-      // Check cache first
-      const cached = cacheRef.current.get(slug)
-      if (cached && isValidCache(cached.timestamp)) {
-        dispatch({ type: 'SET_CURRENT_ENTRY', payload: cached.data })
-        return
-      }
+      return withEntryLoading(async () => {
+        // Check cache first
+        const cached = cacheRef.current.get(slug)
+        if (cached && isValidCache(cached.timestamp)) {
+          dispatch({ type: 'SET_CURRENT_ENTRY', payload: cached.data })
+          return
+        }
 
-      // Set loading state
-      dispatch({ type: 'SET_LOADING', payload: { key: 'currentEntry', value: true } })
-      dispatch({ type: 'SET_ERROR', payload: null })
-
-      try {
+        dispatch({ type: 'SET_ERROR', payload: null })
         const response = await fetch(`/api/public/journals/${encodeURIComponent(slug)}`)
 
         if (!response.ok) {
@@ -78,14 +77,9 @@ export function useJournalEntry(options: UseJournalEntryOptions = {}): UseJourna
 
         // Store last successful slug for refetch
         lastSlugRef.current = slug
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Failed to fetch journal entry'
-        dispatch({ type: 'SET_ERROR', payload: errorMessage })
-        dispatch({ type: 'SET_CURRENT_ENTRY', payload: null })
-      }
+      })
     },
-    [dispatch, isValidCache],
+    [dispatch, isValidCache, withEntryLoading],
   )
 
   const clearEntry = useCallback(() => {

@@ -12,7 +12,14 @@ export interface LoadingStates {
   categories: boolean
   tags: boolean
   currentEntry: boolean
+  filters: boolean
+  pagination: boolean
+  search: boolean
+  retry: boolean
 }
+
+// Loading state keys for type safety
+export type LoadingStateKey = keyof LoadingStates
 
 // Pagination state
 export interface PaginationState {
@@ -42,7 +49,8 @@ export type JournalAction =
   | { type: 'SET_CATEGORIES'; payload: Category[] }
   | { type: 'SET_TAGS'; payload: Tag[] }
   | { type: 'SET_CURRENT_ENTRY'; payload: JournalEntry | null }
-  | { type: 'SET_LOADING'; payload: { key: keyof LoadingStates; value: boolean } }
+  | { type: 'SET_LOADING'; payload: { key: LoadingStateKey; value: boolean } }
+  | { type: 'SET_MULTIPLE_LOADING'; payload: Partial<LoadingStates> }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SET_FILTERS'; payload: Partial<JournalFilters> }
   | { type: 'CLEAR_FILTERS' }
@@ -68,6 +76,10 @@ export const initialJournalState: JournalState = {
     categories: false,
     tags: false,
     currentEntry: false,
+    filters: false,
+    pagination: false,
+    search: false,
+    retry: false,
   },
   error: null,
 }

@@ -1,139 +1,170 @@
-"use client";
-import { useState, useEffect, useRef } from "react";
-import Slider from "@/components/Slider/Slider";
-import Copy from "@/components/Copy";
-import Menu from "@/components/menu/Menu";
-import Video from "@/components/Video/Video";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import CustomEase from "gsap/CustomEase";
-import { useGSAP } from "@gsap/react";
-import { useLenis } from "lenis/react";
-import AnimatedLink from "@/components/AnimatedLink";
+'use client'
+import React, { useEffect, useRef, useState } from 'react'
+import Slider from '@/components/Slider/Slider'
+import Copy from '@/components/Copy'
+import Menu from '@/components/menu/Menu'
+import Video from '@/components/Video/Video'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import CustomEase from 'gsap/CustomEase'
+import { useGSAP } from '@gsap/react'
+import { useLenis } from 'lenis/react'
+import AnimatedLink from '@/components/AnimatedLink'
+import fetchRecentJournals, { RecentJournal } from '../../utils/fetchRecentJournals'
+import { JournalEntry as FullJournalEntry } from '@/types/journal'
+import './Home.css'
+import './preloader.css'
+import JournalCard from '@/components/JournalCard'
 
-import "./Home.css";
-import "./preloader.css";
-
-let isInitialLoad = true;
-gsap.registerPlugin(ScrollTrigger, CustomEase);
-CustomEase.create("hop", "0.9, 0, 0.1, 1");
+let isInitialLoad = true
+gsap.registerPlugin(ScrollTrigger, CustomEase)
+CustomEase.create('hop', '0.9, 0, 0.1, 1')
 
 export default function Home() {
-  const tagsRef = useRef(null);
-  const [showPreloader, setShowPreloader] = useState(isInitialLoad);
-  const [loaderAnimating, setLoaderAnimating] = useState(false);
-  const lenis = useLenis();
+  const tagsRef = useRef<HTMLDivElement | null>(null)
+  const [showPreloader, setShowPreloader] = useState<boolean>(isInitialLoad)
+  const [loaderAnimating, setLoaderAnimating] = useState<boolean>(false)
+  const [entries, setEntries] = useState<RecentJournal[] | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+  const lenis = useLenis() as any
 
   useEffect(() => {
     return () => {
-      isInitialLoad = false;
-    };
-  }, []);
+      isInitialLoad = false
+    }
+  }, [])
 
   useEffect(() => {
     if (lenis) {
       if (loaderAnimating) {
-        lenis.stop();
+        lenis.stop()
       } else {
-        lenis.start();
+        lenis.start()
       }
     }
-  }, [lenis, loaderAnimating]);
+  }, [lenis, loaderAnimating])
+
+  useEffect(() => {
+    let mounted = true
+    setLoading(true)
+
+    fetchRecentJournals(3)
+      .then((data: RecentJournal[]) => {
+        if (!mounted) return
+        setEntries(data)
+      })
+      .catch((err: unknown) => {
+        if (!mounted) return
+        const message = err instanceof Error ? err.message : String(err)
+        setError(message)
+      })
+      .finally(() => {
+        if (!mounted) return
+        setLoading(false)
+      })
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   // preloader animation
   useGSAP(() => {
     const tl = gsap.timeline({
       delay: 0.3,
       defaults: {
-        ease: "hop",
+        ease: 'hop',
       },
-    });
+    })
 
     if (showPreloader) {
-      setLoaderAnimating(true);
-      const counts = document.querySelectorAll(".count");
+      setLoaderAnimating(true)
+      const counts = document.querySelectorAll<HTMLElement>('.count')
 
       counts.forEach((count, index) => {
-        const digits = count.querySelectorAll(".digit h1");
+        const digits = count.querySelectorAll<HTMLElement>('.digit h1')
 
         tl.to(
-          digits,
+          digits as any,
           {
-            y: "0%",
+            y: '0%',
             duration: 1,
             stagger: 0.075,
           },
-          index * 1
-        );
+          index * 1,
+        )
 
         if (index < counts.length) {
           tl.to(
-            digits,
+            digits as any,
             {
-              y: "-100%",
+              y: '-100%',
               duration: 1,
               stagger: 0.075,
             },
-            index * 1 + 1
-          );
+            index * 1 + 1,
+          )
         }
-      });
+      })
 
-      tl.to(".spinner", {
+      tl.to('.spinner', {
         opacity: 0,
         duration: 0.3,
-      });
+      })
 
       tl.to(
-        ".word h1",
+        '.word h1',
         {
-          y: "0%",
+          y: '0%',
           duration: 1,
         },
-        "<"
-      );
+        '<',
+      )
 
-      tl.to(".divider", {
-        scaleY: "100%",
+      tl.to('.divider', {
+        scaleY: '100%',
         duration: 1,
-        onComplete: () =>
-          gsap.to(".divider", { opacity: 0, duration: 0.3, delay: 0.3 }),
-      });
+        onComplete: () => {
+          gsap.to('.divider', { opacity: 0, duration: 0.3, delay: 0.3 })
+        },
+      })
 
-      tl.to("#word-1 h1", {
-        y: "100%",
+      tl.to('#word-1 h1', {
+        y: '100%',
         duration: 1,
         delay: 0.3,
-      });
+      })
 
       tl.to(
-        "#word-2 h1",
+        '#word-2 h1',
         {
-          y: "-100%",
+          y: '-100%',
           duration: 1,
         },
-        "<"
-      );
+        '<',
+      )
 
       tl.to(
-        ".block",
+        '.block',
         {
-          clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+          clipPath: 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)',
           duration: 1,
           stagger: 0.1,
           delay: 0.75,
           onStart: () => {
-            gsap.to(".hero-img", { scale: 1, duration: 2, ease: "hop" });
+            gsap.to('.hero-img', { scale: 1, duration: 2, ease: 'hop' })
           },
           onComplete: () => {
-            gsap.set(".loader", { pointerEvents: "none" });
-            setLoaderAnimating(false);
+            gsap.set('.loader', { pointerEvents: 'none' })
+            setLoaderAnimating(false)
           },
         },
-        "<"
-      );
+        '<',
+      )
     }
-  }, [showPreloader]);
+  }, [showPreloader])
+
   return (
     <>
       {showPreloader && (
@@ -228,14 +259,12 @@ export default function Home() {
           <div className="text-cont">
             <Copy>
               <p className="about-text">
-                I build brands that feel inevitable—and the products that carry
-                them. For 10+ years I’ve designed identities, UX/UI, and visuals
-                that actually move people. Along the way I added an uncommon
-                edge: AI fluency for writing, design, and photography that
-                multiplies creative output. In the last six years I’ve gone deep
-                on code—web, mobile, and backend—shipping with Python,
-                TypeScript, and pure JavaScript. I’m a unicorn creative
-                engineer: strategy, craft, and software in one pair of hands.
+                I build brands that feel inevitable and the products that carry them. For 10+ years
+                I’ve designed identities, UX/UI, and visuals that actually move people. Along the
+                way I added an uncommon edge: AI fluency for writing, design, and photography that
+                multiplies creative output. In the last six years I’ve gone deep on code—web,
+                mobile, and backend—shipping with Python, TypeScript, and pure JavaScript. I’m a
+                unicorn creative engineer: strategy, craft, and software in one pair of hands.
               </p>
             </Copy>
             <AnimatedLink
@@ -252,8 +281,8 @@ export default function Home() {
           <div className="journal-header">
             <Copy delay={0.3}>
               <h5>
-                Read the latest Journal entries from me to catch up with latest
-                ai trends, design industry news and development innovations.
+                Read the latest Journal entries from me to catch up with latest ai trends, design
+                industry news and development innovations.
               </h5>
             </Copy>
             <AnimatedLink
@@ -264,9 +293,22 @@ export default function Home() {
               text="Read More"
             />
           </div>
-          <div className="journal-cont"></div>
+
+          {/* Basic render of fetched journal entries (if any) */}
+          {loading && <p>Loading journals and updates please wait...</p>}
+          {error && <p className="error">{error}</p>}
+          {entries && entries.length > 0 && (
+            <div className="journal-home-list">
+              {entries.map((entry) => (
+                <JournalCard
+                  key={entry.id || entry.slug || entry.title}
+                  entry={entry as unknown as FullJournalEntry}
+                />
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </>
-  );
+  )
 }

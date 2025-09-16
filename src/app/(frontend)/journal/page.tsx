@@ -1,33 +1,62 @@
 'use client'
 
-import React from 'react'
-import { JournalProvider } from '../../../contexts/JournalContext'
-import JournalErrorBoundary from '../../../components/JournalErrorBoundary'
-import JournalList from '../../../components/JournalList'
+import React, { useEffect, useState } from 'react'
 import './Journal.css'
+import Menu from '@/components/menu/Menu'
+import JournalCard from '@/components/JournalCard'
+import JournalErrorBoundary from '../../../components/JournalErrorBoundary'
+import fetchRecentJournals, { RecentJournal } from '../../../utils/fetchRecentJournals'
+import { JournalEntry as FullJournalEntry } from '@/types/journal'
 
-interface JournalPageProps {
-  // Add any props that might be passed from the router or parent components
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
-}
+export default function JournalPage() {
+  const [entries, setEntries] = useState<RecentJournal[] | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
-function JournalContent() {
+  useEffect(() => {
+    let mounted = true
+    setLoading(true)
+    fetchRecentJournals()
+      .then((data: RecentJournal[]) => {
+        if (!mounted) return
+        setEntries(data)
+      })
+      .catch((err: unknown) => {
+        if (!mounted) return
+        const message = err instanceof Error ? err.message : String(err)
+        setError(message)
+      })
+      .finally(() => {
+        if (!mounted) return
+        setLoading(false)
+      })
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
   return (
-    <section className="journal-content">
-      <div className="journal-separator"></div>
-      <JournalList />
-    </section>
+    <>
+      <Menu />
+      <section className="journal-content">
+        {loading && <p>Loading journals…</p>}
+
+        {!loading && error && <p className="error">{error}</p>}
+
+        {!loading && entries && entries.length === 0 && <p>No journal entries found.</p>}
+
+        {!loading && entries && entries.length > 0 && (
+          <div className="journal-list">
+            {entries.map((entry) => (
+              <JournalCard
+                key={entry.id || entry.slug || entry.title}
+                entry={entry as unknown as FullJournalEntry}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   )
 }
-
-function Journal({ searchParams }: JournalPageProps) {
-  return (
-    <JournalErrorBoundary>
-      <JournalProvider>
-        <JournalContent />
-      </JournalProvider>
-    </JournalErrorBoundary>
-  )
-}
-
-export default Journal

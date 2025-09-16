@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { generateSlug } from '../utils/slug'
+import { invalidateCategoryCache, invalidateCategoryCacheOnDelete } from '../utils/cache-hooks'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
@@ -98,6 +99,14 @@ export const Categories: CollectionConfig = {
         data.updatedAt = now
         return data
       },
+    ],
+    afterChange: [
+      // Cache invalidation hook
+      invalidateCategoryCache,
+    ],
+    afterDelete: [
+      // Cache invalidation hook
+      invalidateCategoryCacheOnDelete,
     ],
   },
   timestamps: true,

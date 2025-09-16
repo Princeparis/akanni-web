@@ -5,6 +5,7 @@ import {
   validateRequiredString,
   validateRichTextContent,
 } from '../utils/validation'
+import { invalidateJournalCache, invalidateJournalCacheOnDelete } from '../utils/cache-hooks'
 
 export const Journals: CollectionConfig = {
   slug: 'journals',
@@ -307,6 +308,8 @@ export const Journals: CollectionConfig = {
           }
         }
       },
+      // Cache invalidation hook
+      invalidateJournalCache,
     ],
     beforeDelete: [
       async ({ req, id }) => {
@@ -354,6 +357,10 @@ export const Journals: CollectionConfig = {
           console.error('Error updating tag counts before journal deletion:', error)
         }
       },
+    ],
+    afterDelete: [
+      // Cache invalidation hook
+      invalidateJournalCacheOnDelete,
     ],
   },
   timestamps: true,

@@ -55,6 +55,14 @@ export function withErrorHandling<T>(handler: (req: NextRequest, context: any) =
   return async (req: NextRequest, context: any) => {
     try {
       const result = await handler(req, context)
+
+      // If the handler returned a NextResponse (already formatted), return it directly.
+      // This avoids double-wrapping a NextResponse inside another success envelope
+      // which previously caused the response body to be an empty object.
+      if (result instanceof NextResponse) {
+        return result
+      }
+
       return createSuccessResponse(result)
     } catch (error) {
       console.error('API Error:', error)

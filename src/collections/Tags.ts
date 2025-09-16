@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { generateSlug } from '../utils/slug'
+import { invalidateTagCache, invalidateTagCacheOnDelete } from '../utils/cache-hooks'
 
 export const Tags: CollectionConfig = {
   slug: 'tags',
@@ -132,6 +133,8 @@ export const Tags: CollectionConfig = {
           }
         }
       },
+      // Cache invalidation hook
+      invalidateTagCache,
     ],
     beforeDelete: [
       async ({ req, id }) => {
@@ -167,6 +170,10 @@ export const Tags: CollectionConfig = {
           console.error('Error removing tag from journals before deletion:', error)
         }
       },
+    ],
+    afterDelete: [
+      // Cache invalidation hook
+      invalidateTagCacheOnDelete,
     ],
   },
   timestamps: true,

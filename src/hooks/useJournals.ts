@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import { useJournalContext } from '../contexts/JournalContext'
+import { useEntriesLoading } from './useLoadingStates'
 import { JournalQueryParams, JournalListResponse, APIResponse } from '../types/api'
 import { JournalEntry } from '../types/journal'
 
@@ -24,6 +25,19 @@ interface UseJournalsReturn {
 export function useJournals(options: UseJournalsOptions = {}): UseJournalsReturn {
   const { autoFetch = true, initialParams = {} } = options
   const { state, dispatch } = useJournalContext()
+  const { withEntriesLoading } = useEntriesLoading()
+  // Keep a ref to withEntriesLoading so its identity changes (driven by loading
+  // state) don't force fetchJournals to be recreated on every loading toggle.
+  const withEntriesLoadingRef = useRef(withEntriesLoading)
+  useEffect(() => {
+    withEntriesLoadingRef.current = withEntriesLoading
+  }, [withEntriesLoading])
+  // Keep a ref to the latest state to avoid stale closures inside fetchJournals
+  const stateRef = useRef(state)
+  // Keep stateRef in sync
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
   const lastParamsRef = useRef<JournalQueryParams>(initialParams)
   const cacheRef = useRef<Map<string, { data: JournalListResponse; timestamp: number }>>(new Map())
 
@@ -40,43 +54,105 @@ export function useJournals(options: UseJournalsOptions = {}): UseJournalsReturn
 
   const fetchJournals = useCallback(
     async (params: JournalQueryParams = {}) => {
-      const mergedParams = { ...initialParams, ...params }
-      const cacheKey = getCacheKey(mergedParams)
+      // Use the ref'd version to avoid creating a new fetchJournals when
+      // loading state changes (which would retrigger the auto-fetch effect).
+      return withEntriesLoadingRef.current(async () => {
+        const mergedParams = { ...initialParams, ...params }
+        const cacheKey = getCacheKey(mergedParams)
 
-      // Check cache first
-      const cached = cacheRef.current.get(cacheKey)
-      if (cached && isValidCache(cached.timestamp)) {
-        dispatch({
-          type: 'SET_ENTRIES',
-          payload: {
-            entries: cached.data.docs,
-            pagination: {
-              currentPage: cached.data.page,
-              totalPages: cached.data.totalPages,
-              totalDocs: cached.data.totalDocs,
-              hasNextPage: cached.data.hasNextPage,
-              hasPrevPage: cached.data.hasPrevPage,
-              limit: cached.data.limit,
-            },
-          },
-        })
-
-        // Update categories and tags if they exist
-        if (cached.data.categories) {
-          dispatch({ type: 'SET_CATEGORIES', payload: cached.data.categories })
+        // Debug: trace fetch calls and merged params to help identify update loops
+        // Use a guarded, rate-limited logger to avoid console flood during e2e runs
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const win = (globalThis as any).window as any
+          if (win && win.__DEBUG_JOURNALS__) {
+            win.___journal_log_counter = (win.___journal_log_counter || 0) + 1
+            if (win.___journal_log_counter <= 50) {
+              // eslint-disable-next-line no-console
+              console.debug('[useJournals] [origin:useJournals] fetchJournals called', {
+                mergedParams,
+                cacheKey,
+                count: win.___journal_log_counter,
+              })
+            } else if (win.___journal_log_counter === 51) {
+              // eslint-disable-next-line no-console
+              console.debug(
+                '[useJournals] [origin:useJournals] logging suppressed after 50 messages',
+              )
+            }
+          }
+        } catch (e) {
+          // ignore logging errors in non-browser environments
         }
-        if (cached.data.tags) {
-          dispatch({ type: 'SET_TAGS', payload: cached.data.tags })
+
+        // Check cache first
+        const cached = cacheRef.current.get(cacheKey)
+        if (cached && isValidCache(cached.timestamp)) {
+          // Debug: using cached response (guarded)
+          try {
+            const win = (globalThis as any).window as any
+            if (win && win.__DEBUG_JOURNALS__ && win.___journal_log_counter <= 50) {
+              // eslint-disable-next-line no-console
+              console.debug('[useJournals] [origin:useJournals] using cache', {
+                cacheKey,
+                docs: cached.data.docs.length,
+              })
+            }
+          } catch (e) {}
+          // Only dispatch if cached data differs from current state to avoid
+          // unnecessary state updates and possible render loops.
+          const currentEntries = stateRef.current.entries || []
+          const cachedDocs = cached.data.docs || []
+          const entriesChanged =
+            currentEntries.length !== cachedDocs.length ||
+            (currentEntries.length > 0 &&
+              cachedDocs.length > 0 &&
+              currentEntries[0].id !== cachedDocs[0].id)
+
+          if (entriesChanged) {
+            dispatch({
+              type: 'SET_ENTRIES',
+              payload: {
+                entries: cachedDocs,
+                pagination: {
+                  currentPage: cached.data.page,
+                  totalPages: cached.data.totalPages,
+                  totalDocs: cached.data.totalDocs,
+                  hasNextPage: cached.data.hasNextPage,
+                  hasPrevPage: cached.data.hasPrevPage,
+                  limit: cached.data.limit,
+                },
+              },
+            })
+          }
+
+          // Update categories and tags if they exist
+          if (cached.data.categories) {
+            // Only dispatch if categories changed (shallow check)
+            const currentCats = stateRef.current.categories || []
+            const newCats = cached.data.categories || []
+            if (
+              currentCats.length !== newCats.length ||
+              (currentCats[0] && newCats[0] && currentCats[0].id !== newCats[0].id)
+            ) {
+              dispatch({ type: 'SET_CATEGORIES', payload: newCats })
+            }
+          }
+          if (cached.data.tags) {
+            const currentTags = stateRef.current.tags || []
+            const newTags = cached.data.tags || []
+            if (
+              currentTags.length !== newTags.length ||
+              (currentTags[0] && newTags[0] && currentTags[0].id !== newTags[0].id)
+            ) {
+              dispatch({ type: 'SET_TAGS', payload: newTags })
+            }
+          }
+
+          return
         }
 
-        return
-      }
-
-      // Set loading state
-      dispatch({ type: 'SET_LOADING', payload: { key: 'entries', value: true } })
-      dispatch({ type: 'SET_ERROR', payload: null })
-
-      try {
+        dispatch({ type: 'SET_ERROR', payload: null })
         // Build query string
         const searchParams = new URLSearchParams()
 
@@ -111,36 +187,72 @@ export function useJournals(options: UseJournalsOptions = {}): UseJournalsReturn
           timestamp: Date.now(),
         })
 
-        // Update state
-        dispatch({
-          type: 'SET_ENTRIES',
-          payload: {
-            entries: data.docs,
-            pagination: {
-              currentPage: data.page,
+        // Debug: about to dispatch fetched entries (guarded)
+        try {
+          const win = (globalThis as any).window as any
+          if (win && win.__DEBUG_JOURNALS__ && win.___journal_log_counter <= 50) {
+            // eslint-disable-next-line no-console
+            console.debug('[useJournals] [origin:useJournals] dispatching SET_ENTRIES', {
+              entries: data.docs.length,
+              page: data.page,
               totalPages: data.totalPages,
-              totalDocs: data.totalDocs,
-              hasNextPage: data.hasNextPage,
-              hasPrevPage: data.hasPrevPage,
-              limit: data.limit,
+            })
+          }
+        } catch (e) {}
+
+        // Update state
+        // Only dispatch when fetched data differs from current state to
+        // prevent unnecessary updates which can trigger effects and loops.
+        const currentEntries = stateRef.current.entries || []
+        const fetchedDocs = data.docs || []
+        const entriesChanged =
+          currentEntries.length !== fetchedDocs.length ||
+          (currentEntries.length > 0 &&
+            fetchedDocs.length > 0 &&
+            currentEntries[0].id !== fetchedDocs[0].id)
+
+        if (entriesChanged) {
+          dispatch({
+            type: 'SET_ENTRIES',
+            payload: {
+              entries: fetchedDocs,
+              pagination: {
+                currentPage: data.page,
+                totalPages: data.totalPages,
+                totalDocs: data.totalDocs,
+                hasNextPage: data.hasNextPage,
+                hasPrevPage: data.hasPrevPage,
+                limit: data.limit,
+              },
             },
-          },
-        })
+          })
+        }
 
         // Update categories and tags
         if (data.categories) {
-          dispatch({ type: 'SET_CATEGORIES', payload: data.categories })
+          const currentCats = stateRef.current.categories || []
+          const newCats = data.categories || []
+          if (
+            currentCats.length !== newCats.length ||
+            (currentCats[0] && newCats[0] && currentCats[0].id !== newCats[0].id)
+          ) {
+            dispatch({ type: 'SET_CATEGORIES', payload: newCats })
+          }
         }
         if (data.tags) {
-          dispatch({ type: 'SET_TAGS', payload: data.tags })
+          const currentTags = stateRef.current.tags || []
+          const newTags = data.tags || []
+          if (
+            currentTags.length !== newTags.length ||
+            (currentTags[0] && newTags[0] && currentTags[0].id !== newTags[0].id)
+          ) {
+            dispatch({ type: 'SET_TAGS', payload: newTags })
+          }
         }
 
         // Store last successful params for refetch
         lastParamsRef.current = mergedParams
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch journals'
-        dispatch({ type: 'SET_ERROR', payload: errorMessage })
-      }
+      })
     },
     [dispatch, getCacheKey, initialParams, isValidCache],
   )

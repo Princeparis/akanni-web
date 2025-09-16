@@ -199,16 +199,7 @@ section {
   aspect-ratio: 8/9;
   height: 100%;
   background-color: #000;
-  clip-path: polygon(
-    0 0,
-    80% 0,
-    100% 20%,
-    100% 70%,
-    100% 100%,
-    10% 100%,
-    0 90%,
-    0% 30%
-  );
+  clip-path: polygon(0 0, 80% 0, 100% 20%, 100% 70%, 100% 100%, 10% 100%, 0 90%, 0% 30%);
 }
 
 .about .text-cont {
@@ -221,7 +212,7 @@ section {
 
 .text-cont .about-text {
   font-size: 20px;
-  font-family: "PP Neue Montreal", sans-serif;
+  font-family: 'PP Neue Montreal', sans-serif;
   line-height: 1.6;
   margin-bottom: 24px;
 }
@@ -365,4 +356,20 @@ section {
   text-transform: uppercase;
   line-height: 1.5;
   max-width: 700px;
+}
+
+.journal-cont {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 3rem;
+}
+
+.journal-home-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2rem;
+  padding: 20px 20px;
+  width: 100%;
 }

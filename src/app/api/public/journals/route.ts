@@ -23,6 +23,15 @@ import {
   SORT_ORDER,
   DEFAULTS,
 } from '../../../../utils/constants'
+import {
+  generateCacheKey,
+  generateETag,
+  addCacheHeaders,
+  checkCacheHeaders,
+  createNotModifiedResponse,
+  CACHE_CONFIGS,
+  CacheMetrics,
+} from '../../../../utils/cache'
 
 /**
  * GET /api/journals - Retrieve paginated journal entries with filtering
@@ -47,6 +56,13 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   const where = buildWhereConditions(filters)
 
   try {
+    // Generate cache key for this request
+    const cacheKey = generateCacheKey({
+      collection: 'journals',
+      operation: 'list',
+      params: { ...filters, page, limit, ...sortOptions },
+    })
+
     // Fetch journals with pagination and filtering
     const journalsResult = await payload.find({
       collection: 'journals',
@@ -86,15 +102,38 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
       tags: tagsResult.docs as Tag[],
     }
 
-    // Create response with caching headers
+    // Determine last modified date from the most recent journal entry
+    const lastModified =
+      journalsResult.docs.length > 0
+        ? new Date(
+            Math.max(
+              ...journalsResult.docs.map((doc) =>
+                new Date(doc.updatedAt || doc.createdAt).getTime(),
+              ),
+            ),
+          )
+        : new Date()
+
+    // Generate ETag for cache validation
+    const etag = generateETag(response, lastModified)
+
+    // Check if client has cached version
+    if (checkCacheHeaders(req, etag, lastModified)) {
+      CacheMetrics.recordHit(cacheKey)
+      return createNotModifiedResponse()
+    }
+
+    // Record cache miss
+    CacheMetrics.recordMiss(cacheKey)
+
+    // Create response with enhanced caching headers
     const successResponse = createSuccessResponse(response)
 
-    // Add cache headers for performance optimization
-    successResponse.headers.set(
-      'Cache-Control',
-      `public, max-age=${CACHE_DURATION.MEDIUM}, stale-while-revalidate=${CACHE_DURATION.SHORT}`,
-    )
-    successResponse.headers.set('ETag', generateETag(response))
+    // Determine cache config based on content type
+    const cacheConfig = filters.search ? CACHE_CONFIGS.SEARCH_RESULTS : CACHE_CONFIGS.JOURNAL_LIST
+
+    // Add comprehensive cache headers
+    addCacheHeaders(successResponse, cacheConfig, etag, lastModified)
 
     return successResponse
   } catch (error) {
@@ -205,12 +244,4 @@ function buildWhereConditions(filters: JournalQueryParams): any {
   }
 
   return conditions
-}
-
-/**
- * Generate ETag for caching
- */
-function generateETag(data: any): string {
-  const hash = require('crypto').createHash('md5').update(JSON.stringify(data)).digest('hex')
-  return `"${hash}"`
 }

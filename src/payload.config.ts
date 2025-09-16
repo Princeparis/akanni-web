@@ -15,6 +15,19 @@ import { Journals } from './collections/Journals'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+// Determine DB URL: prefer DATABASE_URI env var, otherwise fall back to a local sqlite file
+// Passing an empty string to the sqlite adapter can cause runtime SQL errors (LibsqlError).
+const envDbUrl = process.env.DATABASE_URI ? process.env.DATABASE_URI.trim() : ''
+const defaultSqlitePath = path.resolve(dirname, 'payload.db')
+const dbUrl = envDbUrl && envDbUrl.length > 0 ? envDbUrl : `file:${defaultSqlitePath}`
+
+if (!envDbUrl) {
+  // Log a visible warning to help local devs notice missing DB config
+  // eslint-disable-next-line no-console
+  console.warn(
+    `[payload.config] DATABASE_URI not set; falling back to local sqlite file at ${defaultSqlitePath}`,
+  )
+}
 
 export default buildConfig({
   admin: {
@@ -31,7 +44,7 @@ export default buildConfig({
   },
   db: sqliteAdapter({
     client: {
-      url: process.env.DATABASE_URI || '',
+      url: dbUrl,
       authToken: process.env.DATABASE_AUTH_TOKEN,
     },
   }),

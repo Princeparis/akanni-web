@@ -14,6 +14,15 @@ import {
 import { APIError, ErrorCodes } from '../../../../../types/errors'
 import { Journal } from '../../../../../payload-types'
 import { HTTP_STATUS, CACHE_DURATION } from '../../../../../utils/constants'
+import {
+  generateCacheKey,
+  generateETag,
+  addCacheHeaders,
+  checkCacheHeaders,
+  createNotModifiedResponse,
+  CACHE_CONFIGS,
+  CacheMetrics,
+} from '../../../../../utils/cache'
 
 interface RouteParams {
   params: {
@@ -41,6 +50,13 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: RouteP
   const payload = await getPayload({ config })
 
   try {
+    // Generate cache key for this specific journal entry
+    const cacheKey = generateCacheKey({
+      collection: 'journals',
+      operation: 'entry',
+      params: { slug },
+    })
+
     // Find journal entry by slug with populated relationships
     const result = await payload.find({
       collection: 'journals',
@@ -72,23 +88,32 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: RouteP
       console.warn(`Returning draft entry: ${slug}`)
     }
 
-    // Create response with caching headers
+    // Determine last modified date
+    const lastModified = new Date(journalEntry.updatedAt || journalEntry.createdAt)
+
+    // Generate ETag for cache validation
+    const etag = generateETag(journalEntry, lastModified)
+
+    // Check if client has cached version
+    if (checkCacheHeaders(req, etag, lastModified)) {
+      CacheMetrics.recordHit(cacheKey)
+      return createNotModifiedResponse()
+    }
+
+    // Record cache miss
+    CacheMetrics.recordMiss(cacheKey)
+
+    // Create response with enhanced caching headers
     const successResponse = createSuccessResponse(journalEntry)
 
-    // Add cache headers for performance optimization
-    // Use longer cache for published entries, shorter for drafts
-    const cacheMaxAge =
-      journalEntry.status === 'published' ? CACHE_DURATION.LONG : CACHE_DURATION.SHORT
+    // Use different cache config based on entry status
+    const cacheConfig =
+      journalEntry.status === 'published'
+        ? CACHE_CONFIGS.JOURNAL_ENTRY_PUBLISHED
+        : CACHE_CONFIGS.JOURNAL_ENTRY_DRAFT
 
-    successResponse.headers.set(
-      'Cache-Control',
-      `public, max-age=${cacheMaxAge}, stale-while-revalidate=${CACHE_DURATION.SHORT}`,
-    )
-    successResponse.headers.set('ETag', generateETag(journalEntry))
-
-    // Add Last-Modified header
-    const lastModified = journalEntry.updatedAt || journalEntry.createdAt
-    successResponse.headers.set('Last-Modified', new Date(lastModified).toUTCString())
+    // Add comprehensive cache headers
+    addCacheHeaders(successResponse, cacheConfig, etag, lastModified)
 
     return successResponse
   } catch (error) {
@@ -106,20 +131,3 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: RouteP
     )
   }
 })
-
-/**
- * Generate ETag for caching
- */
-function generateETag(data: any): string {
-  const hash = require('crypto')
-    .createHash('md5')
-    .update(
-      JSON.stringify({
-        id: data.id,
-        updatedAt: data.updatedAt,
-        status: data.status,
-      }),
-    )
-    .digest('hex')
-  return `"${hash}"`
-}

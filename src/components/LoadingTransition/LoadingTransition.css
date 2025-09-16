@@ -1,0 +1,125 @@
+/* Loading Transition Styles */
+.loading-transition {
+  position: relative;
+  width: 100%;
+}
+
+.loading-transition-skeleton,
+.loading-transition-content {
+  width: 100%;
+}
+
+/* Fade transition styles */
+.loading-transition.fade-transition .loading-transition-skeleton,
+.loading-transition.fade-transition .loading-transition-content {
+  transition: opacity 0.15s ease-in-out;
+}
+
+.loading-transition.fade-transition.transitioning .loading-transition-skeleton {
+  opacity: 1;
+}
+
+.loading-transition.fade-transition.transitioning .loading-transition-content {
+  opacity: 0;
+}
+
+.loading-transition.fade-transition:not(.transitioning) .loading-transition-skeleton {
+  opacity: 0;
+}
+
+.loading-transition.fade-transition:not(.transitioning) .loading-transition-content {
+  opacity: 1;
+}
+
+/* Slide transition (alternative) */
+.loading-transition.slide-transition {
+  overflow: hidden;
+}
+
+.loading-transition.slide-transition .loading-transition-skeleton,
+.loading-transition.slide-transition .loading-transition-content {
+  transition: transform 0.2s ease-in-out;
+}
+
+.loading-transition.slide-transition.transitioning .loading-transition-skeleton {
+  transform: translateY(0);
+}
+
+.loading-transition.slide-transition.transitioning .loading-transition-content {
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+.loading-transition.slide-transition:not(.transitioning) .loading-transition-skeleton {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+.loading-transition.slide-transition:not(.transitioning) .loading-transition-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Smooth height transitions for dynamic content */
+.loading-transition.height-transition {
+  transition: height 0.2s ease-in-out;
+}
+
+/* Accessibility improvements */
+.loading-transition-skeleton {
+  /* Announce loading state to screen readers */
+  position: relative;
+}
+
+.loading-transition-skeleton::before {
+  content: 'Loading content...';
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .loading-transition.fade-transition .loading-transition-skeleton,
+  .loading-transition.fade-transition .loading-transition-content,
+  .loading-transition.slide-transition .loading-transition-skeleton,
+  .loading-transition.slide-transition .loading-transition-content {
+    transition: none;
+  }
+
+  .loading-transition.height-transition {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .loading-transition-skeleton {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Focus management during transitions */
+.loading-transition.transitioning {
+  pointer-events: none;
+}
+
+.loading-transition:not(.transitioning) {
+  pointer-events: auto;
+}
+
+/* Loading state indicators */
+.loading-transition.showing-skeleton .loading-transition-content {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: -1;
+}
+
+.loading-transition:not(.showing-skeleton) .loading-transition-skeleton {
+  display: none;
+}

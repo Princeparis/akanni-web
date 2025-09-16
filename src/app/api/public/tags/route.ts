@@ -15,6 +15,15 @@ import {
 import { APIError, ErrorCodes } from '../../../../types/errors'
 import { Tag } from '../../../../payload-types'
 import { HTTP_STATUS, CACHE_DURATION } from '../../../../utils/constants'
+import {
+  generateCacheKey,
+  generateETag,
+  addCacheHeaders,
+  checkCacheHeaders,
+  createNotModifiedResponse,
+  CACHE_CONFIGS,
+  CacheMetrics,
+} from '../../../../utils/cache'
 
 /**
  * GET /api/tags - Retrieve tags with usage statistics and sorting options
@@ -32,6 +41,13 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   const payload = await getPayload({ config })
 
   try {
+    // Generate cache key for this request
+    const cacheKey = generateCacheKey({
+      collection: 'tags',
+      operation: 'list',
+      params: { ...sortOptions, hideEmpty: queryParams.hideEmpty },
+    })
+
     // Fetch all tags
     const tagsResult = await payload.find({
       collection: 'tags',
@@ -81,15 +97,33 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
       sortedTags = sortedTags.filter((tag) => (tag.journalCount || 0) > 0)
     }
 
-    // Create response with caching headers
+    // Determine last modified date from the most recent tag
+    const lastModified =
+      tagsResult.docs.length > 0
+        ? new Date(
+            Math.max(
+              ...tagsResult.docs.map((doc) => new Date(doc.updatedAt || doc.createdAt).getTime()),
+            ),
+          )
+        : new Date()
+
+    // Generate ETag for cache validation
+    const etag = generateETag(sortedTags, lastModified)
+
+    // Check if client has cached version
+    if (checkCacheHeaders(req, etag, lastModified)) {
+      CacheMetrics.recordHit(cacheKey)
+      return createNotModifiedResponse()
+    }
+
+    // Record cache miss
+    CacheMetrics.recordMiss(cacheKey)
+
+    // Create response with enhanced caching headers
     const successResponse = createSuccessResponse(sortedTags)
 
-    // Add cache headers for performance optimization
-    successResponse.headers.set(
-      'Cache-Control',
-      `public, max-age=${CACHE_DURATION.LONG}, stale-while-revalidate=${CACHE_DURATION.MEDIUM}`,
-    )
-    successResponse.headers.set('ETag', generateETag(sortedTags))
+    // Add comprehensive cache headers
+    addCacheHeaders(successResponse, CACHE_CONFIGS.TAGS, etag, lastModified)
 
     return successResponse
   } catch (error) {
@@ -121,12 +155,4 @@ function parseTagSortOptions(params: any): { field: string; order: string } {
   }
 
   return { field, order }
-}
-
-/**
- * Generate ETag for caching
- */
-function generateETag(data: any): string {
-  const hash = require('crypto').createHash('md5').update(JSON.stringify(data)).digest('hex')
-  return `"${hash}"`
 }
