@@ -378,7 +378,7 @@ const Slider = (): React.JSX.Element => {
           lastColor="#ffffff"
           textColor="#ffffff"
           strokeColor="#ffffff"
-          href="#"
+          href="/portfolio"
           text="View all projects"
         />
       </div>

@@ -4,9 +4,10 @@ import React, { useEffect, useState } from 'react'
 import './Journal.css'
 import Menu from '@/components/menu/Menu'
 import JournalCard from '@/components/JournalCard'
-import JournalErrorBoundary from '../../../components/JournalErrorBoundary'
+import JournalErrorBoundary from '@/components/JournalErrorBoundary'
 import fetchRecentJournals, { RecentJournal } from '../../../utils/fetchRecentJournals'
 import { JournalEntry as FullJournalEntry } from '@/types/journal'
+import Footer from '@/components/footer/Footer'
 
 export default function JournalPage() {
   const [entries, setEntries] = useState<RecentJournal[] | null>(null)
@@ -57,6 +58,7 @@ export default function JournalPage() {
           </div>
         )}
       </section>
+      <Footer />
     </>
   )
 }

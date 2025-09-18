@@ -2,7 +2,7 @@ import React from 'react'
 import { Metadata } from 'next'
 import { JournalProvider } from '../../../../contexts/JournalContext'
 import JournalErrorBoundary from '../../../../components/JournalErrorBoundary'
-import JournalEntryClient from './JournalEntryClient.js'
+import JournalEntryClient from './JournalEntryClient.jsx'
 import { JournalEntry as JournalEntryType } from '../../../../types/journal'
 import { extractPlainText } from '../../../../utils/formatters'
 

@@ -104,7 +104,6 @@ export default function RootLayout({ children }) {
         <ClientLayout>
           <Navbar />
           {children}
-          <Footer />
         </ClientLayout>
       </body>
     </html>

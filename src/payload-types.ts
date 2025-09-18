@@ -72,6 +72,7 @@ export interface Config {
     categories: Category;
     tags: Tag;
     journals: Journal;
+    portfolios: Portfolio;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -83,6 +84,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     journals: JournalsSelect<false> | JournalsSelect<true>;
+    portfolios: PortfoliosSelect<false> | PortfoliosSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -286,6 +288,67 @@ export interface Journal {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolios".
+ */
+export interface Portfolio {
+  id: number;
+  /**
+   * Project title (required)
+   */
+  title: string;
+  /**
+   * URL slug (auto-generated from title)
+   */
+  slug: string;
+  /**
+   * Year the project was completed or launched
+   */
+  year?: number | null;
+  /**
+   * Project categories (choose one or more)
+   */
+  categories: ('branding' | 'ui-ux' | 'web-design' | 'web-development' | 'app-development' | 'backend-development')[];
+  /**
+   * Main cover image for the project
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Detailed project content, case study, images, and rich text
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Short summary for lists and previews
+   */
+  excerpt?: string | null;
+  /**
+   * Short description of the project for cards and meta
+   */
+  description?: string | null;
+  status: 'draft' | 'published';
+  publishedAt?: string | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -310,6 +373,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'journals';
         value: number | Journal;
+      } | null)
+    | ({
+        relationTo: 'portfolios';
+        value: number | Portfolio;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -431,6 +498,30 @@ export interface JournalsSelect<T extends boolean = true> {
   publishedAt?: T;
   category?: T;
   tags?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolios_select".
+ */
+export interface PortfoliosSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  year?: T;
+  categories?: T;
+  coverImage?: T;
+  content?: T;
+  excerpt?: T;
+  description?: T;
+  status?: T;
+  publishedAt?: T;
   seo?:
     | T
     | {

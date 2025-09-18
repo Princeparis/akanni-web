@@ -15,6 +15,7 @@ import { JournalEntry as FullJournalEntry } from '@/types/journal'
 import './Home.css'
 import './preloader.css'
 import JournalCard from '@/components/JournalCard'
+import Footer from '@/components/footer/Footer'
 
 let isInitialLoad = true
 gsap.registerPlugin(ScrollTrigger, CustomEase)
@@ -308,6 +309,7 @@ export default function Home() {
             </div>
           )}
         </section>
+        <Footer />
       </main>
     </>
   )

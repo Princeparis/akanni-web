@@ -1,0 +1,27 @@
+.portfolio {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  min-height: 100svh;
+  background-color: var(--pure-black);
+}
+
+.portfolio-header {
+  padding: 20px;
+}
+
+.portfolio-cont {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 60px;
+}
+
+.portfolio-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: 1.25rem;
+  padding: 1.25rem;
+}
