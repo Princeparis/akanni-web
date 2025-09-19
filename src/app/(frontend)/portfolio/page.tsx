@@ -2,15 +2,18 @@
 
 import Footer from '@/components/footer/Footer'
 import Menu from '@/components/menu/Menu'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import fetchPortfolios, { PortfolioItem } from '@/utils/fetchPortfolios'
 
 import './Portfolio.css'
+import PortfolioCard from '@/components/PortfolioCard/PortfolioCard'
 
 function Portfolio() {
   const [portfolios, setPorfolios] = useState<PortfolioItem[] | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const portfolioRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let mounted = true
@@ -36,12 +39,18 @@ function Portfolio() {
       mounted = false
     }
   }, [])
+
   return (
     <>
       <Menu />
       <main className="portfolio">
-        <div className="portfolio-header"></div>
-        <div className="portfolio-cont">
+        <div className="portfolio-header">
+          <h2>Portfolio</h2>
+          <div className="projects-count">
+            {portfolios && !loading && !error && <span>{portfolios.length}</span>}
+          </div>
+        </div>
+        <div className="portfolio-cont" ref={containerRef}>
           {loading && <div className="portfolio-loading">Loading portfolios…</div>}
           {error && <div className="portfolio-error">Error: {error}</div>}
           {!loading && !error && portfolios && portfolios.length === 0 && (
@@ -51,21 +60,11 @@ function Portfolio() {
           {!loading && !error && portfolios && (
             <div className="portfolio-grid">
               {portfolios.map((p) => (
-                <article key={p.id} className="portfolio-card">
-                  {p.coverImage ? (
-                    // coverImage could be a relation object; try to read common fields
-                    <img
-                      src={
-                        typeof p.coverImage === 'string'
-                          ? p.coverImage
-                          : p.coverImage?.url || p.coverImage?.thumbnail || ''
-                      }
-                      alt={p.title || 'cover'}
-                    />
-                  ) : null}
-                  <h3 className="portfolio-title">{p.title}</h3>
-                  {p.description && <p className="portfolio-description">{p.description}</p>}
-                </article>
+                <PortfolioCard
+                  key={p.id || p.slug || p.title}
+                  portfolio={p}
+                  className="port-card"
+                />
               ))}
             </div>
           )}

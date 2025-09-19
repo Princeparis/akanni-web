@@ -9,19 +9,50 @@
 .portfolio-card-link {
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
   height: 100%;
   text-decoration: none;
   color: inherit;
 }
 
-.portfolio-card-image {
+.portfolio-img {
   position: relative;
+  overflow: hidden;
   width: 100%;
   height: auto;
   aspect-ratio: 3/2;
   overflow: hidden;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
   clip-path: polygon(0 0, 80% 0, 100% 20%, 100% 70%, 100% 100%, 10% 100%, 0 90%, 0% 30%);
+}
+
+.portfolio-img .masks {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.masks .mask {
+  flex: 1;
+  background-color: var(--slate);
+  width: 100%;
+}
+
+.portfolio-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.portfolio-card:hover .portfolio-img img {
+  transform: scale(1.05);
 }
 
 .portfolio-info {
@@ -37,9 +68,22 @@
   text-transform: uppercase;
 }
 
+.info-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-left .year {
+  font-family: var(--font-montreal);
+  font-size: 0.8rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .portfolio-info svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 .portfolio-card-image img {
@@ -51,4 +95,33 @@
 
 .portfolio-card:hover .portfolio-card-image img {
   transform: scale(1.05);
+}
+
+.portfolio-img .categories {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+
+.categories .category {
+  background: var(--tl00);
+  color: var(--black);
+  padding: 0.5rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  font-family: var(--font-montreal);
+  line-height: 1;
+}
+
+.portfolio-card:hover .category {
+  opacity: 1;
 }

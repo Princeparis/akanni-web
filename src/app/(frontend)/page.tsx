@@ -6,6 +6,7 @@ import Menu from '@/components/menu/Menu'
 import Video from '@/components/Video/Video'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { SplitText } from 'gsap/SplitText'
 import CustomEase from 'gsap/CustomEase'
 import { useGSAP } from '@gsap/react'
 import { useLenis } from 'lenis/react'
@@ -18,11 +19,13 @@ import JournalCard from '@/components/JournalCard'
 import Footer from '@/components/footer/Footer'
 
 let isInitialLoad = true
-gsap.registerPlugin(ScrollTrigger, CustomEase)
+gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText)
 CustomEase.create('hop', '0.9, 0, 0.1, 1')
 
 export default function Home() {
   const tagsRef = useRef<HTMLDivElement | null>(null)
+  const titleRef = useRef<HTMLHeadingElement | null>(null)
+  const wordsRef = useRef<any[]>([])
   const [showPreloader, setShowPreloader] = useState<boolean>(isInitialLoad)
   const [loaderAnimating, setLoaderAnimating] = useState<boolean>(false)
   const [entries, setEntries] = useState<RecentJournal[] | null>(null)
@@ -72,6 +75,13 @@ export default function Home() {
 
   // preloader animation
   useGSAP(() => {
+    wordsRef.current = []
+    let split = new SplitText(titleRef.current, {
+      type: 'words lines',
+      mask: 'lines',
+      linesClass: 'line++',
+    })
+    wordsRef.current.push(...split.words)
     const tl = gsap.timeline({
       delay: 0.3,
       defaults: {
@@ -158,6 +168,19 @@ export default function Home() {
           },
           onComplete: () => {
             gsap.set('.loader', { pointerEvents: 'none' })
+          },
+        },
+        '<',
+      )
+
+      tl.from(
+        wordsRef.current,
+        {
+          y: '100%',
+          duration: 1,
+          delay: 2.5,
+          stagger: 0.1,
+          onComplete: () => {
             setLoaderAnimating(false)
           },
         },
@@ -240,9 +263,7 @@ export default function Home() {
           <div className="hero-img-gradient"></div>
           <div className="content">
             <h3>Yusuff Ridwan</h3>
-            <Copy>
-              <h1>Creative Engineer</h1>
-            </Copy>
+            <h1 ref={titleRef}>Creative Engineer</h1>
             <div className="chips">
               <div className="chip">Designer</div>
               <div className="chip">Developer</div>
