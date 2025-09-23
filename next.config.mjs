@@ -7,7 +7,9 @@ const require = createRequire(import.meta.url)
 const nextConfig = {
   // Performance optimizations
   experimental: {
-    optimizeCss: true,
+    // Disable optimizeCss to prevent CSS from being merged across server/client boundaries.
+    // This avoids admin CSS being accidentally merged into frontend bundles.
+    optimizeCss: false,
     optimizePackageImports: ['react', 'react-dom'],
   },
 

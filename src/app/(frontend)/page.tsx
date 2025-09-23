@@ -262,8 +262,10 @@ export default function Home() {
           <div className="hero-img-overlay"></div>
           <div className="hero-img-gradient"></div>
           <div className="content">
-            <h3>Yusuff Ridwan</h3>
-            <h1 ref={titleRef}>Creative Engineer</h1>
+            <h3 className="hero-subtitle">Yusuff Ridwan</h3>
+            <h1 className="hero-title" ref={titleRef}>
+              Creative Engineer
+            </h1>
             <div className="chips">
               <div className="chip">Designer</div>
               <div className="chip">Developer</div>

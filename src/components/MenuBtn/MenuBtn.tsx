@@ -10,7 +10,7 @@ const MenuBtn = ({ isOpen, toggleMenu }: MenuBtnProps): React.JSX.Element => {
   return (
     <div className={`menu-toggle ${isOpen ? 'opened' : 'closed'}`} onClick={toggleMenu}>
       <div className="menu-toggle-icon">
-        <div className="hamburger">
+        <div className="menu-hamburger">
           <div className="menu-bar" data-position="top"></div>
           <div className="menu-bar" data-position="bottom"></div>
         </div>

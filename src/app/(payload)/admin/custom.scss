@@ -1,0 +1,15 @@
+/* Minimal admin custom styles
+   This file intentionally avoids global font resets to prevent interfering with frontend styles.
+   Add admin-specific overrides here only. */
+
+:root {
+  /* admin-only color tweaks can go here */
+  /* keep a harmless CSS variable to avoid empty ruleset lint errors */
+  --payload-admin-safe: 1;
+}
+
+/* Example admin-scoped utility to avoid global selectors */
+.payload-admin-root {
+  /* keep admin styles scoped to payload UI markup */
+  isolation: isolate;
+}

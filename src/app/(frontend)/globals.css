@@ -81,7 +81,7 @@ section {
   width: 100vw;
 }
 
-.nav {
+.frontend-nav {
   position: fixed;
   top: 0;
   left: 0;
@@ -93,7 +93,7 @@ section {
   align-items: center;
 }
 
-.logo {
+.frontend-nav .logo {
   height: 32px;
   padding: 2px;
   aspect-ratio: 1/1;
@@ -161,19 +161,21 @@ section {
   gap: 8px;
 }
 
-.content h1 {
+.content .hero-title {
   font-size: 180px;
   line-height: 1;
   font-weight: 600;
   text-transform: uppercase;
   text-align: left;
+  font-family: var(--font-machina);
 }
 
-.content h3 {
+.content .hero-subtitle {
   font-size: 60px;
   line-height: 1;
   font-weight: 600;
   text-transform: uppercase;
+  font-family: var(--font-machina);
 }
 .content .chips {
   display: flex;
@@ -384,11 +386,11 @@ section {
     height: 100svh;
   }
 
-  .nav {
+  .frontend-nav {
     padding: 12px 16px;
   }
 
-  .logo {
+  .frontend-nav .logo {
     height: 28px;
   }
 
@@ -406,11 +408,11 @@ section {
     bottom: 12%;
   }
 
-  .content h1 {
+  .content .hero-title {
     font-size: 60px;
   }
 
-  .content h3 {
+  .content .hero-subtitle {
     font-size: 24px;
   }
   .content .chips {

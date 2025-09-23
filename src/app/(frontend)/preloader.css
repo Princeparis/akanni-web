@@ -101,6 +101,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
+  height: fit-content;
 }
 
 .loader .digit {
@@ -109,6 +110,7 @@
 }
 
 .loader .count .digit h1 {
+  font-family: var(--font-machina);
   font-size: 15rem;
   font-weight: 400;
   color: var(--base-400);
