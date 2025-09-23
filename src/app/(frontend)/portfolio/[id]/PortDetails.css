@@ -79,7 +79,7 @@
   justify-content: space-between;
   align-items: flex-end;
   height: 50vh;
-  max-height: 50vh;
+  min-height: 50vh;
 }
 
 .project-year {
@@ -114,7 +114,6 @@
   height: auto;
   aspect-ratio: 3/2;
   overflow: hidden;
-  background-color: var(--tl00);
 }
 
 .cover .cover-img {
@@ -139,7 +138,7 @@
   display: flex;
   width: 100%;
   height: 100svh;
-  max-height: 100svh;
+  min-height: 100svh;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1.25rem;
@@ -189,4 +188,141 @@
   height: auto;
   aspect-ratio: 3/2;
   overflow: hidden;
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .portfolio-head {
+    height: fit-content;
+    margin-top: 60px;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .portfolio-head .top {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px;
+    min-height: 60vh;
+  }
+
+  .top .top-left {
+    flex: 1;
+    width: 100%;
+    max-height: 50vh;
+    height: fit-content;
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+
+  .top-left h1 {
+    font-size: 2.5rem;
+    width: 100%;
+    line-height: 1.1;
+  }
+
+  .top-left .categories {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .categories h5 {
+    font-size: 1rem;
+  }
+
+  .categories .cat-stripe {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .portfolio-category {
+    font-size: 0.7rem;
+  }
+
+  .top-right {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: fit-content;
+    min-height: 50vh;
+  }
+
+  .project-year {
+    display: none;
+  }
+
+  .port-desc {
+    font-family: var(--font-montreal);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--white);
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .portfolio-content {
+    padding: 24px 16px;
+    gap: 1rem;
+  }
+
+  .track {
+    height: fit-content;
+    min-height: 100svh;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .first-track {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .second-track {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+
+  .track .left-track {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1;
+    height: fit-content;
+    min-height: 100%;
+    gap: 1rem;
+  }
+  .track .right-track {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .rt-p {
+    font-family: var(--font-montreal);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .image1 {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3/2;
+  }
+
+  .full-image-track {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3/2;
+    overflow: hidden;
+  }
 }

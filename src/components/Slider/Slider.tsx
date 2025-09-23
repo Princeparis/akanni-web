@@ -151,6 +151,18 @@ const Slider = (): React.JSX.Element => {
       state.targetX = startOffset
     }
 
+    // Apply a CSS class to the root slider element when touch-capable / mobile
+    function updateTouchClass(): void {
+      const el = sliderRef.current
+      if (!el) return
+      const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      if (isTouch) {
+        el.classList.add('touch-device')
+      } else {
+        el.classList.remove('touch-device')
+      }
+    }
+
     function updateSlidePositions(): void {
       const track = sliderRef.current?.querySelector('.slide-track')
       if (!track) return
@@ -319,6 +331,7 @@ const Slider = (): React.JSX.Element => {
 
     function handleResize(): void {
       initializeSlides()
+      updateTouchClass()
     }
 
     function initializeEventListeners(): (() => void) | undefined {
@@ -354,6 +367,7 @@ const Slider = (): React.JSX.Element => {
 
     function initializeSlider(): (() => void) | undefined {
       initializeSlides()
+      updateTouchClass()
       const cleanup = initializeEventListeners()
       animate()
       return cleanup

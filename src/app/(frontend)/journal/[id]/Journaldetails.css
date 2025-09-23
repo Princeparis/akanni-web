@@ -36,7 +36,7 @@
   font-family: var(--font-machina);
   font-size: 1.25rem;
   font-weight: 400;
-  letter-spacing: 0.85;
+  line-height: 1;
   text-transform: uppercase;
 }
 
@@ -86,4 +86,51 @@ article .paragraph {
   font-weight: 400;
   line-height: 1.6;
   width: 100%;
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .journal-detail {
+    overflow-x: hidden;
+  }
+
+  .journal-detail-head {
+    width: 100%;
+    padding: 12px 16px;
+  }
+
+  .go-back h4 {
+    font-size: 1rem;
+    font-family: var(--font-montreal);
+    letter-spacing: 1.2;
+  }
+
+  .detail-cover {
+    height: fit-content;
+    padding: 12px 16px;
+  }
+
+  .detail-cover .detail-cover-wrap {
+    aspect-ratio: 4/3;
+  }
+
+  .journal-detail-content {
+    gap: 0.7rem;
+    padding: 16px;
+    max-width: 768px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .journal-detail-content h1 {
+    font-size: 1.7rem;
+    line-height: 1.2;
+  }
+
+  .journal-detail-content article {
+    gap: 0.8rem;
+  }
+
+  article .paragraph {
+    font-size: 0.8rem;
+  }
 }

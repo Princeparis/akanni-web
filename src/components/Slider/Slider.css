@@ -63,6 +63,11 @@
   opacity: calc(1 - var(--slider-moving, 1));
 }
 
+/* On touch devices, there's no hover — show the overlay (project title) by default */
+.slider.touch-device .slide-overlay {
+  opacity: 1 !important;
+}
+
 .project-title {
   text-transform: uppercase;
   font-weight: 500;
@@ -158,6 +163,11 @@
     flex-shrink: 0;
     width: 300px;
     height: 200px;
+  }
+
+  .slide-image img {
+    transform: scale(1.2);
+    user-select: none;
   }
 
   .text-head h5 {

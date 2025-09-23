@@ -15,4 +15,6 @@
   height: 108%;
   object-fit: cover;
   object-position: center;
+  /* Prevent taps on the video from triggering native fullscreen on mobile */
+  pointer-events: none;
 }
