@@ -43,12 +43,13 @@
 .loader #word-2 {
   position: relative;
   left: 0.5rem;
-  padding-left: 0.5rem;
+  padding-left: 0.8rem;
   color: var(--off-white);
 }
 
 .loader .word h1 {
   font-size: 2rem;
+  font-weight: 600;
   color: var(--base-300);
   letter-spacing: -0.05rem;
 }
@@ -151,5 +152,12 @@
 
   .loader .counter .count .digit {
     padding-top: 0.25rem;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .loader .word h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
   }
 }

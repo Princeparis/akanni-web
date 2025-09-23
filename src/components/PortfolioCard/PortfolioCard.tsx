@@ -128,7 +128,7 @@ function PortfolioCard({ portfolio, className = '', showExcerpt }: PortfolioCard
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Link href={`/portfolio/${portfolio.slug}`} className="portfolio-card-link">
+      <Link href={`/portfolio/${portfolio.id}`} className="portfolio-card-link">
         <div className="portfolio-img">
           <div className="categories">
             {portfolio.categories &&

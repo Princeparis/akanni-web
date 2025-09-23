@@ -66,9 +66,14 @@ main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 100vw;
   background-color: var(--pure-black);
   z-index: 2;
+  overflow-x: hidden;
+}
+
+.home {
+  overflow: hidden;
 }
 
 section {
@@ -372,4 +377,121 @@ section {
   gap: 2rem;
   padding: 20px 20px;
   width: 100%;
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  section {
+    height: 100svh;
+  }
+
+  .nav {
+    padding: 12px 16px;
+  }
+
+  .logo {
+    height: 28px;
+  }
+
+  .music-toggle {
+    width: 28px;
+    height: 28px;
+  }
+
+  .ham-line {
+    width: 20px;
+  }
+
+  .content {
+    position: absolute;
+    bottom: 12%;
+  }
+
+  .content h1 {
+    font-size: 60px;
+  }
+
+  .content h3 {
+    font-size: 24px;
+  }
+  .content .chips {
+    gap: 8px;
+  }
+
+  .chips .chip {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 8px;
+    font-size: 0.6rem;
+  }
+
+  .about {
+    width: 100%;
+    height: fit-content;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 16px;
+    gap: 32px;
+    background-color: var(--pure-black);
+  }
+
+  .about .image-cont {
+    width: auto;
+    aspect-ratio: 8/9;
+    height: 100%;
+    background-color: #000;
+    clip-path: polygon(0 0, 80% 0, 100% 20%, 100% 70%, 100% 100%, 10% 100%, 0 90%, 0% 30%);
+  }
+
+  .about .text-cont {
+    justify-content: space-between;
+    width: 100%;
+    height: fit-content;
+    gap: 1rem;
+  }
+
+  .text-cont .about-text {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .journal {
+    padding: 24px 16px 40px 16px;
+    gap: 24px;
+    width: 100%;
+    height: fit-content;
+  }
+
+  .journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .journal-header h5 {
+    font-family: var(--font-montreal);
+    font-size: 0.8rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1.5;
+    max-width: 480px;
+    width: 100%;
+  }
+
+  .journal-cont {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .journal-home-list {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+    padding: 0;
+  }
 }

@@ -33,16 +33,7 @@
   height: 100%;
   overflow: hidden;
   flex: 1;
-  clip-path: polygon(
-    0 0,
-    80% 0,
-    100% 20%,
-    100% 70%,
-    100% 100%,
-    10% 100%,
-    0 90%,
-    0% 30%
-  );
+  clip-path: polygon(0 0, 80% 0, 100% 20%, 100% 70%, 100% 100%, 10% 100%, 0 90%, 0% 30%);
 }
 
 .slide-image img {
@@ -157,4 +148,28 @@
   font-size: 1rem;
   line-height: 1;
   color: var(--black);
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .slider {
+    height: 60svh;
+  }
+  .slide {
+    flex-shrink: 0;
+    width: 300px;
+    height: 200px;
+  }
+
+  .text-head h5 {
+    font-size: 0.8rem;
+  }
+
+  .text-head .number {
+    width: 20px;
+    height: 20px;
+  }
+
+  .text-bar {
+    padding: 12px 16px;
+  }
 }

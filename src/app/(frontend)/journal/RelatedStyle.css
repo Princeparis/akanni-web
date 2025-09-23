@@ -1,0 +1,25 @@
+.related-journals {
+  width: 100%;
+  height: fit-content;
+  margin-top: 4rem;
+}
+
+.related-head {
+  width: 100%;
+  padding: 12px 20px;
+}
+
+.related-head h3 {
+  font-family: var(--font-machina);
+  font-size: 3rem;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.related-list {
+  padding: 20px;
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}

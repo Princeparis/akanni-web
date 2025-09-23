@@ -178,7 +178,7 @@ export default function Home() {
         {
           y: '100%',
           duration: 1,
-          delay: 2.5,
+          delay: 0.5,
           stagger: 0.1,
           onComplete: () => {
             setLoaderAnimating(false)
@@ -256,7 +256,7 @@ export default function Home() {
         </div>
       )}
       <Menu />
-      <main>
+      <main className="home">
         <section className="hero">
           <Video />
           <div className="hero-img-overlay"></div>

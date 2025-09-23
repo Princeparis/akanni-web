@@ -93,16 +93,83 @@ export const Portfolios: CollectionConfig = {
       },
     },
     {
-      name: 'content',
-      type: 'richText',
-      required: true,
+      name: 'intro',
+      type: 'text',
+      required: false,
+      maxLength: 1000,
       admin: {
-        description: 'Detailed project content, case study, images, and rich text',
+        description: 'Introductory text for the project (optional, max 1000 chars)',
       },
-      validate: (value: any) => {
-        const validation = validateRichTextContent(value)
-        return validation.isValid ? true : validation.error!
+      validate: (value: unknown) => {
+        if (value === null || value === undefined) return true
+        if (typeof value !== 'string') return 'Intro must be a string'
+        if ((value as string).length > 1000) return 'Intro must be 1000 characters or fewer'
+        return true
       },
+    },
+    {
+      name: 'image1',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'image2',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'image3',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'image4',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'implementation',
+      type: 'text',
+      required: false,
+      maxLength: 1000,
+      admin: {
+        description: 'Implementation details for the project (optional, max 1000 chars)',
+      },
+      validate: (value: unknown) => {
+        if (value === null || value === undefined) return true
+        if (typeof value !== 'string') return 'Implementation must be a string'
+        if ((value as string).length > 1000)
+          return 'Implementation must be 1000 characters or fewer'
+        return true
+      },
+    },
+    {
+      name: 'image5',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'image6',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'image7',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'image8',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
     },
     {
       name: 'excerpt',
@@ -114,7 +181,7 @@ export const Portfolios: CollectionConfig = {
     },
     {
       name: 'description',
-      type: 'text',
+      type: 'textarea',
       maxLength: 4000,
       admin: {
         description: 'Short description of the project for cards and meta',
@@ -122,7 +189,7 @@ export const Portfolios: CollectionConfig = {
       validate: (value: unknown) => {
         if (value === null || value === undefined) return true
         if (typeof value !== 'string') return 'Description must be a string'
-        if ((value as string).length > 240) return 'Description must be 240 characters or fewer'
+        if ((value as string).length > 4000) return 'Description must be 4000 characters or fewer'
         return true
       },
     },
@@ -164,20 +231,14 @@ export const Portfolios: CollectionConfig = {
         if (data?.title) data.title = data.title.trim()
         if (data?.excerpt) data.excerpt = data.excerpt.trim()
 
-        // Auto-generate excerpt from content if not provided
-        if (!data?.excerpt && data?.content) {
+        // Auto-generate excerpt from intro/implementation if not provided
+        if (data && !data.excerpt) {
           try {
-            const extractTextFromLexical = (content: any): string => {
-              if (!content || !content.root || !content.root.children) return ''
-              let text = ''
-              const traverse = (node: any) => {
-                if (node.text) text += node.text + ' '
-                else if (node.children) node.children.forEach(traverse)
-              }
-              content.root.children.forEach(traverse)
-              return text.trim()
-            }
-            const plainText = extractTextFromLexical(data.content)
+            const parts: string[] = []
+            if (data.intro && typeof data.intro === 'string') parts.push(data.intro)
+            if (data.implementation && typeof data.implementation === 'string')
+              parts.push(data.implementation)
+            const plainText = parts.join(' ').trim()
             if (plainText)
               data.excerpt = plainText.substring(0, 297) + (plainText.length > 297 ? '...' : '')
           } catch (err) {

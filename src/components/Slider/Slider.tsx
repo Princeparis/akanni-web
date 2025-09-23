@@ -75,8 +75,8 @@ const Slider = (): React.JSX.Element => {
       slide.className = 'slide'
 
       if (state.isMobile) {
-        slide.style.width = '175px'
-        slide.style.height = '250px'
+        slide.style.width = '300px'
+        slide.style.height = '200px'
       }
 
       const imageContainer = document.createElement('div')

@@ -71,20 +71,15 @@ const JournalCard = memo(function JournalCard({
 
   return measureRender(() => (
     <article className={`journal-card ${className}`}>
-      <Link href={`/journal/${entry.slug}`} className="journal-card-link">
+      <Link href={`/journal/${entry.id}`} className="journal-card-link">
         {/* Cover Image */}
         <div className="journal-card-image">
           {entry.coverImage ? (
-            <OptimizedImage
+            <img
               src={
                 typeof entry.coverImage === 'string' ? entry.coverImage : entry.coverImage.url || ''
               }
-              alt={entry.title}
-              width={400}
-              height={240}
-              className="journal-card-img"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              placeholder="blur"
+              alt={entry.coverImage?.alt || entry.title}
             />
           ) : (
             <div className="journal-card-placeholder-image">

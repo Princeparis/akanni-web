@@ -2,38 +2,30 @@ import React from 'react'
 import { Metadata } from 'next'
 import { JournalProvider } from '../../../../contexts/JournalContext'
 import JournalErrorBoundary from '../../../../components/JournalErrorBoundary'
-import JournalEntryClient from './JournalEntryClient.jsx'
 import { JournalEntry as JournalEntryType } from '../../../../types/journal'
 import { extractPlainText } from '../../../../utils/formatters'
+import Menu from '@/components/menu/Menu'
+import Footer from '@/components/footer/Footer'
+import JournalDetailClient from './JournalDetailClient'
+import { getJournalEntry } from '../../../../lib/getJournalEntry'
 
 interface JournalEntryPageProps {
-  params: Promise<{ slug: string }>
-}
-
-// Fetch journal entry data for metadata generation
-async function getJournalEntry(slug: string): Promise<JournalEntryType | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
-    const response = await fetch(`${baseUrl}/api/public/journals/${encodeURIComponent(slug)}`, {
-      cache: 'no-store', // Ensure fresh data for metadata
-    })
-
-    if (!response.ok) {
-      return null
-    }
-
-    const result = await response.json()
-    return result.success ? result.data : null
-  } catch (error) {
-    console.error('Error fetching journal entry for metadata:', error)
-    return null
-  }
+  params: Promise<{ id: string }>
 }
 
 // Generate metadata for the journal entry page
 export async function generateMetadata({ params }: JournalEntryPageProps): Promise<Metadata> {
-  const { slug } = await params
-  const entry = await getJournalEntry(slug)
+  const { id } = await params
+  // Fetch entry for metadata. If it fails, return fallback metadata.
+  let entry: any = null
+  try {
+    entry = await getJournalEntry(id)
+  } catch (err) {
+    // swallow - metadata should not crash the build
+    // eslint-disable-next-line no-console
+    console.warn('generateMetadata: getJournalEntry failed', err)
+    entry = null
+  }
 
   if (!entry) {
     return {
@@ -44,7 +36,7 @@ export async function generateMetadata({ params }: JournalEntryPageProps): Promi
   }
 
   // Extract plain text for description
-  const plainTextContent = extractPlainText(entry.content)
+  const plainTextContent = extractPlainText(entry?.content)
   const description =
     entry.seo?.description ||
     entry.excerpt ||
@@ -57,18 +49,18 @@ export async function generateMetadata({ params }: JournalEntryPageProps): Promi
 
   // Build canonical URL
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
-  const canonicalUrl = `${baseUrl}/journal/${entry.slug}`
+  const canonicalUrl = `${baseUrl}/journal/${entry?.slug || id}`
 
   // Prepare Open Graph image
-  const ogImage = entry.coverImage?.url || `${baseUrl}/images/avatar.jpg`
+  const ogImage = entry?.coverImage?.url || `${baseUrl}/images/avatar.jpg`
 
   // Prepare keywords from tags and category
   const keywords = [
     'Akanni',
     'journal',
     'blog',
-    entry.category?.name,
-    ...(entry.tags?.map((tag) => tag.name) || []),
+    entry?.category?.name,
+    ...(entry?.tags?.map((tag: any) => tag.name) || []),
   ]
     .filter(Boolean)
     .join(', ')
@@ -88,11 +80,11 @@ export async function generateMetadata({ params }: JournalEntryPageProps): Promi
       url: canonicalUrl,
       siteName: 'Akanni - Creative Engineer',
       type: 'article',
-      publishedTime: entry.publishedAt?.toISOString(),
-      modifiedTime: entry.updatedAt.toISOString(),
+      publishedTime: entry?.publishedAt ? new Date(entry.publishedAt).toISOString() : undefined,
+      modifiedTime: entry?.updatedAt ? new Date(entry.updatedAt).toISOString() : undefined,
       authors: ['Yusuff Ridwan Akanni'],
       section: entry.category?.name,
-      tags: entry.tags?.map((tag) => tag.name),
+      tags: entry?.tags?.map((tag: any) => tag.name),
       images: [
         {
           url: ogImage,
@@ -119,25 +111,35 @@ export async function generateMetadata({ params }: JournalEntryPageProps): Promi
 
     // Structured data will be handled in the component
     other: {
-      ...(entry.publishedAt && { 'article:published_time': entry.publishedAt.toISOString() }),
-      'article:modified_time': entry.updatedAt.toISOString(),
+      ...(entry?.publishedAt && {
+        'article:published_time': new Date(entry.publishedAt).toISOString(),
+      }),
+      ...(entry?.updatedAt && { 'article:modified_time': new Date(entry.updatedAt).toISOString() }),
       'article:author': 'Yusuff Ridwan Akanni',
       ...(entry.category?.name && { 'article:section': entry.category.name }),
       ...(entry.tags &&
-        entry.tags.length > 0 && { 'article:tag': entry.tags.map((tag) => tag.name).join(',') }),
+        entry?.tags &&
+        entry.tags.length > 0 && {
+          'article:tag': entry.tags.map((tag: any) => tag.name).join(','),
+        }),
     },
   }
 }
 
 async function JournalEntryPage({ params }: JournalEntryPageProps) {
-  const { slug } = await params
+  const { id } = await params
 
+  // Pass the id down to the client component. The client will fetch the data by id
   return (
-    <JournalErrorBoundary>
+    <>
+      <Menu />
       <JournalProvider>
-        <JournalEntryClient slug={slug} />
+        <JournalErrorBoundary>
+          <JournalDetailClient entryId={id} />
+        </JournalErrorBoundary>
       </JournalProvider>
-    </JournalErrorBoundary>
+      <Footer />
+    </>
   )
 }
 

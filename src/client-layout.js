@@ -22,19 +22,19 @@ export default function ClientLayout({ children }) {
 
   const scrollSettings = isMobile
     ? {
-        duration: 0.8,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: 'vertical',
-        gestureDirection: 'vertical',
-        smooth: true,
-        smoothTouch: true,
-        touchMultiplier: 1.5,
-        infinite: false,
-        lerp: 0.09,
-        wheelMultiplier: 1,
-        orientation: 'vertical',
-        smoothWheel: true,
-        syncTouch: true,
+        // duration: 0.8,
+        // easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        // direction: 'vertical',
+        // gestureDirection: 'vertical',
+        // smooth: true,
+        smoothTouch: false,
+        // touchMultiplier: 2.0,
+        // infinite: false,
+        // lerp: 0.09,
+        // wheelMultiplier: 1,
+        // orientation: 'vertical',
+        // smoothWheel: true,
+        // syncTouch: true,
       }
     : {
         duration: 1.2,

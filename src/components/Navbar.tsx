@@ -1,16 +1,35 @@
 'use client'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import MusicToggle from './MusicToggle/MusicToggle'
 import { useViewTransition } from '@/hooks/useViewTransition'
 
 function Navbar(): React.JSX.Element {
+  const [isMobile, setIsMobile] = useState(false)
+  const [width, setWidth] = useState<number>(0)
   const navBarRef = useRef<HTMLElement>(null)
   const { navigateWithTransition } = useViewTransition()
   let lastScrollY = 0
   let isScrolling = false
 
+  useEffect(() => {
+    // Initialize width and mobile flag from the current viewport width.
+    const w = window.innerWidth
+    setWidth(w)
+    setIsMobile(w < 768)
+
+    const handleResize = () => {
+      const iw = window.innerWidth
+      setWidth(iw)
+      setIsMobile(iw < 768)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
   useEffect(() => {
     const topBar = navBarRef.current
     if (!topBar) return
@@ -45,8 +64,11 @@ function Navbar(): React.JSX.Element {
         })
       } else if (direction === 1 && currentScrollY > 100) {
         // Scrolling down - compact navbar and hide
+        // Use the current window.innerWidth to decide mobile sizing so the
+        // navbar adapts immediately when the viewport changes (no stale state).
+        const mobileNow = typeof window !== 'undefined' ? window.innerWidth < 768 : isMobile
         gsap.to(topBar, {
-          width: '30vw',
+          width: mobileNow ? '90vw' : '30vw',
           left: '50%',
           top: '20px',
           backgroundColor: 'rgba(0, 0, 0, 0.15)',

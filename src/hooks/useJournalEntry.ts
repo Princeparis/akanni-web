@@ -14,7 +14,7 @@ interface UseJournalEntryReturn {
   entry: JournalEntry | null
   loading: boolean
   error: string | null
-  fetchEntry: (slug: string) => Promise<void>
+  fetchEntry: (id: string) => Promise<void>
   clearEntry: () => void
   refetch: () => Promise<void>
 }
@@ -23,7 +23,15 @@ export function useJournalEntry(options: UseJournalEntryOptions = {}): UseJourna
   const { autoFetch = false } = options
   const { state, dispatch } = useJournalContext()
   const { withEntryLoading } = useEntryLoading()
-  const lastSlugRef = useRef<string | null>(null)
+  // Keep a ref to the latest withEntryLoading so we can avoid including it
+  // in fetchEntry's dependency list. This prevents fetchEntry from changing
+  // identity when withEntryLoading is recreated (defensive against unstable
+  // identities from upstream hooks).
+  const withEntryLoadingRef = useRef(withEntryLoading)
+  useEffect(() => {
+    withEntryLoadingRef.current = withEntryLoading
+  }, [withEntryLoading])
+  const lastIdRef = useRef<string | null>(null)
   const cacheRef = useRef<Map<string, { data: JournalEntry; timestamp: number }>>(new Map())
 
   // Cache duration: 10 minutes (longer for individual entries)
@@ -34,40 +42,71 @@ export function useJournalEntry(options: UseJournalEntryOptions = {}): UseJourna
   }, [])
 
   const fetchEntry = useCallback(
-    async (slug: string) => {
-      if (!slug) {
-        dispatch({ type: 'SET_ERROR', payload: 'Slug is required' })
+    async (id: string) => {
+      if (!id) {
+        dispatch({ type: 'SET_ERROR', payload: 'id is required' })
         return
       }
 
-      return withEntryLoading(async () => {
+      return withEntryLoadingRef.current(async () => {
         // Check cache first
-        const cached = cacheRef.current.get(slug)
+        const cached = cacheRef.current.get(id)
         if (cached && isValidCache(cached.timestamp)) {
           dispatch({ type: 'SET_CURRENT_ENTRY', payload: cached.data })
           return
         }
 
         dispatch({ type: 'SET_ERROR', payload: null })
-        const response = await fetch(`/api/public/journals/${encodeURIComponent(slug)}`)
 
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Journal entry not found')
+        // Try private API first, then fall back to public route
+        const paths = [
+          `/api/journals/${encodeURIComponent(id)}`,
+          `/api/public/journals/${encodeURIComponent(id)}`,
+        ]
+        let lastErr: Error | null = null
+        let response: Response | null = null
+
+        for (const path of paths) {
+          try {
+            response = await fetch(path)
+            if (!response.ok) {
+              // If 404 on private route, try next; if other error, capture and continue
+              if (response.status === 404) {
+                lastErr = new Error('Journal entry not found')
+                response = null
+                continue
+              }
+              lastErr = new Error(`HTTP error! status: ${response.status}`)
+              response = null
+              continue
+            }
+            // got a 2xx
+            break
+          } catch (err: any) {
+            lastErr = err
+            response = null
+            continue
           }
-          throw new Error(`HTTP error! status: ${response.status}`)
         }
 
-        const result: APIResponse<JournalEntry> = await response.json()
-
-        if (!result.success) {
-          throw new Error(result.error.message)
+        if (!response) {
+          throw lastErr || new Error('Failed to fetch journal entry')
         }
 
-        const entry = result.data
+        const resultOrEntry = await response.json()
+
+        // Support both the APIResponse wrapper and raw entry object
+        let entry: JournalEntry
+        if ((resultOrEntry as APIResponse<JournalEntry>).hasOwnProperty('success')) {
+          const apiRes = resultOrEntry as APIResponse<JournalEntry>
+          if (!apiRes.success) throw new Error(apiRes.error?.message || 'API returned an error')
+          entry = apiRes.data
+        } else {
+          entry = resultOrEntry as JournalEntry
+        }
 
         // Cache the result
-        cacheRef.current.set(slug, {
+        cacheRef.current.set(id, {
           data: entry,
           timestamp: Date.now(),
         })
@@ -75,23 +114,23 @@ export function useJournalEntry(options: UseJournalEntryOptions = {}): UseJourna
         // Update state
         dispatch({ type: 'SET_CURRENT_ENTRY', payload: entry })
 
-        // Store last successful slug for refetch
-        lastSlugRef.current = slug
+        // Store last successful id for refetch
+        lastIdRef.current = id
       })
     },
-    [dispatch, isValidCache, withEntryLoading],
+    [dispatch, isValidCache],
   )
 
   const clearEntry = useCallback(() => {
     dispatch({ type: 'SET_CURRENT_ENTRY', payload: null })
-    lastSlugRef.current = null
+    lastIdRef.current = null
   }, [dispatch])
 
   const refetch = useCallback(async () => {
-    if (lastSlugRef.current) {
-      // Clear cache for current slug and refetch
-      cacheRef.current.delete(lastSlugRef.current)
-      await fetchEntry(lastSlugRef.current)
+    if (lastIdRef.current) {
+      // Clear cache for current id and refetch
+      cacheRef.current.delete(lastIdRef.current)
+      await fetchEntry(lastIdRef.current)
     }
   }, [fetchEntry])
 

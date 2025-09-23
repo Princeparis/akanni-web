@@ -3,7 +3,7 @@
  * Provides utilities for managing loading states with smooth transitions
  */
 
-import { useCallback, useRef, useEffect } from 'react'
+import { useCallback, useRef, useEffect, useMemo } from 'react'
 import { useJournalContext } from '../contexts/JournalContext'
 import { LoadingStateKey } from '../types/state'
 
@@ -221,11 +221,26 @@ export function useEntriesLoading() {
 export function useEntryLoading() {
   const { isLoading, startLoading, stopLoading, withLoading } = useLoadingStates()
 
+  // Compute the boolean loading state separately so changes to it don't
+  // cause handler functions to be recreated. We only memoize the handler
+  // functions (start/stop/with) which are stable and used inside
+  // other hooks (e.g. useJournalEntry) as dependencies.
+  const isLoadingEntry = isLoading('currentEntry')
+
+  const handlers = useMemo(
+    () => ({
+      startLoadingEntry: () => startLoading('currentEntry'),
+      stopLoadingEntry: () => stopLoading('currentEntry'),
+      withEntryLoading: <T>(operation: () => Promise<T>) => withLoading('currentEntry', operation),
+    }),
+    [startLoading, stopLoading, withLoading],
+  )
+
   return {
-    isLoadingEntry: isLoading('currentEntry'),
-    startLoadingEntry: () => startLoading('currentEntry'),
-    stopLoadingEntry: () => stopLoading('currentEntry'),
-    withEntryLoading: <T>(operation: () => Promise<T>) => withLoading('currentEntry', operation),
+    isLoadingEntry,
+    startLoadingEntry: handlers.startLoadingEntry,
+    stopLoadingEntry: handlers.stopLoadingEntry,
+    withEntryLoading: handlers.withEntryLoading,
   }
 }
 

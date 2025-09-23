@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2025-09-20T23:09:22.718Z",
+  "server": "http://localhost:3000",
+  "uploadsDirs": [
+    "/Users/kingakanni/projects/akanni-web/media",
+    "/Users/kingakanni/projects/akanni-web/public/uploads",
+    "/Users/kingakanni/projects/akanni-web/uploads"
+  ],
+  "candidates": [
+    {
+      "id": 9,
+      "filename": "wire.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/wire.jpg",
+      "url": "/api/media/file/wire.jpg"
+    },
+    {
+      "id": 8,
+      "filename": "screen5.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/screen5.jpg",
+      "url": "/api/media/file/screen5.jpg"
+    },
+    {
+      "id": 7,
+      "filename": "screen4.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/screen4.jpg",
+      "url": "/api/media/file/screen4.jpg"
+    },
+    {
+      "id": 6,
+      "filename": "screen3.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/screen3.jpg",
+      "url": "/api/media/file/screen3.jpg"
+    },
+    {
+      "id": 5,
+      "filename": "bgcover.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/bgcover.jpg",
+      "url": "/api/media/file/bgcover.jpg"
+    },
+    {
+      "id": 4,
+      "filename": "screen2.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/screen2.jpg",
+      "url": "/api/media/file/screen2.jpg"
+    },
+    {
+      "id": 3,
+      "filename": "screen1.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/screen1.jpg",
+      "url": "/api/media/file/screen1.jpg"
+    },
+    {
+      "id": 2,
+      "filename": "Whisk_1fb67b29f43b782af5c41b8ac64a4561dr.jpeg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/Whisk_1fb67b29f43b782af5c41b8ac64a4561dr.jpeg",
+      "url": "/api/media/file/Whisk_1fb67b29f43b782af5c41b8ac64a4561dr.jpeg"
+    },
+    {
+      "id": 1,
+      "filename": "african-male-on-emirates-boeing-777-first-class-w768x480.jpg.jpg",
+      "localPath": "/Users/kingakanni/projects/akanni-web/media/african-male-on-emirates-boeing-777-first-class-w768x480.jpg.jpg",
+      "url": "/api/media/file/african-male-on-emirates-boeing-777-first-class-w768x480.jpg.jpg"
+    }
+  ],
+  "migratedAt": "2025-09-20T23:09:37.848Z",
+  "migrated": []
+}

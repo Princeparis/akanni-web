@@ -12,16 +12,7 @@
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  clip-path: polygon(
-    0 0,
-    95% 0,
-    100% 10%,
-    100% 95%,
-    100% 100%,
-    2% 100%,
-    0 95%,
-    0% 40%
-  );
+  clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 95%, 100% 100%, 2% 100%, 0 95%, 0% 40%);
   background-color: var(--slate);
   padding-bottom: 8px;
 }
@@ -109,4 +100,105 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .footer {
+    width: 100%;
+    height: 100svh;
+    padding: 8px;
+  }
+
+  .footer-wrapper {
+    padding-top: 24px;
+    clip-path: polygon(0 0, 100% 0, 100% 0%, 100% 100%, 100% 100%, 0% 100%, 0 100%, 0% 100%);
+  }
+
+  .footer-lower {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .footer-upper {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 8px;
+  }
+
+  .footer-upper .cta {
+    gap: 8px;
+  }
+
+  .cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-upper .arrow-cont {
+    display: none;
+  }
+
+  .cta h2 {
+    font-size: 2rem;
+    font-family: var(--font-kyoto);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .cta p {
+    width: 98%;
+  }
+
+  .footer-upper .socials {
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .socials h4 {
+    font-size: 18px;
+    font-family: var(--font-machina);
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .socials .link-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .copyright {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: fit-content;
+    gap: 0.5rem;
+  }
+
+  .copy-text {
+    font-family: var(--font-montreal);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  .copy-text:nth-child(2) {
+    display: none;
+  }
+
+  .copy-text:nth-child(3) {
+    display: none;
+  }
 }

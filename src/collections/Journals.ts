@@ -64,16 +64,129 @@ export const Journals: CollectionConfig = {
         ],
       },
     },
+    // Replaced richText 'content' with simpler paragraph and subheader fields
     {
-      name: 'content',
-      type: 'richText',
-      required: true,
+      name: 'paragraph1',
+      type: 'textarea',
+      maxLength: 1000,
       admin: {
-        description: 'Main content of the journal entry (rich text)',
+        description: 'Optional paragraph 1 (plain text, up to 1000 chars)',
       },
-      validate: (value: any) => {
-        const validation = validateRichTextContent(value)
-        return validation.isValid ? true : validation.error!
+    },
+    {
+      name: 'paragraph2',
+      type: 'textarea',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional paragraph 2 (plain text, up to 1000 chars)',
+      },
+    },
+    {
+      name: 'paragraph3',
+      type: 'textarea',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional paragraph 3 (plain text, up to 1000 chars)',
+      },
+    },
+    {
+      name: 'paragraph4',
+      type: 'textarea',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional paragraph 4 (plain text, up to 1000 chars)',
+      },
+    },
+    {
+      name: 'paragraph5',
+      type: 'textarea',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional paragraph 5 (plain text, up to 1000 chars)',
+      },
+    },
+
+    {
+      name: 'subheader1',
+      type: 'text',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional subheader 1 (up to 1000 chars)',
+      },
+    },
+    {
+      name: 'subheader2',
+      type: 'text',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional subheader 2 (up to 1000 chars)',
+      },
+    },
+    {
+      name: 'subheader3',
+      type: 'text',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional subheader 3 (up to 1000 chars)',
+      },
+    },
+
+    {
+      name: 'quote1',
+      type: 'textarea',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional quote 1 (up to 1000 chars)',
+      },
+    },
+    {
+      name: 'quote2',
+      type: 'textarea',
+      maxLength: 1000,
+      admin: {
+        description: 'Optional quote 2 (up to 1000 chars)',
+      },
+    },
+
+    // Image upload slots (optional)
+    {
+      name: 'image1',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Optional image 1',
+      },
+    },
+    {
+      name: 'image2',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Optional image 2',
+      },
+    },
+    {
+      name: 'image3',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Optional image 3',
+      },
+    },
+    {
+      name: 'image4',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Optional image 4',
+      },
+    },
+    {
+      name: 'image5',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Optional image 5',
       },
     },
     {
@@ -190,32 +303,26 @@ export const Journals: CollectionConfig = {
           data.excerpt = data.excerpt.trim()
         }
 
-        // Auto-generate excerpt from content if not provided
-        if (!data?.excerpt && data?.content) {
+        // Auto-generate excerpt from the first available paragraph fields if not provided
+        if (!data?.excerpt) {
           try {
-            // Extract plain text from Lexical content for excerpt
-            const extractTextFromLexical = (content: any): string => {
-              if (!content || !content.root || !content.root.children) return ''
+            const paragraphs = [
+              data?.paragraph1,
+              data?.paragraph2,
+              data?.paragraph3,
+              data?.paragraph4,
+              data?.paragraph5,
+            ]
 
-              let text = ''
-              const traverse = (node: any) => {
-                if (node.text) {
-                  text += node.text + ' '
-                } else if (node.children) {
-                  node.children.forEach(traverse)
-                }
-              }
-
-              content.root.children.forEach(traverse)
-              return text.trim()
-            }
-
-            const plainText = extractTextFromLexical(data.content)
-            if (plainText) {
+            const firstNonEmpty = paragraphs.find(
+              (p) => typeof p === 'string' && p.trim().length > 0,
+            )
+            if (firstNonEmpty && data) {
+              const plainText = firstNonEmpty.trim()
               data.excerpt = plainText.substring(0, 297) + (plainText.length > 297 ? '...' : '')
             }
           } catch (error) {
-            console.error('Error generating excerpt from content:', error)
+            console.error('Error generating excerpt from paragraph fields:', error)
           }
         }
 

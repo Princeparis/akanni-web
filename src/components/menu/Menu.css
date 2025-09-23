@@ -21,16 +21,7 @@
   justify-content: space-between;
   gap: 2rem;
   background-color: var(--slate);
-  clip-path: polygon(
-    0 0,
-    95% 0,
-    100% 5%,
-    100% 95%,
-    100% 100%,
-    5% 100%,
-    0 95%,
-    0% 5%
-  );
+  clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 95%, 100% 100%, 5% 100%, 0 95%, 0% 5%);
 }
 
 .col {
@@ -115,6 +106,10 @@
 }
 
 @media (max-width: 1000px) {
+  .col-1 {
+    padding: 1rem 0.5rem;
+  }
+
   .link a h2 {
     font-size: 2.25rem;
     line-height: 1.2s;
@@ -123,20 +118,17 @@
   .col-2 {
     flex-direction: column;
     align-items: flex-start;
+    padding: 1rem 0.5rem;
   }
 
   .socials {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
-    padding-bottom: 10rem;
+    padding-bottom: 2rem;
   }
 
   .socials .sub-col {
     flex: 1;
-  }
-
-  .menu-commissions {
-    display: none;
   }
 }

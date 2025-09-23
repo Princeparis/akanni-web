@@ -59,7 +59,7 @@
 
 .journal-content {
   width: 100vw;
-  padding-top: 80px;
+  padding-top: 70px;
   background-color: var(--pure-black);
 }
 
@@ -69,4 +69,12 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 2rem;
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .journal-list {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    padding: 16px;
+    gap: 1.25rem;
+  }
 }

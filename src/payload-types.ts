@@ -225,23 +225,65 @@ export interface Journal {
    */
   slug: string;
   /**
-   * Main content of the journal entry (rich text)
+   * Optional paragraph 1 (plain text, up to 1000 chars)
    */
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
+  paragraph1?: string | null;
+  /**
+   * Optional paragraph 2 (plain text, up to 1000 chars)
+   */
+  paragraph2?: string | null;
+  /**
+   * Optional paragraph 3 (plain text, up to 1000 chars)
+   */
+  paragraph3?: string | null;
+  /**
+   * Optional paragraph 4 (plain text, up to 1000 chars)
+   */
+  paragraph4?: string | null;
+  /**
+   * Optional paragraph 5 (plain text, up to 1000 chars)
+   */
+  paragraph5?: string | null;
+  /**
+   * Optional subheader 1 (up to 1000 chars)
+   */
+  subheader1?: string | null;
+  /**
+   * Optional subheader 2 (up to 1000 chars)
+   */
+  subheader2?: string | null;
+  /**
+   * Optional subheader 3 (up to 1000 chars)
+   */
+  subheader3?: string | null;
+  /**
+   * Optional quote 1 (up to 1000 chars)
+   */
+  quote1?: string | null;
+  /**
+   * Optional quote 2 (up to 1000 chars)
+   */
+  quote2?: string | null;
+  /**
+   * Optional image 1
+   */
+  image1?: (number | null) | Media;
+  /**
+   * Optional image 2
+   */
+  image2?: (number | null) | Media;
+  /**
+   * Optional image 3
+   */
+  image3?: (number | null) | Media;
+  /**
+   * Optional image 4
+   */
+  image4?: (number | null) | Media;
+  /**
+   * Optional image 5
+   */
+  image5?: (number | null) | Media;
   /**
    * Brief description for previews and SEO (max 300 characters)
    */
@@ -313,23 +355,21 @@ export interface Portfolio {
    */
   coverImage?: (number | null) | Media;
   /**
-   * Detailed project content, case study, images, and rich text
+   * Introductory text for the project (optional, max 1000 chars)
    */
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
+  intro?: string | null;
+  image1?: (number | null) | Media;
+  image2?: (number | null) | Media;
+  image3?: (number | null) | Media;
+  image4?: (number | null) | Media;
+  /**
+   * Implementation details for the project (optional, max 1000 chars)
+   */
+  implementation?: string | null;
+  image5?: (number | null) | Media;
+  image6?: (number | null) | Media;
+  image7?: (number | null) | Media;
+  image8?: (number | null) | Media;
   /**
    * Short summary for lists and previews
    */
@@ -490,7 +530,21 @@ export interface TagsSelect<T extends boolean = true> {
 export interface JournalsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
-  content?: T;
+  paragraph1?: T;
+  paragraph2?: T;
+  paragraph3?: T;
+  paragraph4?: T;
+  paragraph5?: T;
+  subheader1?: T;
+  subheader2?: T;
+  subheader3?: T;
+  quote1?: T;
+  quote2?: T;
+  image1?: T;
+  image2?: T;
+  image3?: T;
+  image4?: T;
+  image5?: T;
   excerpt?: T;
   coverImage?: T;
   audioUrl?: T;
@@ -517,7 +571,16 @@ export interface PortfoliosSelect<T extends boolean = true> {
   year?: T;
   categories?: T;
   coverImage?: T;
-  content?: T;
+  intro?: T;
+  image1?: T;
+  image2?: T;
+  image3?: T;
+  image4?: T;
+  implementation?: T;
+  image5?: T;
+  image6?: T;
+  image7?: T;
+  image8?: T;
   excerpt?: T;
   description?: T;
   status?: T;
