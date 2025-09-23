@@ -1,4 +1,6 @@
 import { MetadataRoute } from 'next'
+import { getPayload } from 'payload'
+import config from '../payload.config'
 
 interface JournalEntry {
   slug: string
@@ -8,18 +10,30 @@ interface JournalEntry {
 
 async function getJournalEntries(): Promise<JournalEntry[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
-    const response = await fetch(`${baseUrl}/api/public/journals?limit=1000&status=published`, {
-      cache: 'no-store',
+    // Query Payload directly to avoid external HTTP calls during build.
+    // Pass disableOnInit to avoid running background initializers during static generation
+    // Provide a minimal importMap to satisfy the InitOptions type. Avoid accessing
+    // config.admin directly because the `config` symbol here may be a Promise.
+    const payload = await getPayload({
+      config,
+      disableOnInit: true,
+      importMap: {},
+      cron: undefined,
     })
 
-    if (!response.ok) {
-      console.error('Failed to fetch journal entries for sitemap')
-      return []
-    }
+    const journalsResult = await payload.find({
+      collection: 'journals',
+      where: { status: { equals: 'published' } },
+      limit: 1000,
+      sort: '-updatedAt',
+      depth: 1,
+    })
 
-    const result = await response.json()
-    return result.success ? result.data.docs : []
+    return journalsResult.docs.map((doc: any) => ({
+      slug: doc.slug,
+      updatedAt: doc.updatedAt || doc.createdAt,
+      status: doc.status || 'published',
+    }))
   } catch (error) {
     console.error('Error fetching journal entries for sitemap:', error)
     return []
