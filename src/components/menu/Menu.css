@@ -50,6 +50,7 @@
   text-decoration: none;
   color: var(--off-white);
   opacity: 0.6;
+  font-family: var(--font-machina);
   font-size: 4rem;
   font-weight: 600;
   line-height: 1;

@@ -91,10 +91,10 @@ export default function Home() {
 
     if (showPreloader) {
       setLoaderAnimating(true)
-      const counts = document.querySelectorAll<HTMLElement>('.count')
+      const counts = document.querySelectorAll<HTMLElement>('.pre-count')
 
       counts.forEach((count, index) => {
-        const digits = count.querySelectorAll<HTMLElement>('.digit h1')
+        const digits = count.querySelectorAll<HTMLElement>('.pre-digit h1')
 
         tl.to(
           digits as any,
@@ -119,13 +119,13 @@ export default function Home() {
         }
       })
 
-      tl.to('.spinner', {
+      tl.to('.pre-spinner', {
         opacity: 0,
         duration: 0.3,
       })
 
       tl.to(
-        '.word h1',
+        '.pre-word h1',
         {
           y: '0%',
           duration: 1,
@@ -133,22 +133,22 @@ export default function Home() {
         '<',
       )
 
-      tl.to('.divider', {
+      tl.to('.pre-divider', {
         scaleY: '100%',
         duration: 1,
         onComplete: () => {
-          gsap.to('.divider', { opacity: 0, duration: 0.3, delay: 0.3 })
+          gsap.to('.pre-divider', { opacity: 0, duration: 0.3, delay: 0.3 })
         },
       })
 
-      tl.to('#word-1 h1', {
+      tl.to('#pre-word-1 h1', {
         y: '100%',
         duration: 1,
         delay: 0.3,
       })
 
       tl.to(
-        '#word-2 h1',
+        '#pre-word-2 h1',
         {
           y: '-100%',
           duration: 1,
@@ -157,7 +157,7 @@ export default function Home() {
       )
 
       tl.to(
-        '.block',
+        '.pre-block',
         {
           clipPath: 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)',
           duration: 1,
@@ -192,64 +192,64 @@ export default function Home() {
   return (
     <>
       {showPreloader && (
-        <div className="loader">
-          <div className="overlay">
-            <div className="block"></div>
-            <div className="block"></div>
+        <div className="pre-loader">
+          <div className="pre-overlay">
+            <div className="pre-block"></div>
+            <div className="pre-block"></div>
           </div>
-          <div className="intro-logo">
-            <div className="word" id="word-1">
+          <div className="pre-intro-logo">
+            <div className="pre-word" id="pre-word-1">
               <h1>
                 <span>Yusuff</span>
               </h1>
             </div>
-            <div className="word" id="word-2">
+            <div className="pre-word" id="pre-word-2">
               <h1>Ridwan</h1>
             </div>
           </div>
-          <div className="divider"></div>
-          <div className="spinner-container">
-            <div className="spinner"></div>
+          <div className="pre-divider"></div>
+          <div className="pre-spinner-container">
+            <div className="pre-spinner"></div>
           </div>
-          <div className="counter">
-            <div className="count">
-              <div className="digit">
-                <h1>0</h1>
+          <div className="pre-counter">
+            <div className="pre-count">
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">0</h1>
               </div>
-              <div className="digit">
-                <h1>0</h1>
-              </div>
-            </div>
-            <div className="count">
-              <div className="digit">
-                <h1>2</h1>
-              </div>
-              <div className="digit">
-                <h1>7</h1>
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">0</h1>
               </div>
             </div>
-            <div className="count">
-              <div className="digit">
-                <h1>6</h1>
+            <div className="pre-count">
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">2</h1>
               </div>
-              <div className="digit">
-                <h1>5</h1>
-              </div>
-            </div>
-            <div className="count">
-              <div className="digit">
-                <h1>9</h1>
-              </div>
-              <div className="digit">
-                <h1>8</h1>
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">7</h1>
               </div>
             </div>
-            <div className="count">
-              <div className="digit">
-                <h1>9</h1>
+            <div className="pre-count">
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">6</h1>
               </div>
-              <div className="digit">
-                <h1>9</h1>
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">5</h1>
+              </div>
+            </div>
+            <div className="pre-count">
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">9</h1>
+              </div>
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">8</h1>
+              </div>
+            </div>
+            <div className="pre-count">
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">9</h1>
+              </div>
+              <div className="pre-digit">
+                <h1 className="pre-counter-text">9</h1>
               </div>
             </div>
           </div>

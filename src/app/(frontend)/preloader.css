@@ -1,4 +1,4 @@
-.loader {
+.pre-loader {
   position: fixed;
   top: 0;
   left: 0;
@@ -6,10 +6,11 @@
   height: 100svh;
   overflow: hidden;
   z-index: 100000;
-  pointer-events: all;
+  font-family: var(--font-machina);
+  pointer-events: none;
 }
 
-.loader .overlay {
+.pre-loader .pre-overlay {
   position: absolute;
   top: 0;
   width: 100%;
@@ -18,13 +19,13 @@
   color: var(--off-white);
 }
 
-.loader .block {
+.pre-loader .pre-block {
   width: 100%;
   height: 100%;
   background: var(--pure-black);
 }
 
-.loader .intro-logo {
+.pre-loader .pre-intro-logo {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -33,28 +34,30 @@
   gap: 0.5rem;
 }
 
-.loader #word-1 {
+.pre-loader #pre-word-1 {
   position: relative;
   left: 0rem;
   padding-right: 0.25rem;
   color: var(--off-white);
 }
 
-.loader #word-2 {
+.pre-loader #pre-word-2 {
   position: relative;
   left: 0.5rem;
   padding-left: 0.8rem;
   color: var(--off-white);
 }
 
-.loader .word h1 {
+.pre-loader .pre-word h1 {
   font-size: 2rem;
+  font-family: var(--font-machina) !important;
   font-weight: 600;
   color: var(--base-300);
   letter-spacing: -0.05rem;
+  line-height: 1;
 }
 
-.loader .divider {
+.pre-loader .pre-divider {
   position: absolute;
   top: 0;
   left: 50%;
@@ -65,14 +68,14 @@
   background-color: rgba(242, 237, 230, 0.3);
 }
 
-.loader .spinner-container {
+.pre-loader .pre-spinner-container {
   position: absolute;
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.loader .spinner {
+.pre-loader .pre-spinner {
   width: 50px;
   height: 50px;
   border: 1.4px solid var(--base-350);
@@ -87,7 +90,7 @@
   }
 }
 
-.loader .counter {
+.pre-loader .pre-counter {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -95,71 +98,75 @@
   z-index: 2;
 }
 
-.loader .count {
+.pre-loader .pre-count {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
+}
+
+.pre-loader .pre-digit {
+  flex: 1;
+  padding-top: 1rem;
   height: fit-content;
 }
 
-.loader .digit {
-  flex: 1;
-  padding-top: 1rem;
-}
-
-.loader .count .digit h1 {
+.pre-loader .pre-count .pre-digit .pre-counter-text {
   font-family: var(--font-machina);
   font-size: 15rem;
   font-weight: 400;
-  color: var(--base-400);
+  color: var(--off-white);
+  line-height: 1 !important;
 }
 
-.loader .line,
-.loader .word,
-.loader .count .digit {
+.pre-loader .pre-line,
+.pre-loader .pre-word,
+.pre-loader .pre-count .pre-digit {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  height: fit-content;
 }
 
-.loader .line h1,
-.loader .line p,
-.loader .count .digit h1 {
+.pre-loader .pre-line h1,
+.pre-loader .pre-line p,
+.pre-loader .pre-count .pre-digit h1 {
   position: relative;
   transform: translateY(120%);
   will-change: transform;
 }
 
-.loader #word-1 h1 {
+.pre-loader #pre-word-1 h1 {
   transform: translateY(-120%);
 }
 
-.loader #word-2 h1 {
+.pre-loader #pre-word-2 h1 {
   transform: translateY(120%);
 }
 
-.loader .block {
+.pre-loader .pre-block {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 }
 
-.loader .divider {
+.pre-loader .pre-divider {
   transform: scaleY(0%);
   will-change: transform;
 }
 
 @media (max-width: 1000px) {
-  .loader .counter .count .digit h1 {
+  .pre-loader .pre-counter .pre-count .pre-digit h1 {
     font-size: 7rem;
+    line-height: 1 !important;
   }
 
-  .loader .counter .count .digit {
+  .pre-loader .pre-counter .pre-count .pre-digit {
     padding-top: 0.25rem;
   }
 }
 
 @media (min-width: 320px) and (max-width: 768px) {
-  .loader .word h1 {
+  .pre-loader .pre-word h1 {
     font-size: 1.25rem;
     font-weight: 600;
+    line-height: 1 !important;
   }
 }
