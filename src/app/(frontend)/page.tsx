@@ -30,6 +30,7 @@ import ExperienceCard from '@/components/ExperienceCard/ExperienceCard'
 let isInitialLoad = true
 gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText)
 CustomEase.create('hop', '0.9, 0, 0.1, 1')
+CustomEase.create('cubic', '0.37, 0, 0.63, 1')
 
 export default function Home() {
   const tagsRef = useRef<HTMLDivElement | null>(null)
@@ -211,7 +212,7 @@ export default function Home() {
         mask: 'lines',
         linesClass: 'line++',
       })
-      charRef.current.push(...split.chars)
+      charRef.current.push(...split.words)
       if (aboutRef.current) {
         aboutTlRef.current = gsap
           .timeline({ paused: true })
@@ -229,7 +230,7 @@ export default function Home() {
             {
               y: '120%',
               opacity: 0,
-              duration: 0.1,
+              duration: 0.3,
               ease: 'power4.out',
               stagger: 0.1,
             },
@@ -238,10 +239,10 @@ export default function Home() {
           .from(
             aboutRef.current.querySelectorAll('.about-item'),
             {
-              y: '120%',
+              y: '100%',
               opacity: 0,
-              duration: 0.5,
-              ease: 'power4.out',
+              duration: 0.4,
+              ease: 'cubic',
               stagger: 0.1,
             },
             '-=.2',
@@ -259,10 +260,10 @@ export default function Home() {
           .from(
             aboutRef.current.querySelectorAll('.experience .experience-card'),
             {
-              x: '120%',
+              y: '100%',
               opacity: 0,
-              duration: 0.5,
-              ease: 'power4.out',
+              duration: 0.4,
+              ease: 'cubic',
               stagger: 0.1,
             },
             '-=.2',
