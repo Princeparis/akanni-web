@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { sliderData, SliderDataItem } from './sliderData'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './Slider.css'
 import AnimatedLink from '../AnimatedLink'
 import ShuffleText from '../ShuffleText/ShuffleText'

@@ -1,0 +1,58 @@
+.interact-btn {
+  display: flex;
+  align-items: flex-start;
+  padding: 2px 4px;
+  gap: 0.5em;
+  overflow: hidden;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  height: 20px !important;
+  width: fit-content !important;
+  cursor: pointer;
+}
+
+.texts-con {
+  width: fit-content;
+  height: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.text-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.text-strip .paragraph {
+  font-family: var(--font-machina) important !important;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 0.8rem !important;
+  line-height: 1;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-transform: uppercase;
+  height: 16px;
+}
+
+.icon-con {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  transform: translateY(20px);
+}
+
+.third-text {
+  color: #e13a15;
+}
+
+.lastText {
+  color: #e13a15;
+}

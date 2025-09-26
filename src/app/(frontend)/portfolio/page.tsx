@@ -5,6 +5,7 @@ import Menu from '@/components/menu/Menu'
 import React, { useState, useEffect, useRef } from 'react'
 import fetchPortfolios, { PortfolioItem } from '@/utils/fetchPortfolios'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './Portfolio.css'
 import PortfolioCard from '@/components/PortfolioCard/PortfolioCard'
 

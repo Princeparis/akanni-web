@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './Journal.css'
 import Menu from '@/components/menu/Menu'
 import JournalCard from '@/components/JournalCard'

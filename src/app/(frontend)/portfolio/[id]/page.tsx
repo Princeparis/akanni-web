@@ -5,6 +5,7 @@ import { PortfolioItem } from '@/utils/fetchPortfolios'
 import Image from 'next/image'
 import parseRichText from '@/utils/parseRichText'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './PortDetails.css'
 import Footer from '@/components/footer/Footer'
 import Copy from '@/components/NewCopy'

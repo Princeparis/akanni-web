@@ -1,4 +1,5 @@
 'use client'
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './Menu.css'
 
 import { useEffect, useState, useCallback, useRef, useLayoutEffect, MouseEvent } from 'react'

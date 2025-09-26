@@ -46,7 +46,7 @@ function Navbar(): React.JSX.Element {
       const direction = currentScrollY > lastScrollY ? 1 : -1
 
       // Check if we're at the top first
-      if (currentScrollY === 20) {
+      if (currentScrollY < 20) {
         // Reset to full width navbar at top
         gsap.to(topBar, {
           width: '100vw',
@@ -85,7 +85,7 @@ function Navbar(): React.JSX.Element {
           duration: 0.8,
           ease: 'power4.out',
         })
-      } else if (direction === -1 && currentScrollY > 20) {
+      } else if (direction === -1 && currentScrollY > 100) {
         gsap.to(topBar, {
           top: '20px',
           duration: 0.4,

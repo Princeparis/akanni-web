@@ -1,0 +1,170 @@
+.about-slide {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem;
+  z-index: 1000;
+  overflow-y: auto;
+  /* Smooth scrolling and better touch momentum */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  gap: 1rem;
+  pointer-events: all;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+}
+
+.about-slide-header {
+  width: 100%;
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  padding: 12px 16px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 40px;
+  border: none;
+  outline: none;
+  color: var(--off-white);
+  text-transform: uppercase;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.about-slide-header h2 {
+  font-family: var(--font-machina);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--off-white);
+  margin: 0;
+}
+
+.about-sub-title {
+  font-family: var(--font-machina);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--off-white);
+  margin: 0;
+}
+
+.about-slide-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.8rem;
+}
+
+.about-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 95%, 100% 100%, 5% 100%, 0 95%, 0% 5%);
+}
+
+/* Scrollbar styling for WebKit browsers */
+.about-slide::-webkit-scrollbar {
+  width: 12px;
+}
+.about-slide::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+.about-slide::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  border: 3px solid rgba(0, 0, 0, 0);
+}
+.about-slide::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Firefox scrollbar */
+.about-slide {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) rgba(255, 255, 255, 0.03);
+}
+
+/* Make sure the panel captures pointer events for scroll */
+.about-slide {
+  pointer-events: auto;
+}
+
+.about-item h3 {
+  font-family: var(--font-machina);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--off-white);
+  margin: 0;
+}
+
+.about-item p {
+  font-family: var(--font-montreal);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--off-white);
+  margin: 0;
+}
+
+.experience {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.subtitle-cont {
+  overflow: hidden;
+  width: 100%;
+}
+
+.resume-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 16px 0;
+  background-color: var(--pure-black);
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  color: var(--off-white);
+  text-transform: uppercase;
+  font-family: var(--font-montreal);
+  font-size: 0.8rem;
+  font-weight: 400;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .about-slide {
+    width: 100%;
+    height: 100vh;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .resume-btn {
+    margin-bottom: 3.5rem;
+  }
+}

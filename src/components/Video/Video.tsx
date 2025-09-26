@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react'
+
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './Video.css'
 
 function Video(): React.JSX.Element {

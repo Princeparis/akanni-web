@@ -13,10 +13,19 @@ import { useLenis } from 'lenis/react'
 import AnimatedLink from '@/components/AnimatedLink'
 import fetchRecentJournals, { RecentJournal } from '../../utils/fetchRecentJournals'
 import { JournalEntry as FullJournalEntry } from '@/types/journal'
+import { AboutDataItems } from '@/utils/aboutData'
+import { ExperienceData } from '@/utils/aboutData'
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './Home.css'
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './preloader.css'
+
+// @ts-ignore: allow side-effect CSS import without type declarations
+import './about.css'
 import JournalCard from '@/components/JournalCard'
 import Footer from '@/components/footer/Footer'
+import InteractiveBtn from '@/components/InteractiveBtn/InteractiveBtn'
+import ExperienceCard from '@/components/ExperienceCard/ExperienceCard'
 
 let isInitialLoad = true
 gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText)
@@ -25,12 +34,17 @@ CustomEase.create('hop', '0.9, 0, 0.1, 1')
 export default function Home() {
   const tagsRef = useRef<HTMLDivElement | null>(null)
   const titleRef = useRef<HTMLHeadingElement | null>(null)
+  const aboutHeadTextRef = useRef<HTMLHeadingElement | null>(null)
+  const charRef = useRef<any[]>([])
   const wordsRef = useRef<any[]>([])
+  const aboutRef = useRef<HTMLDivElement | null>(null)
+  const aboutTlRef = useRef<gsap.core.Timeline | null>(null)
   const [showPreloader, setShowPreloader] = useState<boolean>(isInitialLoad)
   const [loaderAnimating, setLoaderAnimating] = useState<boolean>(false)
   const [entries, setEntries] = useState<RecentJournal[] | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [aboutOpen, setAboutOpen] = useState<boolean>(false)
   const lenis = useLenis() as any
 
   useEffect(() => {
@@ -177,8 +191,8 @@ export default function Home() {
         wordsRef.current,
         {
           y: '100%',
-          duration: 1,
-          delay: 0.5,
+          duration: 0.5,
+          delay: 0.2,
           stagger: 0.1,
           onComplete: () => {
             setLoaderAnimating(false)
@@ -188,6 +202,103 @@ export default function Home() {
       )
     }
   }, [showPreloader])
+
+  const { contextSafe } = useGSAP(
+    () => {
+      charRef.current = []
+      let split = new SplitText(aboutHeadTextRef.current, {
+        type: 'words lines chars',
+        mask: 'lines',
+        linesClass: 'line++',
+      })
+      charRef.current.push(...split.chars)
+      if (aboutRef.current) {
+        aboutTlRef.current = gsap
+          .timeline({ paused: true })
+          .to(
+            aboutRef.current,
+            {
+              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+              duration: 0.6,
+              ease: 'power4.inOut',
+            },
+            0,
+          )
+          .from(
+            charRef.current,
+            {
+              y: '120%',
+              opacity: 0,
+              duration: 0.1,
+              ease: 'power4.out',
+              stagger: 0.1,
+            },
+            '-=.4',
+          )
+          .from(
+            aboutRef.current.querySelectorAll('.about-item'),
+            {
+              y: '120%',
+              opacity: 0,
+              duration: 0.5,
+              ease: 'power4.out',
+              stagger: 0.1,
+            },
+            '-=.2',
+          )
+          .from(
+            aboutRef.current.querySelectorAll('.experience .about-sub-title'),
+            {
+              opacity: 0,
+              duration: 0.3,
+              ease: 'power4.out',
+              stagger: 0.1,
+            },
+            '-=.2',
+          )
+          .from(
+            aboutRef.current.querySelectorAll('.experience .experience-card'),
+            {
+              x: '120%',
+              opacity: 0,
+              duration: 0.5,
+              ease: 'power4.out',
+              stagger: 0.1,
+            },
+            '-=.2',
+          )
+      } else {
+        aboutTlRef.current = gsap.timeline({ paused: true })
+      }
+    },
+    { scope: tagsRef, revertOnUpdate: true },
+  )
+
+  const handleAboutPlay = contextSafe(() => {
+    if (aboutTlRef.current) {
+      aboutTlRef.current.play()
+    }
+  })
+
+  const handleAboutReverse = contextSafe(() => {
+    if (aboutTlRef.current) {
+      aboutTlRef.current.reverse()
+    }
+  })
+
+  const handleOpenAbout = () => {
+    if (aboutOpen) return
+    // set the intended state first, then play the timeline
+    setAboutOpen(true)
+    handleAboutPlay()
+  }
+
+  const handleCloseAbout = () => {
+    if (!aboutOpen) return
+    // set the intended state first, then reverse the timeline
+    setAboutOpen(false)
+    handleAboutReverse()
+  }
 
   return (
     <>
@@ -255,6 +366,40 @@ export default function Home() {
           </div>
         </div>
       )}
+      <div className="about-slide" ref={aboutRef} data-open={aboutOpen}>
+        <div className="about-slide-header">
+          <h2 ref={aboutHeadTextRef}>About Me</h2>
+          <button className="close-btn" onClick={handleCloseAbout} aria-label="Close About Me">
+            &times; Close
+          </button>
+        </div>
+        <div className="about-slide-content">
+          {AboutDataItems.map((item, index) => {
+            return (
+              <div key={index} className="about-item">
+                {item.title && <h3>{item.title}</h3>}
+                <p>{item.content}</p>
+              </div>
+            )
+          })}
+        </div>
+        <div className="experience">
+          <div className="subtitle-cont">
+            <h3 className="about-sub-title">Experience</h3>
+          </div>
+          {ExperienceData.map((item, index) => {
+            return <ExperienceCard className="experience-card" key={index} item={item} />
+          })}
+        </div>
+        <a
+          href="/resume.pdf"
+          rel="noopener noreferrer"
+          download="/resume.pdf"
+          className="resume-btn"
+        >
+          Download Resume
+        </a>
+      </div>
       <Menu />
       <main className="home">
         <section className="hero">
@@ -291,12 +436,13 @@ export default function Home() {
                 unicorn creative engineer: strategy, craft, and software in one pair of hands.
               </p>
             </Copy>
-            <AnimatedLink
+            <InteractiveBtn
+              text="Explore More"
+              containerStyle={{ marginTop: '1rem' }}
+              strokeColor="#ffffff"
               lastColor="#ffffff"
               textColor="#ffffff"
-              strokeColor="#ffffff"
-              href="#"
-              text="Meet Akanni"
+              handleInteraction={handleOpenAbout}
             />
           </div>
         </section>

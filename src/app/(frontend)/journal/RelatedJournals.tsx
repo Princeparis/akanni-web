@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import JournalCard from '@/components/JournalCard'
 import { JournalEntry } from '@/types/journal'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './RelatedStyle.css'
 
 interface RelatedJournalsProps {

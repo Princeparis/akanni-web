@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import { useJournalEntry } from '../../../../hooks/useJournalEntry'
 import Link from 'next/link'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './Journaldetails.css'
 import Copy from '@/components/Copy'
 import RelatedJournals from '../RelatedJournals'

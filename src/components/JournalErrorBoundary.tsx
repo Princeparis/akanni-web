@@ -2,6 +2,8 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 import { ErrorCodes } from '../types/errors'
+
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './JournalErrorBoundary.css'
 
 interface ErrorBoundaryState {

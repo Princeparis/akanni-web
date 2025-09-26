@@ -3,6 +3,8 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 import { useGSAP } from '@gsap/react'
+
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './PortfolioCard.css'
 import OptimizedImage from '../OptimizedImage'
 import { PortfolioItem } from '@/utils/fetchPortfolios'

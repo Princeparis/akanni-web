@@ -7,6 +7,8 @@ import { JournalQueryParams } from '../../types/api'
 import { usePerformanceMonitor, debounce } from '../../utils/performance'
 import { preloadJournalComponents } from '../../utils/dynamic-imports'
 import VirtualScroll from '../VirtualScroll'
+
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './JournalList.css'
 
 // Lazy load components for better performance
