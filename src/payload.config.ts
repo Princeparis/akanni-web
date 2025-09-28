@@ -14,6 +14,9 @@ import { Categories } from './collections/Categories'
 import { Tags } from './collections/Tags'
 import { Journals } from './collections/Journals'
 import { Portfolios } from './collections/Portfolios'
+import { Playgrounds } from './collections/Playgrounds'
+import Logo from './components/admin/Logo'
+import Icon from './components/admin/Icon'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,12 +36,22 @@ if (!envDbUrl) {
 
 export default buildConfig({
   admin: {
+    meta: {
+      titleSuffix: ' - Akanni Admin',
+    },
     user: Users.slug,
+    components: {
+      beforeDashboard: [],
+      graphics: {
+        Logo,
+        Icon,
+      },
+    } as unknown as any,
     importMap: {
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Categories, Tags, Journals, Portfolios],
+  collections: [Users, Media, Categories, Tags, Journals, Portfolios, Playgrounds],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -13,3 +13,22 @@
   /* keep admin styles scoped to payload UI markup */
   isolation: isolate;
 }
+
+/* Ensure admin logo SVG uses currentColor and is sized properly */
+.payload-header__logo {
+  display: flex;
+  align-items: center;
+  height: 40px; /* default header height for logo */
+}
+
+.payload-header__logo svg {
+  height: 100%;
+  width: auto;
+  display: block;
+  color: var(--payload-admin-logo-color, #ffffff);
+}
+
+/* If admin background is dark, ensure the logo remains visible */
+.payload-admin-root {
+  --payload-admin-logo-color: #ffffff;
+}

@@ -73,6 +73,7 @@ export interface Config {
     tags: Tag;
     journals: Journal;
     portfolios: Portfolio;
+    playgrounds: Playground;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -85,6 +86,7 @@ export interface Config {
     tags: TagsSelect<false> | TagsSelect<true>;
     journals: JournalsSelect<false> | JournalsSelect<true>;
     portfolios: PortfoliosSelect<false> | PortfoliosSelect<true>;
+    playgrounds: PlaygroundsSelect<false> | PlaygroundsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -389,6 +391,33 @@ export interface Portfolio {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "playgrounds".
+ */
+export interface Playground {
+  id: number;
+  /**
+   * Playground title (required)
+   */
+  title: string;
+  /**
+   * Representative image for the playground (optional)
+   */
+  image?: (number | null) | Media;
+  /**
+   * URL to preview the playground (e.g. live demo)
+   */
+  previewUrl?: string | null;
+  /**
+   * URL to download the playground or its assets
+   */
+  downloadUrl?: string | null;
+  status: 'draft' | 'published';
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -417,6 +446,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'portfolios';
         value: number | Portfolio;
+      } | null)
+    | ({
+        relationTo: 'playgrounds';
+        value: number | Playground;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -591,6 +624,20 @@ export interface PortfoliosSelect<T extends boolean = true> {
         title?: T;
         description?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "playgrounds_select".
+ */
+export interface PlaygroundsSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  previewUrl?: T;
+  downloadUrl?: T;
+  status?: T;
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

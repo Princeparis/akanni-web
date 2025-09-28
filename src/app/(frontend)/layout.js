@@ -94,6 +94,74 @@ const kyotoFont = localFont({
   fallback: ['Times New Roman', 'serif'],
 })
 
+// SEO metadata for the App Router. Uses NEXT_PUBLIC_SITE_URL when available.
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+
+export const metadata = {
+  title: { default: 'Akanni | Creative Engineer', template: '%s | Akanni' },
+  description:
+    'Portfolio of Yusuff Ridwan Akanni - Creative Engineer, Designer, Developer, Photographer, and Writer',
+  applicationName: 'Akanni',
+  keywords: [
+    'Akanni',
+    'portfolio',
+    'journal',
+    'playground',
+    'web',
+    'design',
+    'creative',
+    'branding',
+    'ai artist',
+    'web designer',
+  ],
+  authors: [{ name: 'Yusuff Ridwan Akanni' }],
+  openGraph: {
+    title: 'Akanni — Portfolio & Journal',
+    description:
+      'Creative portfolio, journals and interactive playgrounds showcasing projects and writing.',
+    url: siteUrl,
+    siteName: 'Akanni',
+    images: [
+      {
+        url: `${siteUrl}/images/akanni-web.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Akanni portfolio cover',
+        type: 'image/jpeg',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Akanni — Portfolio & Journal',
+    description:
+      'Creative portfolio, journals and interactive playgrounds showcasing projects and writing.',
+    images: [`${siteUrl}/images/akanni-web.jpg`],
+    creator: '@akanni',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: siteUrl,
+  },
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    shortcut: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    apple: '/akanni-apple-touch.png',
+  },
+}
+
 export default function RootLayout({ children }) {
   return (
     <html
