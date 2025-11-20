@@ -62,7 +62,7 @@ export const stories: Story[] = [
     title: ['Metnov Web Design', 'for the in-between', 'people of life'],
     linkLabel: 'Explore Work',
     linkSrc: '/sample-project',
-    storyImg: '/stories/Story-Pulsate-Branding.webp',
+    storyImg: '/stories/Story-Metnov-website.webp',
   },
 ]
 
