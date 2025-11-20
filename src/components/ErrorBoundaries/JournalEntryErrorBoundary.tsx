@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 import { JournalErrorBoundary } from '../JournalErrorBoundary'
 
 interface JournalEntryErrorBoundaryProps {
@@ -29,9 +30,9 @@ function JournalEntryErrorFallback({ slug, onRetry }: { slug?: string; onRetry?:
           <button onClick={() => window.history.back()} className="retry-button secondary">
             Go Back
           </button>
-          <a href="/journal" className="retry-button secondary">
+          <Link href="/journal" className="retry-button secondary">
             Browse All Entries
-          </a>
+          </Link>
         </div>
       </div>
     </div>

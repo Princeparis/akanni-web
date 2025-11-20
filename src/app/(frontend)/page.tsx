@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
-import Slider from '@/components/Slider/Slider'
 import Copy from '@/components/Copy'
 import Menu from '@/components/menu/Menu'
 import Video from '@/components/Video/Video'
@@ -15,17 +14,15 @@ import fetchRecentJournals, { RecentJournal } from '../../utils/fetchRecentJourn
 import { JournalEntry as FullJournalEntry } from '@/types/journal'
 import { AboutDataItems } from '@/utils/aboutData'
 import { ExperienceData } from '@/utils/aboutData'
-// @ts-ignore: allow side-effect CSS import without type declarations
 import './Home.css'
-// @ts-ignore: allow side-effect CSS import without type declarations
 import './preloader.css'
 
-// @ts-ignore: allow side-effect CSS import without type declarations
 import './about.css'
 import JournalCard from '@/components/JournalCard'
 import Footer from '@/components/footer/Footer'
 import InteractiveBtn from '@/components/InteractiveBtn/InteractiveBtn'
 import ExperienceCard from '@/components/ExperienceCard/ExperienceCard'
+import StorySlides from '@/components/StorySlides/StorySlides'
 
 let isInitialLoad = true
 gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText)
@@ -91,7 +88,7 @@ export default function Home() {
   // preloader animation
   useGSAP(() => {
     wordsRef.current = []
-    let split = new SplitText(titleRef.current, {
+    const split = new SplitText(titleRef.current, {
       type: 'words lines',
       mask: 'lines',
       linesClass: 'line++',
@@ -207,7 +204,7 @@ export default function Home() {
   const { contextSafe } = useGSAP(
     () => {
       charRef.current = []
-      let split = new SplitText(aboutHeadTextRef.current, {
+      const split = new SplitText(aboutHeadTextRef.current, {
         type: 'words lines chars',
         mask: 'lines',
         linesClass: 'line++',
@@ -393,9 +390,9 @@ export default function Home() {
           })}
         </div>
         <a
-          href="/resume.pdf"
+          href="/Adeniran-R-Yusuff-Resume-Int.pdf"
           rel="noopener noreferrer"
-          download="/resume.pdf"
+          download="/Adeniran-R-Yusuff-Resume-Int.pdf"
           className="resume-btn"
         >
           Download Resume
@@ -447,7 +444,7 @@ export default function Home() {
             />
           </div>
         </section>
-        <Slider />
+        <StorySlides />
         <section className="journal">
           <div className="journal-header">
             <Copy delay={0.3}>

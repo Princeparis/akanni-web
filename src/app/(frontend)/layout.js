@@ -93,6 +93,18 @@ const kyotoFont = localFont({
   display: 'swap',
   fallback: ['Times New Roman', 'serif'],
 })
+const BigFont = localFont({
+  src: [
+    {
+      path: '../../../public/fonts/BigShouldersDisplay.ttf',
+      weight: '900',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-big', // CSS variable for this font
+  display: 'swap',
+  fallback: ['Times New Roman', 'sans-serif'],
+})
 
 // SEO metadata for the App Router. Uses NEXT_PUBLIC_SITE_URL when available.
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -166,7 +178,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${machinaFont.variable} ${montrealFont.variable} ${kyotoFont.variable}`}
+      className={`${machinaFont.variable} ${montrealFont.variable} ${kyotoFont.variable} ${BigFont.variable}`}
     >
       <body>
         <ClientLayout>

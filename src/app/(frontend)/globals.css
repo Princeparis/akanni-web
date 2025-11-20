@@ -45,6 +45,23 @@ a {
   --black: #1d1d1d;
   --pure-black: #000;
   --slate: #0f0f0f;
+  --base-100: #e3e3db;
+  --base-200: #ccccc4;
+  --base-300: #8c7e77;
+  --base-400: #1a1614;
+  --base-500: #ff6e14;
+
+  --accent-1: #3d2fa9;
+  --accent-2: #a92f78;
+  --accent-3: #ff3d33;
+  --accent-4: #785f47;
+  --accent-5: #2f72a9;
+
+  --variant-1: var(--base-200);
+  --variant-2: var(--base-400);
+  --variant-3: var(--base-500);
+  --disabled-folder-bg: #d4d7d0;
+  --disabled-folder-fg: #989b95;
 }
 
 img {

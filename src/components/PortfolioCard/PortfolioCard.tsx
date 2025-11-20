@@ -29,7 +29,7 @@ function PortfolioCard({ portfolio, className = '', showExcerpt }: PortfolioCard
   const { contextSafe } = useGSAP(
     () => {
       wordsRef.current = []
-      let split = new SplitText(titleRef.current, {
+      const split = new SplitText(titleRef.current, {
         type: 'words lines',
         mask: 'lines',
         linesClass: 'line++',
