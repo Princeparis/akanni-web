@@ -30,7 +30,7 @@ export const stories: Story[] = [
     title: ['Pulsate Kids Story App', 'Listen, Read and Quiz', 'For kids and young adults'],
     linkLabel: 'Explore Work',
     linkSrc: '/sample-project',
-    storyImg: '/stories/story-aalo.webp',
+    storyImg: '/stories/Story-aalo.webp',
   },
   {
     profileImg: '/stories/profile-4.png',
@@ -38,7 +38,7 @@ export const stories: Story[] = [
     title: ['Pivota Social Commerce', 'App to socialize and', 'do simple commerce.'],
     linkLabel: 'Explore Work',
     linkSrc: '/sample-project',
-    storyImg: '/stories/story-pivota.webp',
+    storyImg: '/stories/Story-pivota.webp',
   },
   {
     profileImg: '/stories/profile-2.png',
