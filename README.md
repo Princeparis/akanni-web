@@ -4,7 +4,7 @@ A portfolio for Yusuff Ridwan Akanni. Next.js 15, React 19, GSAP, and Lenis. All
 
 ## Development
 
-Use Node 22 or 24 and the pinned pnpm 9.8.0:
+Use Node 22 (also pinned in `.nvmrc` and `package.json`) and pnpm 9.8.0:
 
 ```sh
 corepack pnpm@9.8.0 install --frozen-lockfile
@@ -33,3 +33,7 @@ Install Playwright Chromium with `corepack pnpm@9.8.0 exec playwright install ch
 `NEXT_PUBLIC_SITE_URL` is optional. Set it to the deployed origin to generate absolute metadata and sitemap URLs; without it the sitemap is intentionally empty. No invented production domain is used.
 
 The app builds all seven project pages statically. `next start` serves the production build; the Dockerfile sets `BUILD_STANDALONE=true` to use Next's standalone output. Docker Compose runs only the web application.
+
+## Vercel
+
+The application pins Node `22.x`, matching the Vercel project setting. Next.js and React use patched releases. The normal build command is `pnpm run build`; no special environment variables or security bypasses are needed. See `docs/vercel-security-fix.md` for the deployment-block diagnosis and dependency decisions.

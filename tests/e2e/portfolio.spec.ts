@@ -1,5 +1,17 @@
 import { test, expect } from '@playwright/test'
 
+test('image optimization serves AVIF and WebP with the patched image processor', async ({
+  request,
+}) => {
+  const query = new URLSearchParams({ url: '/stories/Story-reswitch.webp', w: '640', q: '75' })
+  for (const type of ['image/avif', 'image/webp']) {
+    const response = await request.get(`/_next/image?${query}`, { headers: { Accept: type } })
+    expect(response.status()).toBe(200)
+    expect(response.headers()['content-type']).toBe(type)
+    expect((await response.body()).length).toBeGreaterThan(100)
+  }
+})
+
 test('homepage, motion controls, and local project navigation work', async ({ page }) => {
   const errors: string[] = []
   const cmsRequests: string[] = []
