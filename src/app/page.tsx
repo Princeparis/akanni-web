@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Hero from '@/components/Hero'
-import ProjectGrid from '@/components/ProjectGrid'
+import SelectedWork from '@/components/SelectedWork'
 import About from '@/components/About'
 import Reveal from '@/components/Reveal'
 import MagneticLink from '@/components/MagneticLink'
@@ -21,35 +21,7 @@ export default function Home() {
         <span>Make it matter.</span>
         <Asterisk />
       </div>
-      <section id="work" className="work-section section-pad">
-        <div className="section-kicker">
-          <span className="eyebrow">
-            <span className="blue-dot" /> Selected work
-          </span>
-          <span className="eyebrow">01 / A few things I’ve put into the world</span>
-        </div>
-        <div className="work-heading">
-          <Reveal>
-            <h2>
-              Thoughtfully designed.
-              <br />
-              <em>Built to feel different.</em>
-            </h2>
-          </Reveal>
-          <p>
-            Digital products, distinctive identities,
-            <br />
-            and ideas made real.
-            <br />
-            <span>A selection of independent & collaborative work.</span>
-          </p>
-        </div>
-        <ProjectGrid />
-        <div className="work-bottom">
-          <span className="eyebrow">A little strategy. A lot of soul.</span>
-          <MagneticLink href="/portfolio">Explore all projects</MagneticLink>
-        </div>
-      </section>
+      <SelectedWork />
       <About />
       <section className="visual-teaser section-pad">
         <span className="eyebrow">An eye for the unexpected</span>
@@ -57,7 +29,7 @@ export default function Home() {
           <h2>
             Always looking.
             <br />
-            <em>Always making.</em>
+            <span className="outline-text">Always making.</span>
           </h2>
         </Reveal>
         <div className="visual-teaser-images">

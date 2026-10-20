@@ -1,5 +1,59 @@
 import { test, expect } from '@playwright/test'
 
+test.beforeEach(async ({ page }, testInfo) => {
+  if (!testInfo.title.includes('branded intro')) {
+    await page.addInitScript(() => sessionStorage.setItem('akanni-intro-seen', 'true'))
+  }
+})
+
+test('branded intro plays, releases the page, and retains the original SVG identity', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  const intro = page.getByTestId('brand-intro')
+  await expect(intro).toBeVisible()
+  await expect(intro.locator('.intro-mark')).toHaveAttribute('viewBox', '0 0 387.19 386.84')
+  await expect(page.locator('.site-content')).toHaveAttribute('inert', '')
+  await expect(intro).not.toBeVisible({ timeout: 10_000 })
+  await expect(page.locator('.site-content')).not.toHaveAttribute('inert', '')
+  await expect(page.getByRole('heading', { name: 'Creative Engineer' })).toBeVisible()
+  await expect(page.locator('.header-brand-mark')).toHaveAttribute('viewBox', '0 0 387.19 386.84')
+  await expect(page.locator('.footer-original-wordmark')).toHaveAttribute('viewBox', '0 0 1512 292')
+  expect(await page.locator('h1').evaluate((e) => getComputedStyle(e).fontFamily)).toMatch(
+    /machina/i,
+  )
+})
+
+test('branded intro can be skipped and honors reduced motion', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await page.getByRole('button', { name: 'Skip intro' }).click()
+  await expect(page.getByTestId('brand-intro')).not.toBeVisible()
+  await page.evaluate(() => sessionStorage.removeItem('akanni-intro-seen'))
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.reload()
+  await expect(page.getByTestId('brand-intro')).not.toBeVisible()
+  await expect(page.locator('video')).toHaveJSProperty('paused', true)
+})
+
+test('selected work follows desktop scrolling and falls back to a mobile stack', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.goto('/')
+  await expect(page.locator('#work')).toHaveAttribute('data-pinned', 'true')
+  await page
+    .locator('.work-pin')
+    .evaluate((e) => window.scrollTo(0, e.getBoundingClientRect().top + scrollY + 1500))
+  await page.waitForTimeout(1200)
+  const transform = await page
+    .locator('.film-rail')
+    .evaluate((e) => new DOMMatrix(getComputedStyle(e).transform).m41)
+  expect(transform).toBeLessThan(-500)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await expect(page.locator('#work')).not.toHaveAttribute('data-pinned', 'true')
+  expect(await page.locator('.film-rail').evaluate((e) => getComputedStyle(e).display)).toBe('grid')
+})
+
 test('image optimization serves AVIF and WebP with the patched image processor', async ({
   request,
 }) => {
@@ -20,9 +74,7 @@ test('homepage, motion controls, and local project navigation work', async ({ pa
     if (/\/api\//.test(request.url())) cmsRequests.push(request.url())
   })
   await page.goto('/')
-  await expect(
-    page.getByRole('heading', { name: 'Creative by nature. Engineer by craft.' }),
-  ).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Creative Engineer' })).toBeVisible()
   const pause = page.getByRole('button', { name: 'Pause background video' })
   await pause.click()
   await expect(page.locator('video')).toHaveJSProperty('paused', true)
@@ -98,9 +150,7 @@ test('responsive layouts fit the viewport and reduced motion keeps content avail
   for (const width of [360, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/')
-    await expect(
-      page.getByRole('heading', { name: 'Creative by nature. Engineer by craft.' }),
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Creative Engineer' })).toBeVisible()
     await expect(page.locator('video')).toHaveJSProperty('paused', true)
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),

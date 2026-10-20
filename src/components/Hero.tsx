@@ -1,11 +1,10 @@
 'use client'
-
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useIntroReady } from './Intro'
 import MagneticLink from './MagneticLink'
-import { Asterisk } from './Icons'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
@@ -13,7 +12,7 @@ export default function Hero() {
   const root = useRef<HTMLElement>(null)
   const video = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(true)
-
+  const ready = useIntroReady()
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)')
     const sync = () => {
@@ -26,26 +25,37 @@ export default function Hero() {
     media.addEventListener('change', sync)
     return () => media.removeEventListener('change', sync)
   }, [])
-
   useGSAP(
     () => {
       const media = gsap.matchMedia()
       media.add('(prefers-reduced-motion: no-preference)', () => {
-        const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
-        tl.from('.hero-line-inner', {
-          yPercent: 110,
-          rotate: 3,
-          duration: 1.3,
-          stagger: 0.13,
-          delay: 0.1,
-        }).from('.hero-reveal', { opacity: 0, y: 20, stagger: 0.08, duration: 0.8 }, '-=0.5')
-        gsap.to('.hero-asterisk', {
-          rotation: 180,
+        if (!ready) {
+          gsap.set('.hero-line-inner', { yPercent: 115 })
+          gsap.set('.hero-reveal', { opacity: 0 })
+          return
+        }
+        gsap
+          .timeline({ defaults: { ease: 'expo.out' } })
+          .fromTo(
+            '.hero-line-inner',
+            { yPercent: 115, rotate: 4 },
+            { yPercent: 0, rotate: 0, duration: 1.5, stagger: 0.15 },
+          )
+          .fromTo(
+            '.hero-reveal',
+            { opacity: 0, y: 24 },
+            { opacity: 1, y: 0, duration: 1, stagger: 0.08 },
+            0.35,
+          )
+          .fromTo('.hero-video', { scale: 1.18 }, { scale: 1, duration: 2.1 }, 0)
+        gsap.to('.hero-title', {
+          yPercent: 32,
+          opacity: 0.15,
           ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 1 },
+          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.7 },
         })
         gsap.to('.hero-video', {
-          yPercent: 15,
+          yPercent: 12,
           ease: 'none',
           scrollTrigger: {
             trigger: root.current,
@@ -57,9 +67,8 @@ export default function Hero() {
       })
       return () => media.revert()
     },
-    { scope: root },
+    { scope: root, dependencies: [ready], revertOnUpdate: true },
   )
-
   async function toggleVideo() {
     if (!video.current) return
     if (playing) {
@@ -74,7 +83,6 @@ export default function Hero() {
       }
     }
   }
-
   return (
     <section ref={root} className="hero" aria-labelledby="hero-title">
       <video
@@ -91,47 +99,54 @@ export default function Hero() {
         onPlay={() => setPlaying(true)}
       />
       <div className="hero-shade" />
-      <div className="hero-top hero-reveal">
-        <span className="eyebrow">Independent creative engineer</span>
-        <span className="eyebrow">Based in Nigeria. Creating everywhere. ↗</span>
+      <div className="hero-identity hero-reveal">
+        <span className="eyebrow">Yusuff Ridwan Akanni</span>
+        <span className="eyebrow">Independent / Nigeria ↗ Worldwide</span>
       </div>
-      <div className="hero-main">
-        <div className="hero-name hero-reveal">
-          <span className="tiny-cross">+</span> Yusuff Ridwan Akanni
-        </div>
-        <h1 id="hero-title">
-          <span className="hero-line">
-            <span className="hero-line-inner">Creative by nature.</span>
-          </span>
-          <span className="hero-line">
-            <span className="hero-line-inner">
-              Engineer <em>by craft.</em>
+      <div className="hero-coordinate hero-reveal" aria-hidden="true">
+        DESIGN. DEVELOP. EXPERIMENT.
+      </div>
+      <h1 className="hero-title" id="hero-title" aria-label="Creative Engineer">
+        <span className="hero-line">
+          <span className="hero-line-inner">
+            Creative
+            <span className="hero-title-star" aria-hidden="true">
+              *
             </span>
           </span>
-        </h1>
-      </div>
-      <div className="hero-bottom hero-reveal">
-        <div>
+        </span>
+        <span className="hero-line">
+          <span className="hero-line-inner hero-title-outline">Engineer</span>
+        </span>
+      </h1>
+      <div className="hero-lower hero-reveal">
+        <div className="hero-intro-copy">
+          <span className="hero-cross" aria-hidden="true">
+            +
+          </span>
           <p>
             I build brands that feel inevitable.
             <br />
             And the products that carry them.
           </p>
-          <MagneticLink href="#work" className="pill-light">
-            Explore selected work
-          </MagneticLink>
         </div>
-        <div className="hero-side">
-          <Asterisk className="hero-asterisk" />
-          <span className="eyebrow">
-            Strategy. Craft. Code.
-            <br />
-            One pair of hands.
-          </span>
+        <div className="hero-disciplines">
+          <span>Designer</span>
+          <span>Developer</span>
+          <span>AI explorer</span>
+          <span>Writer</span>
         </div>
+        <MagneticLink href="#work" className="pill-light">
+          Explore selected work
+        </MagneticLink>
       </div>
       <div className="hero-foot hero-reveal">
-        <span className="eyebrow">Scroll to discover ↓</span>
+        <span className="eyebrow">Scroll to explore ↓</span>
+        <span className="eyebrow hero-foot-note">
+          Strategy, craft & software.
+          <br />
+          One pair of hands.
+        </span>
         <button
           onClick={toggleVideo}
           className="video-toggle"

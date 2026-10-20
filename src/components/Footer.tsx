@@ -2,10 +2,34 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Arrow, Asterisk } from './Icons'
+import { Arrow } from './Icons'
+import { BrandWordmark } from './Brand'
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import Reveal from './Reveal'
 
 export default function Footer() {
+  const logo = useRef<HTMLAnchorElement>(null)
+  useGSAP(
+    () => {
+      const media = gsap.matchMedia()
+      media.add('(prefers-reduced-motion: no-preference)', () => {
+        const paths = logo.current?.querySelectorAll('path')
+        if (paths)
+          gsap.from(paths, {
+            y: 100,
+            opacity: 0,
+            stagger: 0.09,
+            duration: 1.3,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: logo.current, start: 'top 95%', once: true },
+          })
+      })
+      return () => media.revert()
+    },
+    { scope: logo },
+  )
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
   async function copyEmail() {
@@ -29,9 +53,9 @@ export default function Footer() {
       </div>
       <Reveal>
         <a className="footer-title" href="mailto:akanni@metnov.org">
-          Let’s make
+          Let’s
           <br />
-          <span>something matter.</span>
+          <span>connect.</span>
           <Arrow />
         </a>
       </Reveal>
@@ -54,11 +78,10 @@ export default function Footer() {
           </span>
         </div>
       </div>
+      <Link href="/" ref={logo} className="footer-brand" aria-label="Akanni home">
+        <BrandWordmark className="footer-original-wordmark" />
+      </Link>
       <div className="footer-bottom">
-        <Link href="/" className="footer-signature">
-          akanni
-          <Asterisk />
-        </Link>
         <div className="footer-socials">
           <a href="https://www.linkedin.com/in/kingakanni" target="_blank" rel="noreferrer">
             LinkedIn ↗

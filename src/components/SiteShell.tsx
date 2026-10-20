@@ -4,6 +4,7 @@ import { ReactLenis, useLenis } from 'lenis/react'
 import { useEffect, useState, type ReactNode } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Intro from './Intro'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -24,7 +25,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
   return (
     <ReactLenis root options={{ lerp: 0.1, smoothWheel: !reduced, anchors: { offset: -100 } }}>
       <ScrollSync />
-      {children}
+      <Intro>{children}</Intro>
     </ReactLenis>
   )
 }

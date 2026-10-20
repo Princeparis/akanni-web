@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { AboutDataItems, ExperienceData } from '@/data/about'
 import { Arrow, Asterisk } from './Icons'
 import Reveal from './Reveal'
+import AnimatedCopy from './AnimatedCopy'
 
 const capabilities = [
   {
@@ -55,13 +56,14 @@ export default function About() {
           <div className="about-copy">
             <Reveal>
               <h2>
-                Many disciplines.
+                Strategy. Craft.
                 <br />
-                <em>One curious mind.</em>
+                <span className="outline-text">& software.</span>
               </h2>
-              <p className="about-lead">
-                I’m a creative engineer: strategy, craft, and software in one pair of hands.
-              </p>
+              <AnimatedCopy
+                className="about-lead"
+                text="I’m a creative engineer: strategy, craft, and software in one pair of hands."
+              />
               <p>
                 I build brands that feel inevitable and the products that carry them. For 10+ years
                 I’ve designed identities, UX/UI, and visuals that actually move people. Along the
@@ -100,9 +102,9 @@ export default function About() {
           <span className="eyebrow">What I bring to the table</span>
           <Reveal>
             <h2>
-              Good ideas.
+              One mind.
               <br />
-              <em>Fully realised.</em>
+              <span className="outline-text">Many possibilities.</span>
             </h2>
           </Reveal>
           <p>From the first “what if” to the final interaction. One connected creative process.</p>
@@ -129,7 +131,7 @@ export default function About() {
           <h2>
             Good people.
             <br />
-            <em>Meaningful work.</em>
+            <span className="outline-text">Meaningful work.</span>
           </h2>
         </div>
         <div className="experience-list">

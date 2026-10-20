@@ -7,23 +7,31 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { useLenis } from 'lenis/react'
 import { Arrow } from './Icons'
+import { BrandMark } from './Brand'
 
 export default function Header() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const [sound, setSound] = useState(false)
   const audio = useRef<HTMLAudioElement>(null)
   const menu = useRef<HTMLDialogElement>(null)
   const toggle = useRef<HTMLButtonElement>(null)
   const pathname = usePathname()
   const lenis = useLenis()
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 80)
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    return () => window.removeEventListener('scroll', update)
+  }, [])
 
   useGSAP(
     () => {
       if (!open || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
       gsap.fromTo(
         menu.current,
-        { clipPath: 'inset(0 0 100% 0 round 20px)' },
-        { clipPath: 'inset(0 0 0% 0 round 20px)', duration: 0.65, ease: 'power4.inOut' },
+        { clipPath: 'circle(0% at 100% 0%)' },
+        { clipPath: 'circle(150% at 100% 0%)', duration: 0.65, ease: 'power4.inOut' },
       )
       gsap.from('.mobile-nav-link', {
         y: 40,
@@ -81,17 +89,11 @@ export default function Header() {
 
   return (
     <>
-      <header className="site-header">
+      <header className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
         <Link href="/" className="wordmark" aria-label="Akanni home">
-          <svg viewBox="0 0 35 38" aria-hidden="true">
-            <path
-              d="M17.5 0 35 38l-17.5-7L0 38 17.5 0Zm0 13-6 13 6-3 6 3-6-13Z"
-              fill="currentColor"
-              fillRule="evenodd"
-            />
-          </svg>
-          <span>
-            akanni<span className="wordmark-dot">®</span>
+          <BrandMark className="header-brand-mark" />
+          <span className="header-brand-caption">
+            Akanni<span>Creative engineer</span>
           </span>
         </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
@@ -131,8 +133,11 @@ export default function Header() {
             aria-controls="mobile-navigation"
             onClick={() => setOpen(true)}
           >
-            <span />
-            <span />
+            <span className="menu-toggle-label">Menu</span>
+            <span className="menu-toggle-lines">
+              <i />
+              <i />
+            </span>
           </button>
         </div>
       </header>
