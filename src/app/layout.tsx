@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import localFont from 'next/font/local'
 import SiteShell from '@/components/SiteShell'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import SiteFrame from '@/components/SiteFrame'
 import './globals.css'
 
 const machinaFont = localFont({
@@ -132,9 +131,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           Skip to content
         </a>
         <SiteShell>
-          <Header />
-          {children}
-          <Footer />
+          <SiteFrame>{children}</SiteFrame>
         </SiteShell>
       </body>
     </html>

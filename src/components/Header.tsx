@@ -1,25 +1,33 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useLenis } from 'lenis/react'
 import { Arrow } from './Icons'
 import { BrandMark } from './Brand'
 
+gsap.registerPlugin(ScrollTrigger)
+
 export default function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [sound, setSound] = useState(false)
+  const header = useRef<HTMLElement>(null)
   const audio = useRef<HTMLAudioElement>(null)
   const menu = useRef<HTMLDialogElement>(null)
   const toggle = useRef<HTMLButtonElement>(null)
+  const entrance = useRef<gsap.core.Timeline | null>(null)
+  const closing = useRef(false)
   const pathname = usePathname()
+  const router = useRouter()
   const lenis = useLenis()
+
   useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 80)
+    const update = () => setScrolled(window.scrollY > 40)
     update()
     window.addEventListener('scroll', update, { passive: true })
     return () => window.removeEventListener('scroll', update)
@@ -27,43 +35,107 @@ export default function Header() {
 
   useGSAP(
     () => {
-      if (!open || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-      gsap.fromTo(
-        menu.current,
-        { clipPath: 'circle(0% at 100% 0%)' },
-        { clipPath: 'circle(150% at 100% 0%)', duration: 0.65, ease: 'power4.inOut' },
-      )
-      gsap.from('.mobile-nav-link', {
-        y: 40,
-        opacity: 0,
-        stagger: 0.07,
-        duration: 0.6,
-        delay: 0.2,
-        ease: 'power3.out',
+      const media = gsap.matchMedia()
+      media.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo(
+          header.current,
+          {
+            width: '100%',
+            top: 0,
+            height: () => (innerWidth <= 760 ? 88 : 110),
+            paddingLeft: () => (innerWidth <= 760 ? 22 : innerWidth * 0.04),
+            paddingRight: () => (innerWidth <= 760 ? 22 : innerWidth * 0.04),
+            borderRadius: 0,
+          },
+          {
+            width: () => Math.min(innerWidth - 32, 560),
+            top: 16,
+            height: 68,
+            paddingLeft: 18,
+            paddingRight: 18,
+            borderRadius: 10,
+            ease: 'none',
+            scrollTrigger: { start: 40, end: 280, scrub: 0.5, invalidateOnRefresh: true },
+          },
+        )
       })
+      return () => media.revert()
+    },
+    { scope: header },
+  )
+
+  const { contextSafe } = useGSAP(
+    () => {
+      if (!open || !menu.current) return
+      closing.current = false
+      menu.current.showModal()
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      entrance.current = gsap
+        .timeline({ defaults: { ease: 'power4.out' } })
+        .fromTo(
+          '.menu-underlay',
+          { yPercent: 100 },
+          { yPercent: 0, duration: 0.65, ease: 'expo.inOut' },
+          0,
+        )
+        .fromTo(
+          '.menu-sheet',
+          { yPercent: 105, rotation: 2 },
+          { yPercent: 0, rotation: 0, duration: 0.95, ease: 'expo.inOut' },
+          0.08,
+        )
+        .fromTo(
+          '.menu-link-inner',
+          { yPercent: 125, rotation: 5 },
+          { yPercent: 0, rotation: 0, stagger: 0.065, duration: 0.85 },
+          0.48,
+        )
+        .fromTo('.menu-link-rule', { scaleX: 0 }, { scaleX: 1, stagger: 0.065, duration: 0.8 }, 0.6)
+        .fromTo('.menu-chrome', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.65)
     },
     { scope: menu, dependencies: [open], revertOnUpdate: true },
   )
 
-  useEffect(() => {
-    if (open) {
-      menu.current?.showModal()
-      lenis?.stop()
-    } else {
+  const closeMenu = contextSafe((destination?: string) => {
+    if (closing.current) return
+    closing.current = true
+    entrance.current?.kill()
+    const finish = () => {
       menu.current?.close()
-      lenis?.start()
+      setOpen(false)
+      if (destination) router.push(destination)
     }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finish()
+      return
+    }
+    gsap
+      .timeline({ onComplete: finish })
+      .to(
+        '.menu-link-inner',
+        { yPercent: -125, rotation: -3, stagger: 0.035, duration: 0.4, ease: 'power3.in' },
+        0,
+      )
+      .to('.menu-chrome', { opacity: 0, duration: 0.2 }, 0)
+      .to('.menu-sheet', { yPercent: -105, rotation: -1, duration: 0.7, ease: 'expo.inOut' }, 0.15)
+      .to('.menu-underlay', { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, 0.25)
+  })
+
+  useEffect(() => {
+    if (!open) return
+    lenis?.stop()
+    const previousOverflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
     return () => {
+      document.documentElement.style.overflow = previousOverflow
       lenis?.start()
     }
   }, [open, lenis])
 
-  useEffect(
-    () => () => {
-      audio.current?.pause()
-    },
-    [],
-  )
+  useEffect(() => {
+    const element = audio.current
+    return () => element?.pause()
+  }, [])
 
   async function toggleSound() {
     if (!audio.current) return
@@ -84,17 +156,14 @@ export default function Header() {
     { href: '/#work', label: 'Selected work', active: pathname.startsWith('/portfolio') },
     { href: '/#about', label: 'About me', active: false },
     { href: '/gallery', label: 'Visual diary', active: pathname === '/gallery' },
-    { href: '/playground', label: 'Playground', active: pathname === '/playground' },
+    { href: '/playground', label: 'Playground', active: pathname.startsWith('/playground') },
   ]
 
   return (
     <>
-      <header className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
+      <header ref={header} className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
         <Link href="/" className="wordmark" aria-label="Akanni home">
           <BrandMark className="header-brand-mark" />
-          <span className="header-brand-caption">
-            Akanni<span>Creative engineer</span>
-          </span>
         </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
           {links.map((link) => (
@@ -122,9 +191,6 @@ export default function Header() {
             </span>
             <span>Sound {sound ? 'on' : 'off'}</span>
           </button>
-          <Link href="/#contact" className="header-contact">
-            Let’s talk <Arrow />
-          </Link>
           <button
             ref={toggle}
             className="mobile-menu-toggle"
@@ -147,42 +213,99 @@ export default function Header() {
         id="mobile-navigation"
         aria-label="Site navigation"
         className="mobile-navigation"
-        onCancel={() => setOpen(false)}
+        onKeyDown={(event) => {
+          if (event.key !== 'Tab') return
+          const focusable = menu.current?.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled])',
+          )
+          if (!focusable?.length) return
+          const first = focusable[0],
+            last = focusable[focusable.length - 1]
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault()
+            last.focus()
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault()
+            first.focus()
+          }
+        }}
+        onCancel={(event) => {
+          event.preventDefault()
+          closeMenu()
+        }}
         onClose={() => {
           setOpen(false)
           toggle.current?.focus()
         }}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setOpen(false)
-        }}
       >
-        <div className="mobile-menu-top">
-          <span className="eyebrow">A little navigation</span>
-          <button
-            aria-label="Close navigation menu"
-            className="round-button"
-            onClick={() => setOpen(false)}
-          >
-            ×
-          </button>
-        </div>
-        <nav aria-label="Mobile navigation">
-          {[...links, { href: '/#contact', label: 'Let’s talk' }].map((link, i) => (
+        <div className="menu-underlay" aria-hidden="true" />
+        <div className="menu-sheet">
+          <div className="mobile-menu-top menu-chrome">
             <Link
-              key={link.href}
-              className="mobile-nav-link"
-              href={link.href}
-              onClick={() => setOpen(false)}
+              href="/"
+              aria-label="Akanni home"
+              onClick={(event) => {
+                event.preventDefault()
+                closeMenu('/')
+              }}
             >
-              <small>0{i + 1}</small>
-              {link.label}
-              <Arrow />
+              <BrandMark className="menu-brand-mark" />
             </Link>
-          ))}
-        </nav>
-        <a className="mobile-menu-email" href="mailto:akanni@metnov.org">
-          akanni@metnov.org ↗
-        </a>
+            <span className="eyebrow">Index / Explore</span>
+            <button
+              aria-label="Close navigation menu"
+              className="menu-close"
+              onClick={() => closeMenu()}
+            >
+              <span>Close</span>
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div className="menu-body">
+            <div className="menu-aside menu-chrome">
+              <span className="eyebrow">A little navigation</span>
+              <p>
+                Good things
+                <br />
+                are a click away.
+              </p>
+              <span className="menu-aside-note">
+                Independent creative engineer
+                <br />
+                Based in Nigeria. Working everywhere.
+              </span>
+            </div>
+            <nav aria-label="Mobile navigation">
+              {[...links, { href: '/#contact', label: 'Let’s talk' }].map((link, i) => (
+                <Link
+                  key={link.href}
+                  className="mobile-nav-link"
+                  href={link.href}
+                  onClick={(event) => {
+                    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+                    event.preventDefault()
+                    closeMenu(link.href)
+                  }}
+                >
+                  <span className="menu-link-mask">
+                    <span className="menu-link-inner">
+                      <small>0{i + 1}</small>
+                      <span className="menu-link-label">{link.label}</span>
+                      <Arrow />
+                    </span>
+                  </span>
+                  <span className="menu-link-rule" aria-hidden="true" />
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <div className="menu-bottom menu-chrome">
+            <a className="mobile-menu-email" href="mailto:akanni@metnov.org">
+              akanni@metnov.org ↗
+            </a>
+            <span className="eyebrow">Strategy. Craft. Software.</span>
+          </div>
+        </div>
       </dialog>
     </>
   )

@@ -1,0 +1,324 @@
+.experiment-app {
+  --experiment-bg: #f1efe8;
+  --experiment-ink: #252525;
+  --experiment-line: #25252530;
+  background: var(--experiment-bg);
+  color: var(--experiment-ink);
+  min-height: 100dvh;
+  padding: 0 4vw;
+}
+.experiment-app a:focus-visible,
+.experiment-app button:focus-visible,
+.experiment-app input:focus-visible {
+  outline: 2px solid #384d67;
+  outline-offset: 5px;
+}
+.experiment-bar {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--experiment-line);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+.experiment-bar > span {
+  color: #77766e;
+}
+.experiment-heading {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  align-items: end;
+  gap: 6vw;
+  padding: 50px 0 35px;
+}
+.experiment-kicker {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #65645f;
+}
+.experiment-heading h1 {
+  font-size: clamp(42px, 5.8vw, 94px);
+  text-transform: uppercase;
+  letter-spacing: -0.065em;
+  line-height: 1.05;
+  margin-top: 18px;
+}
+.experiment-heading > p {
+  font-size: 16px;
+  color: #65645f;
+  line-height: 1.6;
+  max-width: 400px;
+  padding-bottom: 3px;
+}
+.experiment-instrument {
+  border: 1px solid var(--experiment-line);
+}
+.experiment-stage {
+  height: clamp(340px, 52vh, 720px);
+  position: relative;
+  background: #10151a;
+  overflow: hidden;
+}
+.experiment-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+.canvas-caption,
+.canvas-state {
+  position: absolute;
+  bottom: 20px;
+  padding: 8px 12px;
+  color: #f1efe8;
+  background: #151515a6;
+  font-size: 9px;
+  pointer-events: none;
+  text-transform: uppercase;
+  backdrop-filter: blur(5px);
+}
+.canvas-caption {
+  left: 20px;
+}
+.canvas-state {
+  right: 20px;
+}
+.experiment-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  padding: 25px;
+  background: #e9e6dd;
+}
+.experiment-sliders {
+  display: flex;
+  flex: 1;
+  max-width: 550px;
+  gap: 35px;
+}
+.experiment-sliders label {
+  flex: 1;
+  min-width: 0;
+  font-size: 10px;
+}
+.experiment-sliders label > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.experiment-sliders output {
+  color: #65645f;
+  font-variant-numeric: tabular-nums;
+}
+.experiment-sliders input {
+  width: 100%;
+  accent-color: #252525;
+  margin: 0;
+  height: 20px;
+  cursor: ew-resize;
+}
+.experiment-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.experiment-buttons button {
+  padding: 13px 15px;
+  min-height: 44px;
+  background: transparent;
+  border: 1px solid #25252540;
+  font-size: 10px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.experiment-buttons button:hover {
+  background: #252525;
+  color: #f1efe8;
+}
+.experiment-buttons button:last-child {
+  background: #252525;
+  color: #f1efe8;
+}
+.experiment-help {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+  color: #6a6964;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.experiment-help p {
+  max-width: 680px;
+}
+.experiment-help [role='status'] {
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.experiment-notes {
+  padding: 70px 0 85px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9vw;
+  border-top: 1px solid var(--experiment-line);
+  margin-top: 40px;
+  scroll-margin-top: 30px;
+}
+.experiment-notes h2 {
+  font-size: clamp(32px, 3.4vw, 56px);
+  line-height: 1.1;
+  margin: 24px 0;
+  letter-spacing: -0.06em;
+}
+.experiment-notes p {
+  color: #65645f;
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 580px;
+}
+.experiment-concepts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+.experiment-concepts span {
+  border: 1px solid var(--experiment-line);
+  padding: 9px 12px;
+  font-size: 9px;
+}
+.experiment-code {
+  align-self: center;
+  min-width: 0;
+}
+.experiment-code pre {
+  padding: 25px;
+  background: #e7e4db;
+  border: 1px solid var(--experiment-line);
+  overflow-x: auto;
+  margin: 20px 0;
+  color: #38424e;
+  font-size: 12px;
+  line-height: 1.9;
+  tab-size: 2;
+}
+.experiment-code p {
+  font-size: 12px;
+}
+.experiment-end {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 30px 0;
+  border-top: 1px solid var(--experiment-line);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+@media (max-width: 1000px) {
+  .experiment-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .experiment-sliders {
+    max-width: none;
+  }
+  .experiment-buttons {
+    justify-content: flex-end;
+  }
+  .experiment-heading {
+    gap: 4vw;
+  }
+  .experiment-heading > p {
+    font-size: 14px;
+  }
+}
+@media (max-width: 650px) {
+  .experiment-app {
+    padding: 0 20px;
+  }
+  .experiment-bar {
+    min-height: 65px;
+    font-size: 8px;
+  }
+  .experiment-bar > span {
+    display: none;
+  }
+  .experiment-heading {
+    grid-template-columns: 1fr;
+    padding: 35px 0 25px;
+    gap: 20px;
+  }
+  .experiment-heading h1 {
+    font-size: clamp(35px, 10vw, 60px);
+  }
+  .experiment-heading > p {
+    font-size: 14px;
+  }
+  .experiment-stage {
+    height: 48svh;
+    min-height: 320px;
+  }
+  .canvas-caption,
+  .canvas-state {
+    bottom: 12px;
+    font-size: 7px;
+  }
+  .canvas-caption {
+    left: 12px;
+  }
+  .canvas-state {
+    right: 12px;
+  }
+  .experiment-controls {
+    padding: 20px 15px;
+    gap: 22px;
+  }
+  .experiment-sliders {
+    gap: 25px;
+  }
+  .experiment-sliders label {
+    font-size: 9px;
+  }
+  .experiment-buttons {
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .experiment-buttons button {
+    padding: 10px;
+    font-size: 8px;
+    flex: 1;
+  }
+  .experiment-help {
+    flex-direction: column;
+    gap: 5px;
+    font-size: 11px;
+  }
+  .experiment-notes {
+    padding: 40px 0 50px;
+    margin-top: 20px;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .experiment-notes h2 {
+    font-size: 34px;
+  }
+  .experiment-notes p {
+    font-size: 14px;
+  }
+  .experiment-code pre {
+    padding: 18px;
+    font-size: 10px;
+  }
+  .experiment-end {
+    flex-direction: column;
+    gap: 20px;
+    font-size: 9px;
+  }
+}

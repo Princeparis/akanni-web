@@ -15,8 +15,8 @@ export default function PlaygroundPage() {
           <em>play.</em>
         </h1>
         <p>
-          I believe in continuous learning and exploring new technologies. Here’s a little space to
-          try things, turn things, and see what happens.
+          Independent creative coding studies. Explore a vector field, get lost in optical
+          interference, or disturb a spring system. Open an experiment and make it your own.
         </p>
       </div>
       <Playground />

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { experiments } from '@/data/experiments'
 import { projects } from '@/data/projects'
 export default function sitemap(): MetadataRoute.Sitemap {
   const origin = process.env.NEXT_PUBLIC_SITE_URL
@@ -8,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/portfolio',
     '/gallery',
     '/playground',
+    ...experiments.map((experiment) => `/playground/${experiment.slug}`),
     ...projects.map((p) => `/portfolio/${p.slug}`),
   ].map((path) => ({
     url: `${origin.replace(/\/$/, '')}${path}`,

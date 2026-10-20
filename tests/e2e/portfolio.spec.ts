@@ -161,18 +161,23 @@ test('responsive layouts fit the viewport and reduced motion keeps content avail
   }
 })
 
-test('blog, CMS, and API routes are removed; the playground works', async ({ page, request }) => {
+test('blog, CMS, and API routes are removed; the playground links to independent studies', async ({
+  page,
+  request,
+}) => {
   for (const path of ['/admin', '/journal', '/api/journals', '/api/graphql']) {
     const response = await request.get(path)
     expect(response.status(), path).toBe(404)
   }
   await page.goto('/playground')
-  await page.getByRole('button', { name: 'Switch between craft and code' }).click()
-  await expect(page.getByRole('button', { name: 'Switch between craft and code' })).toHaveText(
-    'Code.',
-  )
-  await page.getByRole('button', { name: 'Spin the asterisk' }).click()
-  await expect(page.getByRole('button', { name: 'Spin the asterisk' })).toBeVisible()
+  for (const title of ['Field notes', 'Between the lines', 'Soft systems']) {
+    await expect(page.getByRole('link', { name: new RegExp(title) })).toBeVisible()
+  }
+  await page.getByRole('link', { name: /Field notes/ }).click()
+  await expect(page).toHaveURL('/playground/flow-field')
+  await expect(page.getByRole('heading', { name: 'Field notes', exact: true })).toBeVisible()
+  await expect(page.locator('.site-header')).toHaveCount(0)
+  await expect(page.locator('.site-footer')).toHaveCount(0)
 })
 
 test('sound and contact controls reflect their real state', async ({ page, context }) => {

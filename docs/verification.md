@@ -22,3 +22,13 @@ The Docker configuration is updated but a container image was not built during t
 - Production build, TypeScript, and ESLint checks passed. Twelve browser tests passed, including intro playback/skip/reduced motion, desktop project scrolling, and mobile fallback.
 - A browser screencast of the intro, hero, work sequence, navigation, and footer is saved as `artifacts/revision/motion.mp4` (16.8 seconds). Static desktop/mobile captures are in the same ignored directory.
 - The CMS removal and security patches remain intact.
+
+## Focused navigation and playground refinements
+
+- Next.js production build: passed, with all 19 static pages generated, including the three experiment routes.
+- Standalone ESLint and TypeScript checks: passed.
+- Production Chromium suite: all 18 tests passed. New coverage verifies progressive header contraction/expansion; drawer early dismissal, exit, keyboard focus, and scroll locking; interactive canvas controls, pause stability, inversion, and real PNG downloads.
+- Experiments render without the portfolio header/footer. Reduced-motion canvases remain static until explicitly played. Viewport checks passed at 320, 768, and 1440px, alongside the existing portfolio responsive checks.
+- The existing video, branded intro, original vector viewboxes, project scroll sequence, local project navigation, archive filters, gallery, music, clipboard, and removed CMS routes still pass their browser checks.
+- The original footer surface remains `#d9fe62`; original font files and vector geometry are unchanged. No runtime dependencies were added.
+- Review captures are saved locally in ignored `artifacts/focused/`, including the desktop/mobile drawer, compact header, playground index, and all three experiment screens. `navigation-and-flow.mp4` records the actual browser animations.
