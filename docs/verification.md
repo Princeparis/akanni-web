@@ -32,3 +32,12 @@ The Docker configuration is updated but a container image was not built during t
 - The existing video, branded intro, original vector viewboxes, project scroll sequence, local project navigation, archive filters, gallery, music, clipboard, and removed CMS routes still pass their browser checks.
 - The original footer surface remains `#d9fe62`; original font files and vector geometry are unchanged. No runtime dependencies were added.
 - Review captures are saved locally in ignored `artifacts/focused/`, including the desktop/mobile drawer, compact header, playground index, and all three experiment screens. `navigation-and-flow.mp4` records the actual browser animations.
+
+## Kinetic loader revision
+
+- Production build, standalone TypeScript, and ESLint: passed. All 22 Chromium tests passed against the production server.
+- New interaction checks cover keyboard hold/release, live sculpture movement during a paused sequence, touch drag/release, skip while held, session replay suppression, and changing reduced-motion preference during playback.
+- Loader control checks passed at 320×568, 390×844, 768×1024, 1440×1000, and 844×390. The small-phone artwork interaction area cannot cover the skip or explore controls.
+- Existing homepage, video, navigation, projects, gallery, playground, contact controls, and retired CMS checks remain passing.
+- The original local fonts and SVG artwork are unchanged. No runtime packages were added. Previous loader styles were removed from the global stylesheet; replacement styles are scoped under the portal loader.
+- Desktop/mobile screenshots and an actual 9.4-second browser recording are saved locally under ignored `artifacts/loader/`.

@@ -10,7 +10,7 @@ The first redesign moved too far from the original site's identity. This revisio
 
 ## Interaction direction
 
-- A branded counter, name reveal, center divider, and opposing curtain wipe introduce the site. It plays once per tab session, can be skipped, and yields immediately for reduced motion.
+- An interactive monochrome wire sculpture introduces the site. A GSAP timeline assembles its contours, rolls masked typography, advances a sequence counter, then opens a circular aperture onto the existing hero. Pointer movement turns the form; holding slows its rotation and pauses the sequence. It plays once per tab session, can be skipped, and yields immediately for reduced motion.
 - Hero typography follows the intro through masked, staggered GSAP entrances; the video eases from a close crop and parallax follows scrolling.
 - Desktop selected work is a pinned horizontal sequence, with image parallax synchronized to the rail and a progress indicator. Touch layouts and reduced-motion users receive a normal project grid/stack.
 - Body text uses GSAP SplitText line masking with automatic re-splitting. Vector logo paths reveal in sequence at the footer. Navigation uses a layered sheet entrance, masked and staggered links, drawn rules, and a choreographed exit.
