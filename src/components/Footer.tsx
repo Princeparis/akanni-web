@@ -15,9 +15,9 @@ export default function Footer() {
     () => {
       const media = gsap.matchMedia()
       media.add('(prefers-reduced-motion: no-preference)', () => {
-        const paths = logo.current?.querySelectorAll('path')
-        if (paths)
-          gsap.from(paths, {
+        const shapes = logo.current?.querySelectorAll('path, rect')
+        if (shapes)
+          gsap.from(shapes, {
             y: 100,
             opacity: 0,
             stagger: 0.09,
@@ -78,8 +78,8 @@ export default function Footer() {
           </span>
         </div>
       </div>
-      <Link href="/" ref={logo} className="footer-brand" aria-label="Akanni home">
-        <BrandWordmark className="footer-original-wordmark" />
+      <Link href="/" ref={logo} className="footer-brand" aria-label="Rayab home">
+        <BrandWordmark className="footer-brand-wordmark" />
       </Link>
       <div className="footer-bottom">
         <div className="footer-socials">

@@ -225,7 +225,7 @@ summary::-webkit-details-marker {
 .header-brand-mark {
   height: 42px;
   width: 42px;
-  color: var(--ink);
+  color: #f4f4f2;
 }
 .desktop-nav {
   position: absolute;
@@ -376,6 +376,7 @@ summary::-webkit-details-marker {
   width: 38px;
   height: 38px;
   display: block;
+  --brand-accent: currentColor;
 }
 .menu-close {
   display: flex;
@@ -1212,7 +1213,7 @@ summary::-webkit-details-marker {
   color: var(--muted);
   line-height: 1.7;
 }
-/* The full original vector wordmark returns as the final visual signature. */
+/* The Rayab wordmark becomes the final signature on the existing lime surface. */
 .site-footer {
   padding: 50px 4vw 28px;
   background: var(--blue);
@@ -1299,12 +1300,13 @@ summary::-webkit-details-marker {
   border-top: 1px solid #10110c44;
   padding-top: 35px;
 }
-.footer-original-wordmark {
+.footer-brand-wordmark {
   width: 100%;
   height: auto;
   color: #10110c;
   display: block;
   overflow: visible;
+  --brand-accent: currentColor;
 }
 .footer-bottom {
   display: flex;

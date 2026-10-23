@@ -60,3 +60,11 @@ The Docker configuration is updated but a container image was not built during t
 - Three.js is the only new runtime package. Its studio environment is generated locally and both projects load dynamically for their own routes. New collection previews are optimized captures of the running scenes.
 - Final desktop/mobile production captures are saved locally under ignored `artifacts/immersive/`. Physical-device, Safari/Firefox, and Vercel deployment checks are outside this verification.
 - Final polish: five targeted production tests passed again after correcting overlapping live-edit/beat transforms and replacing the two previews with clean drawing-buffer captures. The new assertion checks that edited keys settle upright and every key returns to rest when playback stops.
+
+## Rayab logo replacement — 23 October 2026
+
+- Replaced the shared symbol and footer signature with the owner's supplied Rayab icon and wordmark. All three original SVG masters match the uploaded ZIP byte-for-byte, and displayed path data and accent coordinates match the masters exactly.
+- Production build generated 27 static pages successfully. Standalone ESLint and TypeScript checks passed.
+- All 22 production Chromium tests covering the portfolio, loader, navigation, and original studies passed. Updated identity assertions verify the new icon and wordmark while the existing navbar contraction, drawer, and loader interactions remain covered.
+- Browser review verified the header's white/lime treatment, the footer's dark wordmark, correct aspect ratio, new favicon metadata, and zero horizontal overflow at 1440px and 390px. No uncaught browser errors were reported.
+- Desktop/mobile header, menu, footer, and loader captures are stored locally under ignored `artifacts/rayab/`. The original fonts, playground tools, and written portfolio content are unchanged.

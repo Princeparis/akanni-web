@@ -118,7 +118,7 @@ export const metadata: Metadata = {
     description: 'Creative by nature. Engineer by craft.',
     ...(siteUrl ? { images: ['/images/akanni-web.jpg'] } : {}),
   },
-  icons: { icon: '/favicon.svg', apple: '/akanni-apple-touch.png' },
+  icons: { icon: '/brand/rayab/favicon.svg', apple: '/brand/rayab/apple-touch-icon.png' },
 }
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

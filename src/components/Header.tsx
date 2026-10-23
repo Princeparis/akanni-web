@@ -162,7 +162,7 @@ export default function Header() {
   return (
     <>
       <header ref={header} className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
-        <Link href="/" className="wordmark" aria-label="Akanni home">
+        <Link href="/" className="wordmark" aria-label="Rayab home">
           <BrandMark className="header-brand-mark" />
         </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
@@ -243,7 +243,7 @@ export default function Header() {
           <div className="mobile-menu-top menu-chrome">
             <Link
               href="/"
-              aria-label="Akanni home"
+              aria-label="Rayab home"
               onClick={(event) => {
                 event.preventDefault()
                 closeMenu('/')

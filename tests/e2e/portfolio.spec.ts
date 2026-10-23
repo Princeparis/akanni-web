@@ -6,19 +6,20 @@ test.beforeEach(async ({ page }, testInfo) => {
   }
 })
 
-test('branded intro plays, releases the page, and retains the original SVG identity', async ({
+test('branded intro plays, releases the page, and uses the supplied Rayab SVG identity', async ({
   page,
 }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   const intro = page.getByTestId('brand-intro')
   await expect(intro).toBeVisible()
-  await expect(intro.locator('.intro-mark')).toHaveAttribute('viewBox', '0 0 387.19 386.84')
+  await expect(intro.locator('.intro-mark')).toHaveAttribute('viewBox', '160 64 288 384')
+  await expect(intro.locator('.intro-mark')).toHaveAttribute('data-brand', 'rayab')
   await expect(page.locator('.site-content')).toHaveAttribute('inert', '')
   await expect(intro).not.toBeVisible({ timeout: 10_000 })
   await expect(page.locator('.site-content')).not.toHaveAttribute('inert', '')
   await expect(page.getByRole('heading', { name: 'Creative Engineer' })).toBeVisible()
-  await expect(page.locator('.header-brand-mark')).toHaveAttribute('viewBox', '0 0 387.19 386.84')
-  await expect(page.locator('.footer-original-wordmark')).toHaveAttribute('viewBox', '0 0 1512 292')
+  await expect(page.locator('.header-brand-mark')).toHaveAttribute('viewBox', '160 64 288 384')
+  await expect(page.locator('.footer-brand-wordmark')).toHaveAttribute('viewBox', '80 120 1494 280')
   expect(await page.locator('h1').evaluate((e) => getComputedStyle(e).fontFamily)).toMatch(
     /machina/i,
   )

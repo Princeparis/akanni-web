@@ -4,13 +4,13 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('akanni-intro-seen', 'true'))
 })
 
-test('header shrinks with scrolling and expands at the top, retaining only the original icon', async ({
+test('header shrinks with scrolling and expands at the top, retaining only the Rayab icon', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
   await page.goto('/')
   const header = page.locator('.site-header')
-  await expect(header.getByRole('link', { name: 'Akanni home' })).toHaveText('')
+  await expect(header.getByRole('link', { name: 'Rayab home' })).toHaveText('')
   expect((await header.boundingBox())!.width).toBe(1440)
   await page.evaluate(() => window.scrollTo(0, 160))
   await expect.poll(async () => (await header.boundingBox())!.width).toBeLessThan(1200)
@@ -47,7 +47,7 @@ test('drawer animates its entrance and exit, traps focus, and recovers from earl
         .evaluate((element) => Math.round(new DOMMatrix(getComputedStyle(element).transform).m42)),
     )
     .toBe(0)
-  await menu.getByRole('link', { name: 'Akanni home', exact: true }).focus()
+  await menu.getByRole('link', { name: 'Rayab home', exact: true }).focus()
   await page.keyboard.press('Shift+Tab')
   expect(await menu.evaluate((element) => element.contains(document.activeElement))).toBe(true)
   await expect(page.locator('html')).toHaveCSS('overflow', 'hidden')

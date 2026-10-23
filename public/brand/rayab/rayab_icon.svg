@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .w{fill:#f4f4f2}
+      .g{fill:#dfff17}
+    </style>
+  </defs>
+  <path class="w" fill-rule="evenodd" d="M176 64h96v170c18-52 77-90 150-90h26v96h-86c-45 0-77 10-96 29-19 19-28 49-28 90v89h-62V360h-16V64Zm38 320h26v64h-26z"/>
+  <rect class="g" x="240" y="384" width="34" height="34"/>
+</svg>
