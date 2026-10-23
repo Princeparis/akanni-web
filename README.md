@@ -27,7 +27,8 @@ Install Playwright Chromium with `corepack pnpm@9.8.0 exec playwright install ch
 - `src/data/projects.ts`: project artwork, descriptions, categories, and services.
 - `src/data/about.ts`: existing biography and experience content.
 - `src/app/globals.css`: shared responsive design system.
-- `src/data/tools.ts`: the six practical playground tools; `src/data/experiments.ts`: original visual studies.
+- `src/data/tools.ts`: six practical tools; `src/data/immersive.ts`: Matter and Pulse; `src/data/experiments.ts`: earlier visual studies.
+- `src/components/immersive/`: independent Three.js/GSAP sculpture studio and Web Audio rhythm instrument. See `docs/immersive-playground.md` for controls, rendering, and exports.
 - `src/data/gallery.ts`: original frames and generated editorial studies.
 - `public/`: original fonts, project artwork, photography, video, music, and résumé; new gallery assets are in `public/assets/generated/`.
 - `docs/design-direction.md`: research sources and visual/interaction decisions.

@@ -50,3 +50,12 @@ The Docker configuration is updated but a container image was not built during t
 - Practical tools fit 320, 768, and 1440px viewports with reduced motion. Existing homepage/video, loader interaction, navigation, project/experiment flows, gallery keyboard/focus, clipboard/music, and retired CMS route checks also pass.
 - Original font binaries and original gallery image files are unchanged. Generated gallery additions are optimized WebP files with descriptive alternative text and generated-study labels. No runtime packages were added.
 - Desktop/mobile production captures and an actual browser recording are saved locally under ignored `artifacts/practical/`. Capturing the interactive flows reported no uncaught browser errors.
+
+## Matter and Pulse — two additional projects
+
+- Next.js production build passed with 27 static pages, including `/playground/matter` and `/playground/pulse`. Standalone ESLint and TypeScript passed.
+- Full production Chromium suite: 40 tests passed. New checks cover rendered nonblank PNG export, shape/material/light/camera controls, pointer orbit, WebGL context loss and Retry, audio synthesis and step editing, keyboard step navigation, actual stereo PCM samples/duration, silent WAV export, mute/transport, and closing audio on route exit.
+- Both instruments fit 320, 390, 768, and 1440px with reduced motion. Phone sequencers use two rows of eight steps per voice; WebGL-disabled browsers retain the working audio sequencer and a clear sculpture fallback.
+- The original six utilities and their shared shell/content are unchanged, as are homepage, loader, header/footer, fonts, SVGs, and gallery. The collection now features six utilities plus the two new projects; all three earlier studies remain linked separately.
+- Three.js is the only new runtime package. Its studio environment is generated locally and both projects load dynamically for their own routes. New collection previews are optimized captures of the running scenes.
+- Final desktop/mobile production captures are saved locally under ignored `artifacts/immersive/`. Physical-device, Safari/Firefox, and Vercel deployment checks are outside this verification.

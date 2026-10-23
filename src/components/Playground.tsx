@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { tools } from '@/data/tools'
+import { immersive } from '@/data/immersive'
 import { experiments } from '@/data/experiments'
 import { Arrow } from './Icons'
 
@@ -55,6 +57,31 @@ function Preview({ kind }: { kind: string }) {
 
 function ToolPreview({ kind }: { kind: string }) {
   if (kind === 'flow-field' || kind === 'moire') return <Preview kind={kind} />
+  if (kind === 'matter' || kind === 'pulse')
+    return (
+      <div className={`immersive-card-preview preview-${kind}`} aria-hidden="true">
+        <Image
+          src={`/assets/playground/${kind}-preview.webp`}
+          alt=""
+          fill
+          sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw"
+        />
+        <span>
+          {kind === 'matter'
+            ? 'A study in light, form & feeling'
+            : 'Four voices. Infinite detours.'}
+        </span>
+        <strong>
+          {kind === 'matter' ? 'Matter' : 'Pulse'}
+          <i>↗</i>
+        </strong>
+        <small>
+          {kind === 'matter'
+            ? 'Real-time 3D / Shape. Light. Capture.'
+            : 'Audiovisual / Compose. Play. Export.'}
+        </small>
+      </div>
+    )
   return (
     <div className={`tool-card-preview preview-${kind}`} aria-hidden="true">
       {kind === 'calculator' && (
@@ -160,7 +187,7 @@ function ToolPreview({ kind }: { kind: string }) {
   )
 }
 
-const featured = [...tools, ...experiments.slice(0, 2)]
+const featured = [...tools, ...immersive]
 
 export default function Playground() {
   return (
@@ -194,9 +221,18 @@ export default function Playground() {
         ))}
       </div>
       <p className="experiment-index-note">
-        Six useful instruments. Two visual detours. Every experience runs in your browser, with
-        nothing to sign up for. Bring a little curiosity. Take something useful away.
+        Eight independent instruments. Every experience runs in your browser, with nothing to sign
+        up for. Bring a little curiosity. Take something useful away.
       </p>
+      <nav className="experiment-archive" aria-label="Earlier visual studies">
+        <span className="eyebrow">From the sketchbook</span>
+        {experiments.map((experiment) => (
+          <Link key={experiment.slug} href={`/playground/${experiment.slug}`}>
+            {experiment.title}
+            <span>↗</span>
+          </Link>
+        ))}
+      </nav>
     </section>
   )
 }

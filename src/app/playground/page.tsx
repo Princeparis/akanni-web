@@ -15,8 +15,8 @@ export default function PlaygroundPage() {
           <em>play.</em>
         </h1>
         <p>
-          Useful tools. Unexpected interactions. Calculate, build a palette, find a type scale,
-          focus, frame an image, or shape a movement. Eight small experiments, made to be used.
+          Useful tools. Unexpected interactions. From a precise little calculator to a sculpture you
+          can shape and a rhythm you can see. Eight independent projects, made to be used.
         </p>
       </div>
       <Playground />

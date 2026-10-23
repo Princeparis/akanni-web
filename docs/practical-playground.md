@@ -1,6 +1,6 @@
 # Practical creative tools
 
-The playground features eight experiences: six new utilities, Field Notes, and Between the Lines. The original Spring Grid route remains available, so existing links keep working.
+The six utilities below are preserved. The eight-project collection now adds Matter and Pulse as projects 07 and 08; Field Notes, Between the Lines, and Soft Systems remain linked separately under “From the sketchbook.” See `immersive-playground.md` for the two new projects.
 
 | Tool       | Working features                                                                                                                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

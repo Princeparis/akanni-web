@@ -1,0 +1,1382 @@
+/* Two independent instruments. Original local typefaces, distinct visual worlds. */
+.immersive-loading {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  background: #e9e7e1;
+  color: #292923;
+  font-size: 13px;
+}
+.immersive-loading.is-dark {
+  background: #0c100e;
+  color: #c4f77c;
+}
+.immersive-app {
+  --studio-line: #c9c7bf;
+  --studio-muted: #66665e;
+  min-height: 100svh;
+  padding: 0 4.3vw;
+  font-family: var(--font-machina), sans-serif;
+}
+.immersive-app :where(button, input, select) {
+  font: inherit;
+}
+.immersive-app button {
+  background: transparent;
+}
+.immersive-app button:disabled,
+.immersive-app fieldset:disabled {
+  cursor: default;
+  opacity: 0.42;
+}
+.immersive-app fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.immersive-app button:focus-visible,
+.immersive-app a:focus-visible,
+.immersive-app input:focus-visible,
+.immersive-app select:focus-visible,
+.immersive-app canvas:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+.immersive-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--studio-line);
+  font-size: 11px;
+  letter-spacing: -0.01em;
+}
+.immersive-nav > span {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--studio-muted);
+}
+.immersive-nav a {
+  padding: 8px 0;
+}
+.immersive-nav a:last-child {
+  text-align: right;
+}
+.immersive-eyebrow {
+  display: block;
+  font-size: 9px;
+  line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+.immersive-status {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-montreal), sans-serif;
+  font-size: 12px;
+  color: var(--studio-muted);
+  padding: 15px 0;
+  line-height: 1.5;
+}
+.immersive-notes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9vw;
+  border-top: 1px solid var(--studio-line);
+  padding: 75px 0 85px;
+}
+.immersive-notes h2 {
+  font-size: clamp(36px, 4.6vw, 66px);
+  text-transform: none;
+  margin-top: 30px;
+  line-height: 1.04;
+}
+.immersive-notes p {
+  font-size: 16px;
+  line-height: 1.65;
+  margin-bottom: 20px;
+  color: var(--studio-muted);
+  max-width: 560px;
+}
+.immersive-notes a {
+  display: inline-block;
+  font-size: 11px;
+  border-bottom: 1px solid currentColor;
+  padding: 10px 0;
+  margin-top: 12px;
+}
+.live-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 7px;
+  vertical-align: 1px;
+}
+
+/* MATTER — an open, warm photographic studio. */
+.matter-app {
+  color: #292923;
+  background: #e9e7e1;
+}
+.matter-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  padding: 42px 0 22px;
+}
+.matter-heading > div:first-child {
+  min-width: 0;
+}
+.matter-heading .immersive-eyebrow {
+  color: var(--studio-muted);
+}
+.matter-title {
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  margin: 13px 0 -16px -8px;
+  font-size: clamp(100px, 14.2vw, 214px);
+  line-height: 1.1;
+  letter-spacing: -0.09em;
+}
+.matter-title span {
+  display: block;
+}
+.matter-title sup {
+  font-size: 16px;
+  letter-spacing: 0;
+  padding: 0.9em 0 0 1.2em;
+}
+.matter-intro {
+  padding: 0 0 13px;
+  flex: 0 1 285px;
+}
+.matter-intro p {
+  font-family: var(--font-machina), sans-serif;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: -0.06em;
+  margin: 14px 0;
+}
+.matter-symbol {
+  font-size: 39px;
+  display: block;
+  line-height: 1;
+}
+.matter-symbol svg {
+  display: block;
+  width: 39px;
+  height: 39px;
+}
+.matter-intro .immersive-eyebrow {
+  font-size: 8px;
+  letter-spacing: 0.02em;
+}
+.matter-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 278px;
+  gap: 28px;
+  padding: 25px 0 0;
+  border-top: 1px solid var(--studio-line);
+}
+.matter-stage {
+  position: relative;
+  height: 636px;
+  min-width: 0;
+  isolation: isolate;
+}
+.matter-render-host {
+  position: absolute;
+  inset: 0;
+}
+.matter-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+.matter-canvas:active {
+  cursor: grabbing;
+}
+.matter-stage-label {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  pointer-events: none;
+}
+.matter-specimen {
+  position: absolute;
+  top: 31px;
+  left: 0;
+  font-size: 8px;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  color: var(--studio-muted);
+  pointer-events: none;
+}
+.matter-stage-bottom {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+.matter-stage-bottom p {
+  font-size: 10px;
+  color: var(--studio-muted);
+}
+.matter-view-actions {
+  display: flex;
+  gap: 5px;
+  pointer-events: auto;
+}
+.matter-view-actions button {
+  width: 35px;
+  height: 35px;
+  border: 1px solid var(--studio-line);
+  border-radius: 50%;
+  font-size: 18px;
+  background: #e9e7e1cf;
+}
+.matter-view-actions button:hover {
+  background: #292923;
+  color: #e9e7e1;
+}
+.matter-orientation {
+  position: absolute;
+  right: 20px;
+  bottom: 83px;
+  font-size: 7px;
+  width: 33px;
+  height: 45px;
+  pointer-events: none;
+}
+.matter-orientation::before,
+.matter-orientation::after,
+.matter-orientation i {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 26px;
+  background: #96968d;
+  top: 8px;
+  left: 14px;
+  transform-origin: bottom;
+}
+.matter-orientation::after {
+  transform: rotate(122deg);
+  height: 22px;
+  top: 12px;
+}
+.matter-orientation i {
+  transform: rotate(-105deg);
+  height: 20px;
+  top: 14px;
+}
+.matter-orientation > span {
+  position: absolute;
+  left: 37px;
+  top: 37px;
+}
+.matter-orientation > b {
+  position: absolute;
+  left: -13px;
+  top: 37px;
+  font-weight: 400;
+}
+.matter-stage-message {
+  position: absolute;
+  inset: 70px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  background: #e9e7e1;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.matter-stage-message button {
+  padding: 15px;
+  border: 1px solid currentColor;
+}
+.matter-controls {
+  border-left: 1px solid var(--studio-line);
+  padding-left: 27px;
+}
+.matter-control-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.matter-control-heading > span:last-child {
+  font-size: 26px;
+  line-height: 1;
+}
+.matter-controls fieldset {
+  margin-bottom: 25px;
+}
+.matter-controls legend {
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  font-size: 10px;
+  margin-bottom: 13px;
+}
+.matter-controls legend > span {
+  font-size: 8px;
+  color: var(--studio-muted);
+}
+.matter-form-options {
+  display: flex;
+  gap: 6px;
+}
+.matter-form-options button {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--studio-line);
+  border-radius: 3px;
+  padding: 12px 4px 9px;
+  font-size: 9px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.matter-form-options button > span {
+  display: block;
+  font-size: 27px;
+  height: 36px;
+  line-height: 1;
+}
+.matter-form-options button > span svg {
+  display: block;
+  width: 26px;
+  height: 26px;
+  margin: 0 auto;
+}
+.matter-form-options button[aria-pressed='true'] {
+  background: #292923;
+  color: #f1efe8;
+  border-color: #292923;
+}
+.matter-finish-options {
+  display: grid;
+  gap: 5px;
+}
+.matter-finish-options button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0;
+  text-align: left;
+  gap: 10px;
+  font-size: 10px;
+}
+.matter-finish-options button > i {
+  display: block;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 1px solid #3332;
+}
+.finish-chrome {
+  background: conic-gradient(from -30deg, #555e62, #f6f6f1, #6a7579, #b8beba, #fff, #555e62);
+}
+.finish-terracotta {
+  background: radial-gradient(circle at 33% 25%, #e8a17b, #b6603d 60%, #6f321d);
+}
+.finish-porcelain {
+  background: radial-gradient(circle at 30% 25%, #fffdf5, #dfd9c9 65%, #aaa393);
+}
+.matter-finish-options button > b {
+  font-size: 12px;
+  margin-left: auto;
+  font-weight: 400;
+}
+.matter-tuning label {
+  display: block;
+  margin-bottom: 13px;
+}
+.matter-tuning label:last-child {
+  margin-bottom: 0;
+}
+.matter-tuning label > span {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--studio-muted);
+  margin-bottom: 4px;
+}
+.matter-tuning output {
+  color: #292923;
+}
+.matter-app input[type='range'] {
+  width: 100%;
+  display: block;
+  height: 19px;
+  margin: 0;
+  accent-color: #292923;
+  cursor: ew-resize;
+}
+.matter-camera-options {
+  display: flex;
+  border: 1px solid var(--studio-line);
+  border-radius: 3px;
+  padding: 3px;
+  gap: 3px;
+}
+.matter-camera-options button {
+  padding: 9px 3px;
+  font-size: 8px;
+  flex: 1;
+  border-radius: 2px;
+}
+.matter-camera-options button[aria-pressed='true'] {
+  background: #d4d2ca;
+}
+.matter-rotation {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0 0;
+  font-size: 9px;
+}
+.matter-rotation > i {
+  width: 21px;
+  height: 12px;
+  border: 1px solid #aaa89e;
+  border-radius: 20px;
+  position: relative;
+}
+.matter-rotation > i::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 6px;
+  height: 6px;
+  background: #77766a;
+  border-radius: 50%;
+}
+.matter-rotation[aria-pressed='true'] > i {
+  background: #292923;
+  border-color: #292923;
+}
+.matter-rotation[aria-pressed='true'] > i::after {
+  left: 11px;
+  background: #e9e7e1;
+}
+.matter-controls .matter-export {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: #292923;
+  color: #f4f1e9;
+  border-radius: 3px;
+  padding: 18px 12px;
+  font-size: 9px;
+}
+.matter-export > span {
+  font-size: 8px;
+  color: #c8c6bb;
+}
+.matter-export:hover {
+  background: #44443b;
+}
+.matter-notes {
+  margin-top: 15px;
+}
+
+/* PULSE — a tactile rhythm deck below a living particle sculpture. */
+.pulse-app {
+  --studio-line: #30382f;
+  --studio-muted: #a2ac9f;
+  background: #0c100e;
+  color: #edf1e6;
+  --pulse-accent: #c4f77c;
+}
+.pulse-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 38px;
+  gap: 25px;
+}
+.pulse-heading .immersive-eyebrow {
+  color: var(--studio-muted);
+}
+.pulse-title {
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  font-size: clamp(100px, 14.1vw, 210px);
+  line-height: 1.14;
+  letter-spacing: -0.095em;
+  margin-left: -7px;
+  margin-bottom: -15px;
+}
+.pulse-title > span {
+  display: block;
+}
+.pulse-title > i {
+  font-style: normal;
+  color: var(--pulse-accent);
+  font-size: 0.24em;
+  margin: 0 0 0.4em 0.35em;
+  letter-spacing: 0;
+}
+.pulse-description {
+  padding-bottom: 12px;
+  max-width: 285px;
+}
+.pulse-description p {
+  font-family: var(--font-machina), sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.055em;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+.pulse-description .immersive-eyebrow {
+  font-size: 8px;
+  letter-spacing: 0.02em;
+}
+.pulse-visual {
+  position: relative;
+  height: 360px;
+  margin-top: 20px;
+  border-top: 1px solid var(--studio-line);
+  overflow: hidden;
+}
+.pulse-render-host {
+  position: absolute;
+  inset: -50px 0 -60px;
+  cursor: crosshair;
+}
+.pulse-render-host canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.pulse-visual-label {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  font-size: 8px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.pulse-visual-label > small {
+  display: block;
+  font-size: 8px;
+  color: var(--studio-muted);
+  text-transform: none;
+  margin-top: 7px;
+  letter-spacing: 0;
+}
+.pulse-visual-label .live-dot {
+  color: #65715f;
+}
+.pulse-visual-label .live-dot.is-playing {
+  color: var(--pulse-accent);
+  box-shadow: 0 0 12px #c4f77c70;
+}
+.pulse-visual-counter {
+  position: absolute;
+  right: 0;
+  top: 22px;
+  color: #788571;
+  font-size: 10px;
+}
+.pulse-visual-counter > span {
+  color: var(--pulse-accent);
+  font-size: 18px;
+}
+.pulse-shape-picker {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  display: flex;
+  gap: 5px;
+}
+.pulse-shape-picker button {
+  border: 1px solid var(--studio-line);
+  border-radius: 20px;
+  font-size: 8px;
+  padding: 8px 13px;
+  color: var(--studio-muted);
+  background: #0c100ebd;
+}
+.pulse-shape-picker button[aria-pressed='true'] {
+  border-color: #a6bf8e;
+  color: #d5f5af;
+}
+.pulse-shape-picker button:last-child {
+  border-radius: 50%;
+  padding: 8px 12px;
+}
+.pulse-visual-signature {
+  position: absolute;
+  bottom: 25px;
+  right: 0;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: var(--studio-muted);
+}
+.pulse-visual-fallback {
+  position: absolute;
+  inset: 20px 15px 65px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: #0c100e;
+  pointer-events: none;
+}
+.pulse-visual-fallback > span {
+  color: var(--pulse-accent);
+  font-size: 110px;
+  line-height: 1;
+}
+.pulse-visual-fallback p {
+  color: var(--studio-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.pulse-deck {
+  background: #131a15;
+  border: 1px solid #323e30;
+  border-radius: 6px;
+  padding: 24px;
+  position: relative;
+}
+.pulse-transport {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--studio-line);
+}
+.pulse-transport .pulse-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 18px 20px;
+  font-size: 11px;
+  color: #15200e;
+  background: var(--pulse-accent);
+  border-radius: 3px;
+  min-width: 165px;
+}
+.pulse-play:hover {
+  background: #ddffb1;
+}
+.pulse-play > span {
+  font-size: 14px;
+}
+.pulse-play > svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.pulse-tempo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pulse-tempo > span {
+  font-size: 8px;
+  color: var(--studio-muted);
+}
+.pulse-tempo input {
+  width: 65px;
+  border: 0;
+  border-bottom: 1px solid #55614d;
+  color: #edf1e6;
+  padding: 7px 0;
+  font-size: 21px;
+  background: transparent;
+  border-radius: 0;
+}
+.pulse-volume {
+  min-width: 95px;
+  max-width: 145px;
+  flex: 1;
+}
+.pulse-volume > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 8px;
+  color: var(--studio-muted);
+}
+.pulse-volume input {
+  display: block;
+  width: 100%;
+  height: 23px;
+  margin: 3px 0 0;
+  accent-color: var(--pulse-accent);
+}
+.pulse-preset {
+  display: block;
+  margin-left: auto;
+}
+.pulse-preset > span {
+  display: block;
+  font-size: 8px;
+  color: var(--studio-muted);
+  margin-bottom: 7px;
+}
+.pulse-preset select {
+  display: block;
+  background: #131a15;
+  color: #edf1e6;
+  border: 0;
+  padding: 4px 10px 4px 0;
+  font-size: 11px;
+  max-width: 170px;
+}
+.pulse-transport .pulse-export {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 10px;
+  padding: 16px 12px;
+  border: 1px solid #55614d;
+  border-radius: 3px;
+}
+.pulse-export > span {
+  color: var(--pulse-accent);
+}
+.pulse-sequencer {
+  padding-top: 18px;
+}
+.pulse-beat-numbers {
+  display: grid;
+  grid-template-columns: 105px 1fr;
+  align-items: center;
+  margin-bottom: 12px;
+  color: #889580;
+  font-size: 8px;
+}
+.pulse-beat-numbers > div {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 7px;
+  text-align: center;
+}
+.pulse-beat-numbers [data-current='true'] {
+  color: var(--pulse-accent);
+}
+.pulse-track {
+  display: grid;
+  grid-template-columns: 105px 1fr;
+  align-items: center;
+  margin-bottom: 10px;
+  --track-color: #c4f77c;
+}
+.pulse-track-1 {
+  --track-color: #e3b67c;
+}
+.pulse-track-2 {
+  --track-color: #7faca0;
+}
+.pulse-track-3 {
+  --track-color: #c5bdde;
+}
+.pulse-track-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  text-align: left;
+  padding: 12px 10px 12px 0;
+}
+.pulse-track-name > span {
+  font-size: 7px;
+  color: #829179;
+}
+.pulse-track-name > i {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--track-color);
+  margin-left: auto;
+  margin-right: 15px;
+}
+.pulse-track-name[aria-pressed='true'] {
+  text-decoration: line-through;
+  color: #889580;
+}
+.pulse-track-name[aria-pressed='true'] > i {
+  background: #55614d;
+}
+.pulse-step-row {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 7px;
+}
+.pulse-step {
+  position: relative;
+  aspect-ratio: 0.95;
+  max-height: 48px;
+  min-height: 20px;
+  border: 1px solid #344131;
+  border-radius: 3px;
+  background: #1a241b !important;
+  padding: 0;
+}
+.pulse-step[data-quarter='true'] {
+  border-left-color: #63775a;
+}
+.pulse-step::after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  bottom: 5px;
+  left: 25%;
+  right: 25%;
+  border-radius: 1px;
+  background: #73846b;
+}
+.pulse-step[aria-pressed='true'] {
+  background: var(--track-color) !important;
+  border-color: var(--track-color);
+}
+.pulse-step[aria-pressed='true']::after {
+  background: #1d2c1b80;
+}
+.pulse-step[data-current='true'] {
+  box-shadow: 0 0 0 2px #f3ffdf;
+}
+.pulse-step[data-current='true'][aria-pressed='true'] {
+  filter: brightness(1.25);
+  box-shadow:
+    0 0 16px #c4f77c38,
+    0 0 0 2px #f3ffdf;
+}
+.pulse-step:hover {
+  border-color: var(--track-color);
+}
+.pulse-track.is-muted .pulse-step-row {
+  opacity: 0.35;
+}
+.pulse-deck-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  border-top: 1px solid var(--studio-line);
+  padding-top: 16px;
+  margin-top: 20px;
+  font-size: 8px;
+  color: var(--studio-muted);
+}
+.pulse-deck-foot button {
+  font-size: 9px;
+  padding: 5px 0;
+}
+.pulse-mobile-hint {
+  display: none;
+}
+.pulse-notes {
+  margin-top: 15px;
+}
+.pulse-notes h2 {
+  color: #c4f77c;
+}
+
+@media (min-width: 1700px) {
+  .immersive-app {
+    padding-left: max(4.3vw, calc((100vw - 1600px) / 2));
+    padding-right: max(4.3vw, calc((100vw - 1600px) / 2));
+  }
+}
+@media (max-width: 1100px) {
+  .matter-workspace {
+    grid-template-columns: minmax(0, 1fr) 245px;
+    gap: 20px;
+  }
+  .matter-controls {
+    padding-left: 20px;
+  }
+  .pulse-transport {
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .pulse-transport .pulse-play {
+    min-width: 150px;
+  }
+  .pulse-volume {
+    max-width: 130px;
+  }
+  .pulse-preset {
+    margin-left: auto;
+  }
+  .pulse-track,
+  .pulse-beat-numbers {
+    grid-template-columns: 85px 1fr;
+  }
+  .pulse-step-row,
+  .pulse-beat-numbers > div {
+    gap: 5px;
+  }
+  .pulse-track-name > i {
+    margin-right: 8px;
+  }
+}
+@media (max-width: 760px) {
+  .immersive-app {
+    padding: 0 24px;
+  }
+  .immersive-nav {
+    font-size: 10px;
+    padding: 15px 0;
+  }
+  .immersive-nav > span {
+    display: none;
+  }
+  .matter-heading,
+  .pulse-heading {
+    padding-top: 30px;
+    gap: 18px;
+  }
+  .matter-title,
+  .pulse-title {
+    font-size: 18vw;
+    margin-left: -4px;
+  }
+  .matter-title sup {
+    font-size: 10px;
+  }
+  .matter-intro {
+    flex-basis: 175px;
+    padding: 0;
+  }
+  .matter-intro p,
+  .pulse-description p {
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  .matter-symbol {
+    font-size: 28px;
+  }
+  .matter-symbol svg {
+    width: 28px;
+    height: 28px;
+  }
+  .matter-intro .immersive-eyebrow,
+  .pulse-description .immersive-eyebrow {
+    display: none;
+  }
+  .matter-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+  }
+  .matter-stage {
+    height: 490px;
+  }
+  .matter-stage-label,
+  .matter-specimen {
+    left: 0;
+  }
+  .matter-controls {
+    border-left: 0;
+    border-top: 1px solid var(--studio-line);
+    padding: 20px 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 28px;
+  }
+  .matter-control-heading {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+  .matter-controls fieldset {
+    margin: 0;
+  }
+  .matter-controls .matter-export {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    padding: 20px 16px;
+  }
+  .matter-form-options button {
+    padding: 15px 4px 12px;
+  }
+  .matter-finish-options {
+    gap: 1px;
+  }
+  .matter-controls legend {
+    margin-bottom: 16px;
+  }
+  .matter-tuning label {
+    margin-bottom: 20px;
+  }
+  .matter-camera-options {
+    flex-wrap: wrap;
+  }
+  .matter-camera-options button {
+    padding: 11px 4px;
+    font-size: 8px;
+  }
+  .matter-stage-bottom p {
+    max-width: 180px;
+    line-height: 1.6;
+  }
+  .immersive-notes {
+    gap: 35px;
+    padding: 45px 0 55px;
+  }
+  .immersive-notes p {
+    font-size: 14px;
+  }
+  .immersive-notes a {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+  .pulse-description {
+    max-width: 160px;
+    padding-bottom: 0;
+  }
+  .pulse-visual {
+    height: 350px;
+  }
+  .pulse-deck {
+    padding: 18px;
+  }
+  .pulse-transport {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+  }
+  .pulse-transport .pulse-play {
+    min-width: 0;
+    padding: 16px 10px;
+    font-size: 10px;
+  }
+  .pulse-tempo {
+    justify-content: end;
+  }
+  .pulse-volume {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+  .pulse-preset {
+    margin: 0;
+    justify-self: end;
+  }
+  .pulse-preset select {
+    font-size: 10px;
+    width: 100%;
+    max-width: 135px;
+  }
+  .pulse-transport .pulse-export {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+  }
+  .pulse-track,
+  .pulse-beat-numbers {
+    grid-template-columns: 70px 1fr;
+  }
+  .pulse-track-name {
+    font-size: 9px;
+    gap: 5px;
+  }
+  .pulse-track-name > i {
+    display: none;
+  }
+  .pulse-beat-numbers {
+    font-size: 6px;
+  }
+  .pulse-step-row,
+  .pulse-beat-numbers > div {
+    gap: 3px;
+  }
+  .pulse-step {
+    border-radius: 2px;
+  }
+  .pulse-step::after {
+    bottom: 3px;
+    height: 1px;
+  }
+}
+@media (max-width: 600px) {
+  .pulse-step-row,
+  .pulse-beat-numbers > div {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 5px;
+  }
+  .pulse-step {
+    min-height: 35px;
+    max-height: 44px;
+    aspect-ratio: 0.8;
+  }
+  .pulse-beat-numbers > div > span:nth-child(n + 9) {
+    display: none;
+  }
+  .pulse-track {
+    margin-bottom: 18px;
+  }
+  .pulse-mobile-hint {
+    display: block;
+    font-size: 9px;
+    color: var(--studio-muted);
+    padding-left: 70px;
+    margin-top: 5px;
+  }
+}
+@media (max-width: 440px) {
+  .immersive-app {
+    padding: 0 17px;
+  }
+  .immersive-nav {
+    font-size: 9px;
+  }
+  .matter-heading {
+    align-items: start;
+    position: relative;
+    padding-top: 27px;
+    padding-bottom: 18px;
+  }
+  .matter-title,
+  .pulse-title {
+    font-size: 23.5vw;
+    margin-top: 12px;
+  }
+  .matter-intro {
+    position: absolute;
+    right: 0;
+    bottom: -88px;
+    z-index: 2;
+    text-align: right;
+    max-width: 135px;
+    pointer-events: none;
+  }
+  .matter-intro p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .matter-symbol {
+    font-size: 24px;
+  }
+  .matter-symbol svg {
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+  }
+  .matter-heading .immersive-eyebrow,
+  .pulse-heading .immersive-eyebrow {
+    font-size: 7px;
+  }
+  .matter-stage {
+    height: 430px;
+  }
+  .matter-controls {
+    gap: 23px 15px;
+  }
+  .matter-control-heading {
+    margin: 0 0 -4px;
+  }
+  .matter-form-options {
+    gap: 3px;
+  }
+  .matter-form-options button {
+    font-size: 8px;
+    padding: 17px 2px 12px;
+  }
+  .matter-form-options button > span {
+    font-size: 24px;
+  }
+  .matter-finish-options button {
+    font-size: 9px;
+    gap: 7px;
+  }
+  .matter-finish-options button > i {
+    width: 23px;
+    height: 23px;
+  }
+  .matter-controls legend {
+    font-size: 9px;
+  }
+  .matter-camera-options {
+    gap: 1px;
+    padding: 2px;
+  }
+  .matter-camera-options button {
+    font-size: 6px;
+    padding: 12px 2px;
+  }
+  .matter-rotation {
+    font-size: 8px;
+    gap: 6px;
+    line-height: 1.5;
+    min-height: 40px;
+  }
+  .matter-rotation > i {
+    flex-shrink: 0;
+  }
+  .matter-tuning label > span {
+    font-size: 8px;
+  }
+  .matter-stage-bottom {
+    bottom: 0;
+  }
+  .matter-stage-bottom p {
+    max-width: 155px;
+    font-size: 9px;
+  }
+  .matter-view-actions button {
+    width: 30px;
+    height: 30px;
+  }
+  .immersive-notes {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    padding-top: 35px;
+  }
+  .immersive-notes h2 {
+    font-size: 40px;
+    margin-top: 15px;
+  }
+  .immersive-status {
+    font-size: 11px;
+  }
+  .pulse-heading {
+    display: block;
+    position: relative;
+  }
+  .pulse-title {
+    margin-bottom: -5px;
+  }
+  .pulse-description {
+    position: absolute;
+    right: 0;
+    top: 25px;
+  }
+  .pulse-description p {
+    font-size: 9px;
+    text-align: right;
+    line-height: 1.5;
+  }
+  .pulse-visual {
+    height: 335px;
+    margin-top: 20px;
+  }
+  .pulse-render-host {
+    inset: -35px -45px -25px;
+  }
+  .pulse-visual-label {
+    font-size: 7px;
+  }
+  .pulse-visual-label > small {
+    font-size: 7px;
+  }
+  .pulse-shape-picker {
+    gap: 4px;
+  }
+  .pulse-shape-picker button {
+    font-size: 7px;
+    padding: 8px 11px;
+  }
+  .pulse-visual-counter {
+    font-size: 8px;
+  }
+  .pulse-visual-counter > span {
+    font-size: 15px;
+  }
+  .pulse-visual-signature {
+    font-size: 6px;
+  }
+  .pulse-deck {
+    padding: 15px 10px;
+  }
+  .pulse-transport {
+    padding: 0 4px 20px;
+    gap: 16px;
+  }
+  .pulse-transport .pulse-play {
+    font-size: 9px;
+    gap: 9px;
+  }
+  .pulse-tempo input {
+    width: 57px;
+    font-size: 19px;
+  }
+  .pulse-preset select {
+    max-width: 120px;
+    font-size: 9px;
+  }
+  .pulse-track,
+  .pulse-beat-numbers {
+    grid-template-columns: 47px 1fr;
+  }
+  .pulse-track-name {
+    font-size: 8px;
+    gap: 0;
+    padding-right: 5px;
+  }
+  .pulse-track-name > span {
+    display: none;
+  }
+  .pulse-beat-numbers {
+    font-size: 5px;
+  }
+  .pulse-beat-numbers > span {
+    max-width: 35px;
+    line-height: 1.5;
+  }
+  .pulse-step-row,
+  .pulse-beat-numbers > div {
+    gap: 4px;
+  }
+  .pulse-step {
+    min-height: 35px;
+    aspect-ratio: 0.75;
+  }
+  .pulse-mobile-hint {
+    padding-left: 47px;
+    font-size: 8px;
+  }
+  .pulse-step[data-current='true'] {
+    box-shadow: 0 0 0 1px #f3ffdf;
+  }
+  .pulse-deck-foot {
+    font-size: 6px;
+    gap: 7px;
+  }
+  .pulse-deck-foot button {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .immersive-app *,
+  .immersive-app *::before,
+  .immersive-app *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

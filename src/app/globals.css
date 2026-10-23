@@ -2364,6 +2364,88 @@ summary::-webkit-details-marker {
   }
 }
 /* A collection of actual instruments, with previews that show what they do. */
+.immersive-card-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 26px;
+}
+.immersive-card-preview.preview-matter {
+  color: #292923;
+  background: #e9e7e1;
+}
+.immersive-card-preview.preview-pulse {
+  color: #d9ffab;
+  background: #0c100e;
+}
+.immersive-card-preview > img {
+  object-fit: cover;
+  transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.experiment-card:hover .immersive-card-preview > img {
+  transform: scale(1.07);
+}
+.immersive-card-preview > span,
+.immersive-card-preview > strong,
+.immersive-card-preview > small {
+  position: absolute;
+  z-index: 1;
+  left: 26px;
+  right: 26px;
+}
+.immersive-card-preview > span {
+  top: 25px;
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.immersive-card-preview > strong {
+  bottom: 45px;
+  font-weight: 400;
+  font-size: clamp(45px, 5.8vw, 85px);
+  letter-spacing: -0.075em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.immersive-card-preview > strong > i {
+  font-size: 25px;
+  font-style: normal;
+}
+.immersive-card-preview > small {
+  bottom: 25px;
+  font-size: 7px;
+}
+.experiment-archive {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  font-size: 11px;
+}
+.experiment-archive > span {
+  color: var(--muted);
+}
+.experiment-archive > a {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+@media (max-width: 600px) {
+  .immersive-card-preview > strong {
+    font-size: 64px;
+  }
+  .experiment-archive {
+    gap: 14px 25px;
+  }
+  .experiment-archive > span {
+    flex-basis: 100%;
+  }
+}
 .tool-card-preview {
   width: 100%;
   height: 100%;
