@@ -6,14 +6,15 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/package-studios.mjs && next build",
+    "build": "node scripts/prepare-email-brand.mjs && node scripts/package-studios.mjs && next build",
     "start": "next start",
     "lint": "eslint src tests",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "test:e2e": "playwright test",
     "test:contact:delivery": "node scripts/verify-contact.mjs",
-    "package:studios": "node scripts/package-studios.mjs"
+    "package:studios": "node scripts/package-studios.mjs",
+    "prepare:email-brand": "node scripts/prepare-email-brand.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

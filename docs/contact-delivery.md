@@ -6,6 +6,8 @@ The contact address is `wemzain@gmail.com`, shared by the footer, copy control, 
 
 Nodemailer connects to Gmail over certificate-verified SMTPS on port 465. The email is rendered locally with the maintained `@react-email/render` package using a React template and email-compatible inline styles. No Resend service, account, API key, or verified custom domain is involved. The deprecated React Email component bundle is not installed.
 
+The message now uses the official Rayab artwork as inline CID PNGs, an ink/paper layout with pale lavender accents, full-width mobile sections, a personal signature and a clear reply action. Sender branding is `Rayab / Open line` with a `[Rayab]` subject prefix. See [Email identity](email-identity.md) for design references, image embedding, responsive behavior and verification.
+
 To enable actual inbox delivery:
 
 1. Enable **2-Step Verification** for the Google account `wemzain@gmail.com`.

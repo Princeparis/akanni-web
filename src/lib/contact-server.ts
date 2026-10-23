@@ -1,8 +1,7 @@
 import { createHash } from 'node:crypto'
-import { createElement } from 'react'
 import nodemailer from 'nodemailer'
-import { render } from '@react-email/render'
-import InquiryEmail from '@/emails/InquiryEmail'
+import { renderInquiryEmail } from '@/emails/render-inquiry'
+import { emailBrandAttachments } from '@/emails/brand'
 import {
   CONTACT_EMAIL,
   MAX_TOTAL_BYTES,
@@ -217,13 +216,11 @@ export async function handleContact(request: Request) {
       'The mailbox is busy. Please try again shortly, or use the email link.',
     )
   const delivery = (async () => {
-    const html = await render(
-      createElement(InquiryEmail, {
-        inquiry,
-        files: attachments.map((file) => file.filename),
-        reference: submissionId,
-      }),
-    )
+    const html = await renderInquiryEmail({
+      inquiry,
+      files: attachments.map((file) => file.filename),
+      reference: submissionId,
+    })
     const transport = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: Number(process.env.SMTP_PORT || 465),
@@ -237,13 +234,16 @@ export async function handleContact(request: Request) {
     })
     try {
       const result = await transport.sendMail({
-        from: { name: 'Rayab portfolio', address: user },
+        from: { name: 'Rayab / Open line', address: user },
         to: CONTACT_EMAIL,
         replyTo: { name: inquiry.name, address: inquiry.email },
-        subject: `[Portfolio] ${inquiry.subject}`,
+        subject: `[Rayab] ${inquiry.subject}`,
         messageId: `<inquiry.${submissionId}@${user.split('@')[1]}>`,
         html,
         text: [
+          'RAYAB / OPEN LINE',
+          'Strategy. Craft. Software.',
+          '',
           `New inquiry from ${inquiry.name}${inquiry.company ? ` / ${inquiry.company}` : ''}`,
           `Reply to: ${inquiry.email}`,
           `Topic: ${inquiry.topic || 'General inquiry'}`,
@@ -253,8 +253,11 @@ export async function handleContact(request: Request) {
           '',
           `Attachments: ${attachments.map((file) => file.filename).join(', ') || 'None'}`,
           `Reference: ${submissionId}`,
+          '',
+          `Reply directly to this email to write to ${inquiry.name}.`,
+          'Yusuff Ridwan Akanni / Creative engineer & director',
         ].join('\n'),
-        attachments,
+        attachments: [...emailBrandAttachments(), ...attachments],
       })
       if (
         !result.accepted.some(

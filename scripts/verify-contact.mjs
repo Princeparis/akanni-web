@@ -30,6 +30,41 @@ const freePort = async () => {
   return port
 }
 
+function mimeParts(raw) {
+  const end = raw.indexOf('\r\n\r\n')
+  assert.ok(end >= 0, 'MIME part must have headers and body')
+  const headers = Object.fromEntries(
+    raw
+      .slice(0, end)
+      .replace(/\r\n[\t ]+/g, ' ')
+      .split('\r\n')
+      .map((line) => {
+        const colon = line.indexOf(':')
+        return [line.slice(0, colon).toLowerCase(), line.slice(colon + 1).trim()]
+      }),
+  )
+  const body = raw.slice(end + 4)
+  const boundary = headers['content-type']?.match(/boundary=(?:"([^"]+)"|([^;\s]+))/i)
+  if (boundary)
+    return body
+      .split(`--${boundary[1] || boundary[2]}`)
+      .slice(1, -1)
+      .flatMap((part) => mimeParts(part.replace(/^\r\n/, '').replace(/\r\n$/, '')))
+  const encoding = headers['content-transfer-encoding']?.toLowerCase()
+  const bytes =
+    encoding === 'base64'
+      ? Buffer.from(body.replace(/\s/g, ''), 'base64')
+      : encoding === 'quoted-printable'
+        ? Buffer.from(
+            body
+              .replace(/=\r\n/g, '')
+              .replace(/=([0-9a-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16))),
+            'binary',
+          )
+        : Buffer.from(body)
+  return [{ headers, bytes }]
+}
+
 try {
   const keyFile = path.join(directory, 'key.pem'),
     certFile = path.join(directory, 'cert.pem')
@@ -224,14 +259,42 @@ try {
   assert.equal((await response.json()).reference, id)
   assert.equal(messages.length, 1)
   const raw = messages[0].raw.replace(/=\r\n/g, '')
+  const parts = mimeParts(messages[0].raw)
+  const html = parts
+    .find((part) => part.headers['content-type']?.startsWith('text/html'))
+    ?.bytes.toString('utf8')
+  const plain = parts
+    .find((part) => part.headers['content-type']?.startsWith('text/plain'))
+    ?.bytes.toString('utf8')
+  assert.ok(html, 'HTML alternative must exist')
+  assert.ok(
+    plain?.includes('RAYAB / OPEN LINE'),
+    'Plain-text alternative must also carry the brand',
+  )
+  assert.match(raw, /Content-Type: multipart\/related/)
+  const logoCids = [...html.matchAll(/src="cid:([^"]+)"/g)].map((match) => match[1])
+  assert.equal(logoCids.length, 2, 'Official wordmark and mark must both be embedded')
+  for (const cid of logoCids) {
+    const image = parts.find((part) => part.headers['content-id'] === `<${cid}>`)
+    assert.ok(image, `CID ${cid} must resolve to an actual MIME part`)
+    assert.match(image.headers['content-type'], /^image\/png/)
+    assert.match(image.headers['content-disposition'], /^inline/)
+    assert.equal(image.bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a')
+    assert.ok(image.bytes.length > 1000, 'Logo must contain real PNG pixels')
+  }
+  assert.match(html, /\[if mso\]/)
+  assert.ok(
+    !/<svg\b|src="https?:/i.test(html),
+    'Email branding must not depend on SVG or remote images',
+  )
   assert.match(messages[0].envelope.from, /<sender@example\.com>/)
   assert.deepEqual(messages[0].envelope.to, ['RCPT TO:<wemzain@gmail.com>'])
   assert.match(raw, /Reply-To:.*jamie@example\.com/)
-  assert.match(raw, /Subject: \[Portfolio\] A new website/)
+  assert.match(raw, /Subject: \[Rayab\] A new website/)
   assert.match(raw, /Content-Type: text\/plain/)
   assert.match(raw, /Content-Type: text\/html/)
   assert.ok(
-    raw.includes('&lt;script&gt;not executable&lt;/script&gt;'),
+    html.includes('&lt;script&gt;not executable&lt;/script&gt;'),
     'HTML must escape visitor text',
   )
   assert.match(raw, /filename=brief\.txt/)
@@ -268,7 +331,7 @@ try {
   })
   assert.equal(response.status, 503, 'Unconfigured delivery must never claim success')
   console.log(
-    'PASS: verified-TLS SMTP, fixed recipient, reply-to, React HTML + plain text, escaped content, attachment bytes, retry deduplication, validation, SMTP failure/retry, throttling, and missing-credential response.',
+    'PASS: verified-TLS SMTP, fixed recipient, reply-to, branded HTML + plain text, embedded PNG logos with matching CID parts, Outlook wrapper, escaped content, attachment bytes, retry deduplication, validation, SMTP failure/retry, throttling, and missing-credential response.',
   )
   console.log('Messages were captured locally. No email was sent to Gmail.')
 } catch (error) {
