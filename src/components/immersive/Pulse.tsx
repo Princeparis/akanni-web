@@ -95,7 +95,7 @@ export default function Pulse() {
     audio.current?.setVolume(volume / 100)
   }, [volume])
 
-  useGSAP(
+  const { contextSafe } = useGSAP(
     () => {
       if (reduced) return
       gsap
@@ -121,21 +121,24 @@ export default function Pulse() {
     { scope: root, dependencies: [reduced], revertOnUpdate: true },
   )
 
-  useGSAP(
-    () => {
-      if (reduced || step < 0) return
-      const targets = root.current?.querySelectorAll(
-        `.pulse-step[data-step="${step}"][aria-pressed="true"]`,
-      )
-      if (targets?.length)
-        gsap.fromTo(
-          targets,
-          { scale: 0.84 },
-          { scale: 1, duration: 0.3, ease: 'back.out(2)', overwrite: true },
-        )
-    },
-    { scope: root, dependencies: [step], revertOnUpdate: true },
-  )
+  useEffect(() => {
+    if (reduced || step < 0) return
+    const targets = root.current?.querySelectorAll(
+      `.pulse-step[data-step="${step}"][aria-pressed="true"]`,
+    )
+    if (!targets?.length) return
+    const tween = gsap.fromTo(
+      targets,
+      { scale: 0.84 },
+      { scale: 1, duration: 0.3, ease: 'back.out(2)', overwrite: 'auto' },
+    )
+    // A new step finishes the preceding pulse at rest. Reverting a GSAP context here
+    // would restore a partially animated key-press transform every time the beat changes.
+    return () => {
+      tween.kill()
+      gsap.set(targets, { scale: 1 })
+    }
+  }, [step, reduced])
 
   const togglePlayback = async () => {
     if (!audio.current) return
@@ -160,7 +163,7 @@ export default function Pulse() {
       setStarting(false)
     }
   }
-  const toggleStep = (track: number, index: number, button: HTMLButtonElement) => {
+  const toggleStep = contextSafe((track: number, index: number, button: HTMLButtonElement) => {
     setPattern((previous) =>
       previous.map((row, r) =>
         r === track ? row.map((value, c) => (c === index ? !value : value)) : row,
@@ -171,9 +174,9 @@ export default function Pulse() {
       gsap.fromTo(
         button,
         { scale: 0.7, rotate: -8 },
-        { scale: 1, rotate: 0, duration: 0.6, ease: 'elastic.out(1, .5)', overwrite: true },
+        { scale: 1, rotate: 0, duration: 0.6, ease: 'elastic.out(1, .5)', overwrite: 'auto' },
       )
-  }
+  })
   const navigateSteps = (event: KeyboardEvent<HTMLButtonElement>, row: number, column: number) => {
     let nextRow = row,
       nextColumn = column

@@ -176,6 +176,16 @@ test('Pulse starts only on request, plays a clocked pattern, mutes, stops, and c
   await expect(page.getByRole('button', { name: 'Stop loop', exact: true })).toBeVisible()
   await expect(page.locator('.pulse-step[data-current="true"]')).toHaveCount(4)
   expect(await contextCount()).toBe(1)
+  const editedKey = page.getByRole('button', { name: 'Kick step 2', exact: true })
+  await editedKey.click()
+  await expect
+    .poll(() =>
+      editedKey.evaluate((button) => {
+        const matrix = new DOMMatrix(getComputedStyle(button).transform)
+        return Math.abs(matrix.b) + Math.abs(matrix.c)
+      }),
+    )
+    .toBeLessThan(0.001)
   await page.getByRole('button', { name: 'Mute Kick', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Mute Kick', exact: true })).toHaveAttribute(
     'aria-pressed',
@@ -186,6 +196,22 @@ test('Pulse starts only on request, plays a clocked pattern, mutes, stops, and c
   await page.getByRole('button', { name: 'Scatter particles', exact: true }).click()
   await page.getByRole('button', { name: 'Stop loop', exact: true }).click()
   await expect(page.locator('.pulse-step[data-current="true"]')).toHaveCount(0)
+  await expect
+    .poll(() =>
+      page.locator('.pulse-step').evaluateAll((buttons) =>
+        buttons.every((button) => {
+          const matrix = new DOMMatrix(getComputedStyle(button).transform)
+          return (
+            Math.abs(matrix.a - 1) +
+              Math.abs(matrix.b) +
+              Math.abs(matrix.c) +
+              Math.abs(matrix.d - 1) <
+            0.001
+          )
+        }),
+      ),
+    )
+    .toBe(true)
   await page.getByRole('button', { name: 'Play loop', exact: true }).click()
   await page
     .getByRole('link', { name: /Explore Matter/ })

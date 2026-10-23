@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import matterPreview from '../../public/assets/playground/matter-preview.webp'
+import pulsePreview from '../../public/assets/playground/pulse-preview.webp'
 import { tools } from '@/data/tools'
 import { immersive } from '@/data/immersive'
 import { experiments } from '@/data/experiments'
@@ -61,7 +63,7 @@ function ToolPreview({ kind }: { kind: string }) {
     return (
       <div className={`immersive-card-preview preview-${kind}`} aria-hidden="true">
         <Image
-          src={`/assets/playground/${kind}-preview.webp`}
+          src={kind === 'matter' ? matterPreview : pulsePreview}
           alt=""
           fill
           sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw"
