@@ -41,3 +41,12 @@ The Docker configuration is updated but a container image was not built during t
 - Existing homepage, video, navigation, projects, gallery, playground, contact controls, and retired CMS checks remain passing.
 - The original local fonts and SVG artwork are unchanged. No runtime packages were added. Previous loader styles were removed from the global stylesheet; replacement styles are scoped under the portal loader.
 - Desktop/mobile screenshots and an actual 9.4-second browser recording are saved locally under ignored `artifacts/loader/`.
+
+## Eight-entry practical playground and gallery expansion
+
+- Next.js production build: passed, generating all 25 static pages, including the six new utility routes and the preserved original studies.
+- Standalone TypeScript and ESLint: passed. Full Playwright suite against the production server: 32 tests passed (31 browser scenarios plus the scientific-math/contrast/type-scale checks).
+- New browser coverage exercises keyboard calculation, scientific modes, memory/history, invalid expressions, palette locking and real CSS/JSON downloads, editable fluid type exports, elapsed-time timer pause/completion, local image uploads, actual PNG/JPEG/WebP exports decoded to verify pixel dimensions, easing playback and matching copied code, and all eighteen gallery entries.
+- Practical tools fit 320, 768, and 1440px viewports with reduced motion. Existing homepage/video, loader interaction, navigation, project/experiment flows, gallery keyboard/focus, clipboard/music, and retired CMS route checks also pass.
+- Original font binaries and original gallery image files are unchanged. Generated gallery additions are optimized WebP files with descriptive alternative text and generated-study labels. No runtime packages were added.
+- Desktop/mobile production captures and an actual browser recording are saved locally under ignored `artifacts/practical/`. Capturing the interactive flows reported no uncaught browser errors.

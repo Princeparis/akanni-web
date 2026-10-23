@@ -27,7 +27,9 @@ Install Playwright Chromium with `corepack pnpm@9.8.0 exec playwright install ch
 - `src/data/projects.ts`: project artwork, descriptions, categories, and services.
 - `src/data/about.ts`: existing biography and experience content.
 - `src/app/globals.css`: shared responsive design system.
-- `public/`: original fonts, project artwork, photography, video, music, and résumé.
+- `src/data/tools.ts`: the six practical playground tools; `src/data/experiments.ts`: original visual studies.
+- `src/data/gallery.ts`: original frames and generated editorial studies.
+- `public/`: original fonts, project artwork, photography, video, music, and résumé; new gallery assets are in `public/assets/generated/`.
 - `docs/design-direction.md`: research sources and visual/interaction decisions.
 
 `NEXT_PUBLIC_SITE_URL` is optional. Set it to the deployed origin to generate absolute metadata and sitemap URLs; without it the sitemap is intentionally empty. No invented production domain is used.

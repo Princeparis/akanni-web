@@ -133,11 +133,11 @@ test('gallery supports next, previous, Escape, and focus restoration', async ({ 
   await firstImage.click()
   const viewer = page.getByRole('dialog', { name: 'Visual diary image viewer' })
   await expect(viewer).toBeVisible()
-  await expect(viewer.locator('.gallery-full-image')).toHaveAttribute('src', /img1\.jpeg/)
+  await expect(viewer.locator('.gallery-full-image')).toHaveAttribute('src', /alloy\.webp/)
   await page.keyboard.press('ArrowRight')
-  await expect(viewer.locator('.gallery-full-image')).toHaveAttribute('src', /img2\.jpeg/)
+  await expect(viewer.locator('.gallery-full-image')).toHaveAttribute('src', /ember\.webp/)
   await viewer.getByRole('button', { name: 'Previous image' }).click()
-  await expect(viewer.locator('.gallery-full-image')).toHaveAttribute('src', /img1\.jpeg/)
+  await expect(viewer.locator('.gallery-full-image')).toHaveAttribute('src', /alloy\.webp/)
   await page.keyboard.press('Escape')
   await expect(viewer).not.toBeVisible()
   await expect(firstImage).toBeFocused()
@@ -170,7 +170,16 @@ test('blog, CMS, and API routes are removed; the playground links to independent
     expect(response.status(), path).toBe(404)
   }
   await page.goto('/playground')
-  for (const title of ['Field notes', 'Between the lines', 'Soft systems']) {
+  for (const title of [
+    'Sum',
+    'Spectrum',
+    'Type lab',
+    'Focus',
+    'Frame',
+    'Motion lab',
+    'Field notes',
+    'Between the lines',
+  ]) {
     await expect(page.getByRole('link', { name: new RegExp(title) })).toBeVisible()
   }
   await page.getByRole('link', { name: /Field notes/ }).click()

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { tools } from '@/data/tools'
 import { experiments } from '@/data/experiments'
 import { projects } from '@/data/projects'
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -9,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/portfolio',
     '/gallery',
     '/playground',
-    ...experiments.map((experiment) => `/playground/${experiment.slug}`),
+    ...[...tools, ...experiments].map((experiment) => `/playground/${experiment.slug}`),
     ...projects.map((p) => `/portfolio/${p.slug}`),
   ].map((path) => ({
     url: `${origin.replace(/\/$/, '')}${path}`,

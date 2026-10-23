@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { tools } from '@/data/tools'
 import { experiments } from '@/data/experiments'
 import { Arrow } from './Icons'
 
@@ -52,29 +53,138 @@ function Preview({ kind }: { kind: string }) {
   )
 }
 
+function ToolPreview({ kind }: { kind: string }) {
+  if (kind === 'flow-field' || kind === 'moire') return <Preview kind={kind} />
+  return (
+    <div className={`tool-card-preview preview-${kind}`} aria-hidden="true">
+      {kind === 'calculator' && (
+        <div className="preview-calc-machine">
+          <div>
+            <small>sqrt(144) + 2³</small>
+            <strong>
+              20<span>↗</span>
+            </strong>
+          </div>
+          <div className="preview-calc-keys">
+            {[
+              'sin',
+              'cos',
+              'tan',
+              '÷',
+              '7',
+              '8',
+              '9',
+              '×',
+              '4',
+              '5',
+              '6',
+              '−',
+              '1',
+              '2',
+              '3',
+              '+',
+              '0',
+              '.',
+              'π',
+              '=',
+            ].map((key, index) => (
+              <i key={index}>{key}</i>
+            ))}
+          </div>
+        </div>
+      )}
+      {kind === 'palette-studio' && (
+        <div className="preview-palette">
+          {['#4f5e50', '#9aab89', '#e2d8bd', '#c69a6c', '#8b4e3b', '#332a29'].map(
+            (color, index) => (
+              <span key={color} style={{ background: color }}>
+                <small>0{index + 1}</small>
+                <b>Aa</b>
+              </span>
+            ),
+          )}
+        </div>
+      )}
+      {kind === 'type-scale' && (
+        <div className="preview-types">
+          <small>A rhythm for your next idea.</small>
+          <span>Aa</span>
+          <b>Aa</b>
+          <strong>Aa</strong>
+          <em>1.250 / Major third</em>
+        </div>
+      )}
+      {kind === 'focus-timer' && (
+        <div className="preview-timer">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#25252528" />
+            <circle
+              cx="100"
+              cy="100"
+              r="80"
+              fill="none"
+              stroke="currentColor"
+              strokeDasharray="400 103"
+              transform="rotate(-90 100 100)"
+            />
+          </svg>
+          <span>
+            <small>A little room to focus</small>25:00<i>One thing at a time.</i>
+          </span>
+        </div>
+      )}
+      {kind === 'image-lab' && (
+        <div className="preview-image">
+          <span>FRAME / 1080 × 1350</span>
+          <div>
+            <i />
+            <i />
+            <i />
+          </div>
+          <small>Good things fit.</small>
+        </div>
+      )}
+      {kind === 'motion-studio' && (
+        <div className="preview-motion">
+          <svg viewBox="0 0 400 300">
+            <path d="M70 245H330 M70 245V45" stroke="#25252530" fill="none" />
+            <path d="M70 245L125 230 M330 45L190 25" stroke="#25252555" fill="none" />
+            <path d="M70 245C125 230 190 25 330 45" stroke="#252525" strokeWidth="3" fill="none" />
+            <circle cx="125" cy="230" r="7" fill="#bd623b" />
+            <circle cx="190" cy="25" r="7" fill="#5e7380" />
+          </svg>
+          <span>Find the in-between.</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+const featured = [...tools, ...experiments.slice(0, 2)]
+
 export default function Playground() {
   return (
     <section className="experiment-index" aria-label="Creative coding experiments">
       <div className="experiment-index-top">
-        <span className="eyebrow">Open experiments / 001—003</span>
+        <span className="eyebrow">Useful curiosities / 001—008</span>
         <span className="eyebrow">Made to be played with</span>
       </div>
       <div className="experiment-cards">
-        {experiments.map((experiment) => (
+        {featured.map((experiment, index) => (
           <Link
             className="experiment-card"
             key={experiment.slug}
             href={`/playground/${experiment.slug}`}
           >
             <div className="experiment-card-art">
-              <Preview kind={experiment.slug} />
+              <ToolPreview kind={experiment.slug} />
               <span className="experiment-launch">
                 Open experiment <Arrow />
               </span>
             </div>
             <div className="experiment-card-meta">
               <span className="eyebrow">
-                {experiment.number} / {experiment.medium}
+                {String(index + 1).padStart(2, '0')} / {experiment.medium}
               </span>
               <Arrow />
             </div>
@@ -84,8 +194,8 @@ export default function Playground() {
         ))}
       </div>
       <p className="experiment-index-note">
-        Independent studies in code, perception, and playful systems. Every experiment runs in your
-        browser. No account, no uploads, just curiosity.
+        Six useful instruments. Two visual detours. Every experience runs in your browser, with
+        nothing to sign up for. Bring a little curiosity. Take something useful away.
       </p>
     </section>
   )

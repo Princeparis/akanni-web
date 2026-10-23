@@ -1459,8 +1459,9 @@ summary::-webkit-details-marker {
   color: #0b0b0b;
 }
 .gallery-grid {
-  columns: 3;
-  column-gap: 22px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
   padding: 10px 4vw 100px;
 }
 .gallery-item {
@@ -1471,7 +1472,7 @@ summary::-webkit-details-marker {
   break-inside: avoid;
   overflow: hidden;
   background: #171717;
-  margin-bottom: 22px;
+  margin-bottom: 0;
 }
 .gallery-item img {
   width: 100%;
@@ -1481,7 +1482,7 @@ summary::-webkit-details-marker {
 .gallery-item:hover img {
   transform: scale(1.04);
 }
-.gallery-item span {
+.gallery-item > .gallery-open {
   position: absolute;
   right: 15px;
   bottom: 15px;
@@ -2074,14 +2075,14 @@ summary::-webkit-details-marker {
     font-size: 11px;
   }
   .gallery-grid {
-    columns: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     padding: 0 22px 65px;
-    column-gap: 12px;
+    gap: 12px;
   }
   .gallery-item {
-    margin-bottom: 12px;
+    margin-bottom: 0;
   }
-  .gallery-item span {
+  .gallery-item > .gallery-open {
     width: 28px;
     height: 28px;
     font-size: 17px;
@@ -2360,5 +2361,250 @@ summary::-webkit-details-marker {
   }
   .experiment-launch {
     transform: none;
+  }
+}
+/* A collection of actual instruments, with previews that show what they do. */
+.tool-card-preview {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 25px;
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.experiment-card:hover .tool-card-preview {
+  transform: scale(1.035);
+}
+.preview-calc-machine {
+  background: #17191b;
+  color: #eeece6;
+  width: 78%;
+  max-width: 280px;
+  padding: 18px;
+  border: 1px solid #ffffff22;
+  border-radius: 8px;
+}
+.preview-calc-machine > div:first-child {
+  text-align: right;
+  padding-bottom: 18px;
+}
+.preview-calc-machine small {
+  font: 9px var(--font-montreal);
+  color: #aaa;
+}
+.preview-calc-machine strong {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 400;
+  font-size: 46px;
+  line-height: 1.1;
+  margin-top: 10px;
+  letter-spacing: -0.07em;
+}
+.preview-calc-machine strong span {
+  font-size: 18px;
+  color: #e3b88f;
+  order: -1;
+}
+.preview-calc-keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.preview-calc-keys i {
+  font-size: 10px;
+  font-style: normal;
+  text-align: center;
+  padding: 9px 2px;
+  background: #2a2d30;
+}
+.preview-calc-keys i:last-child {
+  background: #e3b88f;
+  color: #222;
+}
+.tool-card-preview.preview-calculator {
+  background: #262a2c;
+}
+.preview-palette-studio {
+  padding: 0;
+  background: #e2d8bd;
+}
+.preview-palette {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+.preview-palette > span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 8px;
+  color: #fff;
+}
+.preview-palette small {
+  font-size: 8px;
+}
+.preview-palette b {
+  font-family: var(--font-montreal);
+  font-size: clamp(20px, 3vw, 45px);
+  letter-spacing: -0.08em;
+  font-weight: 400;
+  mix-blend-mode: difference;
+}
+.preview-type-scale {
+  background: #dfddd3;
+  color: #252525;
+}
+.preview-types {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+  line-height: 1.05;
+  letter-spacing: -0.07em;
+}
+.preview-types small {
+  font-size: 8px;
+  letter-spacing: 0;
+  margin-bottom: 20px;
+}
+.preview-types span {
+  font-size: 30px;
+}
+.preview-types b {
+  font-size: 60px;
+  font-weight: 400;
+}
+.preview-types strong {
+  font-size: 100px;
+  font-weight: 400;
+}
+.preview-types em {
+  font-size: 8px;
+  letter-spacing: 0;
+  margin-top: 15px;
+}
+.preview-focus-timer {
+  background: #e5e7dd;
+  color: #353f36;
+}
+.preview-timer {
+  position: relative;
+  width: 100%;
+  max-width: 290px;
+  aspect-ratio: 1;
+}
+.preview-timer svg {
+  width: 100%;
+  height: 100%;
+}
+.preview-timer > span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(30px, 4vw, 60px);
+  letter-spacing: -0.09em;
+}
+.preview-timer small,
+.preview-timer i {
+  font-size: 7px;
+  letter-spacing: 0;
+  font-style: normal;
+}
+.preview-timer small {
+  margin-bottom: 20px;
+}
+.preview-timer i {
+  margin-top: 14px;
+}
+.preview-image-lab {
+  background: #202426;
+  color: #ddd9ce;
+}
+.preview-image {
+  width: 75%;
+  border: 1px solid #ddd9ce66;
+  height: 90%;
+  position: relative;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.preview-image > span,
+.preview-image small {
+  font-size: 7px;
+}
+.preview-image > div {
+  position: relative;
+  flex: 1;
+  margin: 20px 0;
+  overflow: hidden;
+  background: #aaab99;
+}
+.preview-image i {
+  position: absolute;
+  height: 140%;
+  width: 40%;
+  background: #cebaa0;
+  transform: rotate(35deg);
+  left: 10%;
+  top: -20%;
+}
+.preview-image i:nth-child(2) {
+  left: 50%;
+  background: #575f56;
+}
+.preview-image i:nth-child(3) {
+  width: 25%;
+  left: 80%;
+  background: #e0dace;
+}
+.preview-motion-studio {
+  background: #e5dfd2;
+  color: #252525;
+  padding: 15px;
+}
+.preview-motion {
+  width: 100%;
+}
+.preview-motion svg {
+  width: 100%;
+  max-height: 280px;
+}
+.preview-motion > span {
+  display: block;
+  font-size: 8px;
+  margin: 10px 0 5px 20px;
+}
+
+.gallery-generated-label {
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  right: 65px;
+  padding: 10px 12px;
+  background: #111a;
+  color: #f5f3ed;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: left;
+  backdrop-filter: blur(8px);
+}
+@media (max-width: 760px) {
+  .gallery-generated-label {
+    left: 8px;
+    bottom: 8px;
+    right: 42px;
+    padding: 7px;
+    font-size: 6px;
   }
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Gallery from '@/components/Gallery'
+import { galleryImages } from '@/data/gallery'
 export const metadata: Metadata = {
   title: 'Visual diary',
   description: 'Photography, visual experiments, and creative detours by Akanni.',
@@ -8,7 +9,7 @@ export default function GalleryPage() {
   return (
     <main id="main">
       <div className="page-intro">
-        <span className="eyebrow">A visual diary / 15 frames</span>
+        <span className="eyebrow">A visual diary / {galleryImages.length} frames</span>
         <h1>
           The way
           <br />

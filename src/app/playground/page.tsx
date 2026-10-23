@@ -15,8 +15,8 @@ export default function PlaygroundPage() {
           <em>play.</em>
         </h1>
         <p>
-          Independent creative coding studies. Explore a vector field, get lost in optical
-          interference, or disturb a spring system. Open an experiment and make it your own.
+          Useful tools. Unexpected interactions. Calculate, build a palette, find a type scale,
+          focus, frame an image, or shape a movement. Eight small experiments, made to be used.
         </p>
       </div>
       <Playground />

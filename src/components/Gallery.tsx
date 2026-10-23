@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { useLenis } from 'lenis/react'
-const images = Array.from({ length: 15 }, (_, index) => `/assets/img${index + 1}.jpeg`)
+import { galleryImages as images } from '@/data/gallery'
 export default function Gallery() {
   const [selected, setSelected] = useState<number | null>(null)
   const dialog = useRef<HTMLDialogElement>(null)
@@ -42,7 +42,7 @@ export default function Gallery() {
       <div className="gallery-grid">
         {images.map((image, index) => (
           <button
-            key={image}
+            key={image.src}
             className="gallery-item"
             aria-label={`Open visual diary image ${index + 1}`}
             onClick={(event) => {
@@ -51,14 +51,21 @@ export default function Gallery() {
             }}
           >
             <Image
-              src={image}
-              alt={`Visual study ${String(index + 1).padStart(2, '0')} from Akanni’s photography collection`}
-              width={750}
-              height={1000}
+              src={image.src}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
               sizes="(max-width: 760px) 50vw, 33vw"
               style={{ height: 'auto' }}
             />
-            <span aria-hidden="true">↗</span>
+            <span className="gallery-open" aria-hidden="true">
+              ↗
+            </span>
+            {image.generated && (
+              <small className="gallery-generated-label">
+                {image.title.split(' /')[0]} / Generated study
+              </small>
+            )}
           </button>
         ))}
       </div>
@@ -86,7 +93,9 @@ export default function Gallery() {
         }}
       >
         <div className="gallery-dialog-top">
-          <span className="eyebrow">A frame from my world</span>
+          <span className="eyebrow">
+            {selected === null ? 'A frame from my world' : images[selected].title}
+          </span>
           <button
             className="round-button"
             aria-label="Close image viewer"
@@ -97,12 +106,12 @@ export default function Gallery() {
         </div>
         {selected !== null && (
           <Image
-            width={1600}
-            height={1200}
+            width={images[selected].width}
+            height={images[selected].height}
             sizes="95vw"
             className="gallery-full-image"
-            src={images[selected]}
-            alt={`Visual study ${selected + 1}`}
+            src={images[selected].src}
+            alt={images[selected].alt}
           />
         )}
         <div className="gallery-controls">
@@ -110,7 +119,7 @@ export default function Gallery() {
             ←
           </button>
           <span aria-live="polite">
-            {selected === null ? '01' : String(selected + 1).padStart(2, '0')} / 15
+            {selected === null ? '01' : String(selected + 1).padStart(2, '0')} / {images.length}
           </span>
           <button className="round-button" aria-label="Next image" onClick={() => step(1)}>
             →
