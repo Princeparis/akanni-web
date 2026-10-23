@@ -1,0 +1,88 @@
+body {
+  --bg: #101217;
+  --ink: #ecede5;
+  --muted: #a0a6b1;
+  --line: #ffffff24;
+  --accent: #d9fe62;
+  --accent-ink: #14170c;
+  --stage: #090f17;
+  --stage-ink: #edf0d7;
+}
+.heading h1 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+}
+.intro p {
+  color: #d3d8cd;
+}
+.viewport {
+  border-right: 0;
+}
+.controls {
+  background: #15181e;
+}
+.options {
+  gap: 5px;
+}
+.options button {
+  padding: 11px 6px;
+  font-size: 9px;
+}
+.heading:before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  position: absolute;
+  right: 3.5vw;
+  top: 100px;
+}
+.notes .eyebrow {
+  color: var(--accent);
+}
+.stage-top {
+  mix-blend-mode: screen;
+}
+.viewport:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 100px #0002;
+}
+.stage-bottom button {
+  background: #111820a0;
+}
+.status-row > span {
+  color: var(--accent);
+}
+@media (max-width: 700px) {
+  .heading:before {
+    display: none;
+  }
+  .controls .sliders {
+    grid-template-columns: 1fr;
+  }
+  .controls .sliders label {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+  }
+  .sliders label > span {
+    margin: 0;
+  }
+  .stage-top > span:last-child {
+    display: none;
+  }
+  .status-row {
+    flex-direction: column;
+  }
+  .status-row > span {
+    font-size: 8px;
+  }
+  .intro p {
+    font-size: 13px;
+  }
+}

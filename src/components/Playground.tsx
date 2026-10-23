@@ -5,6 +5,8 @@ import pulsePreview from '../../public/assets/playground/pulse-preview.webp'
 import { tools } from '@/data/tools'
 import { immersive } from '@/data/immersive'
 import { experiments } from '@/data/experiments'
+import { studios } from '@/data/studios'
+import StudioPreview from './studios/StudioPreview'
 import { Arrow } from './Icons'
 
 function Preview({ kind }: { kind: string }) {
@@ -58,6 +60,7 @@ function Preview({ kind }: { kind: string }) {
 }
 
 function ToolPreview({ kind }: { kind: string }) {
+  if (kind === 'caustic' || kind === 'loom') return <StudioPreview kind={kind} />
   if (kind === 'flow-field' || kind === 'moire') return <Preview kind={kind} />
   if (kind === 'matter' || kind === 'pulse')
     return (
@@ -189,13 +192,13 @@ function ToolPreview({ kind }: { kind: string }) {
   )
 }
 
-const featured = [...tools, ...immersive]
+const featured = [...tools, ...immersive, ...studios]
 
 export default function Playground() {
   return (
     <section className="experiment-index" aria-label="Creative coding experiments">
       <div className="experiment-index-top">
-        <span className="eyebrow">Useful curiosities / 001—008</span>
+        <span className="eyebrow">Useful curiosities / 001—010</span>
         <span className="eyebrow">Made to be played with</span>
       </div>
       <div className="experiment-cards">
@@ -223,8 +226,8 @@ export default function Playground() {
         ))}
       </div>
       <p className="experiment-index-note">
-        Eight independent instruments. Every experience runs in your browser, with nothing to sign
-        up for. Bring a little curiosity. Take something useful away.
+        Ten independent instruments. Every experience runs in your browser, with nothing to sign up
+        for. Bring a little curiosity. Take something useful away.
       </p>
       <nav className="experiment-archive" aria-label="Earlier visual studies">
         <span className="eyebrow">From the sketchbook</span>

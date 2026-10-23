@@ -16,7 +16,8 @@ export default function PlaygroundPage() {
         </h1>
         <p>
           Useful tools. Unexpected interactions. From a precise little calculator to a sculpture you
-          can shape and a rhythm you can see. Eight independent projects, made to be used.
+          can shape, light you can bend, and words you can pull into the wind. Ten independent
+          projects, made to be used.
         </p>
       </div>
       <Playground />

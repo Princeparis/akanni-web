@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { tools } from '@/data/tools'
 import { experiments } from '@/data/experiments'
 import { immersive } from '@/data/immersive'
+import { studios } from '@/data/studios'
 import { projects } from '@/data/projects'
 export default function sitemap(): MetadataRoute.Sitemap {
   const origin = process.env.NEXT_PUBLIC_SITE_URL
@@ -11,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/portfolio',
     '/gallery',
     '/playground',
-    ...[...tools, ...immersive, ...experiments].map(
+    ...[...tools, ...immersive, ...studios, ...experiments].map(
       (experiment) => `/playground/${experiment.slug}`,
     ),
     ...projects.map((p) => `/portfolio/${p.slug}`),

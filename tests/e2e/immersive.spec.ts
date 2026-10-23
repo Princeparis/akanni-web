@@ -22,12 +22,12 @@ test('PCM encoding creates a valid stereo WAV with signed, interleaved samples',
   expect(blank.every((row) => row.length === 16 && row.every((step) => !step))).toBe(true)
 })
 
-test('collection features eight new projects and keeps all three original studies accessible', async ({
+test('collection features ten projects and keeps all three original studies accessible', async ({
   page,
   request,
 }) => {
   await page.goto('/playground')
-  await expect(page.locator('.experiment-card')).toHaveCount(8)
+  await expect(page.locator('.experiment-card')).toHaveCount(10)
   for (const name of ['Matter', 'Pulse'])
     await expect(page.locator('.experiment-card').getByRole('heading', { name })).toBeVisible()
   for (const slug of ['matter', 'pulse', 'flow-field', 'moire', 'spring-grid'])

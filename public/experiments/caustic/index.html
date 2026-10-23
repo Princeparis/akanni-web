@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="A liquid-light laboratory. Disturb a simulated surface and bend the typography underneath it. An independent experiment by Rayab."
+    />
+    <meta name="theme-color" content="#101217" />
+    <title>Caustic — Rayab</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%23d9fe62'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="../shared/studio.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="../shared/runtime.js"></script>
+    <script defer src="scene.js"></script>
+  </head>
+  <body data-experiment="caustic">
+    <a class="skip" href="#art">Skip to the light surface</a>
+    <main id="main" class="shell">
+      <nav class="nav" aria-label="Experiment navigation">
+        <a href="/playground" target="_top" data-home>↖ All experiments</a
+        ><span>Rayab / Independent instrument 009</span
+        ><a href="/playground/loom" target="_top" data-next>Next: Loom ↗</a>
+      </nav>
+      <header class="heading">
+        <h1>Caustic<sup>09</sup></h1>
+        <div class="intro">
+          <span class="eyebrow">A liquid-light laboratory</span>
+          <p>Nothing here is solid.<br />Including the light.</p>
+        </div>
+      </header>
+      <section class="workspace" aria-label="Liquid light studio">
+        <div class="viewport">
+          <canvas
+            id="art"
+            role="img"
+            tabindex="0"
+            aria-label="Interactive liquid light. Drag to draw ripples. Arrow keys move the light. Space drops a ripple. R resets."
+            aria-describedby="surface-help"
+          ></canvas>
+          <div class="stage-top">
+            <span><i class="live-dot"></i> Light, behaving differently</span
+            ><span>REFRACTION / LIVE</span>
+          </div>
+          <div class="stage-bottom">
+            <p id="surface-help">
+              Drag slowly. Leave a little disturbance.<br />Keyboard: arrows move light · Space
+              drops a ripple.
+            </p>
+            <button type="button" data-fullscreen aria-label="Toggle fullscreen">⛶</button>
+          </div>
+          <div class="fallback" role="alert" hidden>
+            <h2>A little more light is needed.</h2>
+            <p>
+              This surface needs WebGL 2 and floating-point render targets. Enable hardware
+              acceleration or try a recent browser. You can still download every line of source.
+            </p>
+            <button type="button" data-retry>Retry the surface ↗</button>
+          </div>
+        </div>
+        <aside class="controls" aria-label="Light settings">
+          <div class="control-title">
+            <span>Make a little interference</span><span aria-hidden="true">✳</span>
+          </div>
+          <fieldset>
+            <legend><span>01</span> The atmosphere</legend>
+            <div class="options">
+              <button data-preset="0" data-gpu-control aria-pressed="true">Moonlight</button
+              ><button data-preset="1" data-gpu-control aria-pressed="false">Infrared</button
+              ><button data-preset="2" data-gpu-control aria-pressed="false">Daybreak</button>
+            </div>
+          </fieldset>
+          <fieldset class="sliders">
+            <legend><span>02</span> The optical properties</legend>
+            <label for="bend"
+              ><span>Refraction <output id="bend-value">65%</output></span
+              ><input
+                id="bend"
+                type="range"
+                min="0"
+                max="100"
+                value="65"
+                aria-label="Refraction"
+                data-gpu-control /></label
+            ><label for="split"
+              ><span>Colour separation <output id="split-value">45%</output></span
+              ><input
+                id="split"
+                type="range"
+                min="0"
+                max="100"
+                value="45"
+                aria-label="Colour separation"
+                data-gpu-control /></label
+            ><label for="decay"
+              ><span>Wave persistence <output id="decay-value">70%</output></span
+              ><input
+                id="decay"
+                type="range"
+                min="0"
+                max="100"
+                value="70"
+                aria-label="Wave persistence"
+                data-gpu-control
+            /></label>
+          </fieldset>
+          <fieldset>
+            <legend><span>03</span> Leave your own mark</legend>
+            <label class="control-label" for="words">Words beneath the surface</label
+            ><input
+              id="words"
+              type="text"
+              maxlength="30"
+              value="LIGHT / IN / MOTION."
+              autocomplete="off"
+              spellcheck="false"
+              data-gpu-control
+            />
+            <p class="micro">
+              Use a / to start a new line. Your words become part of the surface. Everything stays
+              here.
+            </p>
+          </fieldset>
+          <div class="actions">
+            <button type="button" data-drop data-gpu-control>◎ Drop a ripple <span>↗</span></button
+            ><button type="button" data-play data-gpu-control aria-pressed="true">
+              Ⅱ Pause motion</button
+            ><button type="button" data-reset data-gpu-control>
+              Reset the surface <span>↺</span></button
+            ><button type="button" class="primary" data-capture data-gpu-control>
+              Save the light / PNG <span>↓</span></button
+            ><a
+              href="../../downloads/caustic-source.zip"
+              download="rayab-caustic-source.zip"
+              data-source
+              >Take the source / ZIP <span>↗</span></a
+            >
+          </div>
+        </aside>
+      </section>
+      <div class="status-row">
+        <p role="status" aria-live="polite">
+          A real wave field. A little optical mischief. Move through it, then take a frame home.
+        </p>
+        <span>HTML + CSS + JS / NO DEPENDENCIES</span>
+      </div>
+      <details class="notes" id="notes">
+        <summary>Under the surface. <span>The idea, the maths & the source ↙</span></summary>
+        <div class="notes-inner">
+          <div>
+            <span class="eyebrow">Simple rules. Unexpected light.</span>
+            <h2>A surface remembers<br />where you have been.</h2>
+            <p>
+              Two floating-point textures exchange height and velocity. Each point feels its four
+              neighbours; your pointer adds an impulse. The resulting height gradient bends the
+              poster underneath it. Red, green, and blue sample slightly different positions to
+              imitate dispersion. Procedural highlights suggest concentrated light; this is an
+              artistic optical model, not a ray-traced fluid solver.
+            </p>
+            <a
+              class="source-link"
+              href="../../downloads/caustic-source.zip"
+              download="rayab-caustic-source.zip"
+              data-source
+              >Download the complete working source ↓</a
+            >
+          </div>
+          <div>
+            <pre><code>laplacian = left + right + above + below - 4 * height;
+velocity = (velocity + laplacian * 0.24) * damping;
+height += velocity;
+
+normal = gradient(height);
+refractedUV = uv + normal * refraction;
+colour = sampleRGB(poster, refractedUV, dispersion);</code></pre>
+            <p>
+              The ZIP includes this exact live experiment: HTML, CSS, JavaScript, both shaders,
+              shared runtime, a README and MIT licence. Unzip, open caustic/index.html, and play. No
+              account, CDN, install or build step.
+            </p>
+          </div>
+        </div>
+      </details>
+      <footer class="footer">
+        <span>Made of code. Meant to be touched.<br />Rayab / Strategy. Craft. Software.</span
+        ><a href="/playground/loom" target="_top" data-next
+          >Words have a little weight. Enter Loom ↗</a
+        >
+      </footer>
+    </main>
+  </body>
+</html>

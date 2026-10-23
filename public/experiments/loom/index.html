@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#eae6dc" />
+    <meta
+      name="description"
+      content="Words with weight. Grab a real simulated typographic fabric, change its weave, and send it into the wind. A Rayab experiment."
+    />
+    <title>Loom — Rayab</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%23ce3c25'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="../shared/studio.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="../shared/runtime.js"></script>
+    <script defer src="scene.js"></script>
+  </head>
+  <body data-experiment="loom">
+    <a class="skip" href="#art">Skip to the fabric</a>
+    <main id="main" class="shell">
+      <nav class="nav" aria-label="Experiment navigation">
+        <a href="/playground" target="_top" data-home>↖ All experiments</a
+        ><span>Rayab / Independent instrument 010</span
+        ><a href="/playground/caustic" target="_top" data-next>Explore Caustic ↗</a>
+      </nav>
+      <header class="heading">
+        <h1>Loom<sup>10</sup></h1>
+        <div class="intro">
+          <span class="eyebrow">A typographic fabric simulator</span>
+          <p>Give a word some weight.<br />Then let the wind in.</p>
+        </div>
+      </header>
+      <section class="workspace" aria-label="Typographic fabric studio">
+        <div class="viewport">
+          <canvas
+            id="art"
+            role="img"
+            tabindex="0"
+            aria-label="Interactive typographic cloth. Drag the fabric to grab it. Enter grabs the centre, arrows pull, Escape releases, Space sends a gust, R resets."
+            aria-describedby="fabric-help"
+          ></canvas>
+          <div class="stage-top">
+            <span><i class="live-dot"></i> A small act of material disobedience</span
+            ><span>TYPE / UNDER TENSION</span>
+          </div>
+          <div class="stage-bottom">
+            <p id="fabric-help">
+              Grab a fold. Pull it out of line.<br />Keyboard: Enter grabs · arrows pull · Escape
+              releases.
+            </p>
+            <button type="button" data-fullscreen aria-label="Toggle fullscreen">⛶</button>
+          </div>
+          <div class="fallback" role="alert" hidden>
+            <h2>Some threads need a little help.</h2>
+            <p>
+              The fabric needs WebGL 2. Enable hardware acceleration or try a recent browser. The
+              complete offline source remains available.
+            </p>
+            <button type="button" data-retry>Retry the fabric ↗</button>
+          </div>
+        </div>
+        <aside class="controls" aria-label="Fabric settings">
+          <div class="control-title">
+            <span>Type, with a life of its own</span><span aria-hidden="true">↝</span>
+          </div>
+          <fieldset>
+            <legend><span>01</span> The way it hangs</legend>
+            <div class="options">
+              <button data-form="banner" data-gpu-control aria-pressed="true">Banner</button
+              ><button data-form="flag" data-gpu-control aria-pressed="false">Flag</button
+              ><button data-form="drape" data-gpu-control aria-pressed="false">Drape</button>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><span>02</span> The print</legend>
+            <div class="options finishes">
+              <button data-colour="0" data-gpu-control aria-pressed="true">
+                <i class="swatch signal"></i>Signal</button
+              ><button data-colour="1" data-gpu-control aria-pressed="false">
+                <i class="swatch cobalt"></i>Cobalt</button
+              ><button data-colour="2" data-gpu-control aria-pressed="false">
+                <i class="swatch acid"></i>Acid
+              </button>
+            </div>
+            <label class="control-label words-label" for="words">Your words, in the wind</label
+            ><input
+              id="words"
+              type="text"
+              maxlength="28"
+              value="MAKE / IT MOVE."
+              autocomplete="off"
+              spellcheck="false"
+              data-gpu-control
+            />
+            <p class="micro">
+              A / starts a new line. The type is woven into the moving surface, not placed on top.
+            </p>
+          </fieldset>
+          <fieldset class="sliders">
+            <legend><span>03</span> A matter of feeling</legend>
+            <label for="wind"
+              ><span>Wind <output id="wind-value">55%</output></span
+              ><input
+                id="wind"
+                type="range"
+                min="0"
+                max="100"
+                value="55"
+                aria-label="Wind strength"
+                data-gpu-control /></label
+            ><label for="tension"
+              ><span>Fabric tension <output id="tension-value">65%</output></span
+              ><input
+                id="tension"
+                type="range"
+                min="0"
+                max="100"
+                value="65"
+                aria-label="Fabric tension"
+                data-gpu-control
+            /></label>
+          </fieldset>
+          <div class="actions">
+            <button type="button" data-gust data-gpu-control>↝ Send a gust <span>↗</span></button
+            ><button type="button" data-play data-gpu-control aria-pressed="true">
+              Ⅱ Pause motion</button
+            ><button type="button" data-reset data-gpu-control>
+              Reset the fabric <span>↺</span></button
+            ><button type="button" class="primary" data-capture data-gpu-control>
+              Take an impression / PNG <span>↓</span></button
+            ><a href="../../downloads/loom-source.zip" download="rayab-loom-source.zip" data-source
+              >Take the source / ZIP <span>↗</span></a
+            >
+          </div>
+        </aside>
+      </section>
+      <div class="status-row">
+        <p role="status" aria-live="polite">
+          A thousand connected points. Gravity, wind, and your hands. All the good things happen
+          between them.
+        </p>
+        <span>HTML + CSS + JS / NO DEPENDENCIES</span>
+      </div>
+      <details class="notes" id="notes">
+        <summary>Pull at the thread. <span>The mechanics & the source ↙</span></summary>
+        <div class="notes-inner">
+          <div>
+            <span class="eyebrow">It is a material, not a video.</span>
+            <h2>Typography leaves<br />the flat world.</h2>
+            <p>
+              A mesh of points remembers its last position. Gravity and spatially varying wind move
+              it; distance constraints hold neighbouring points together. Changing the anchors turns
+              a banner into a flag or a drape. The print is a locally drawn texture attached to the
+              mesh. Normals and a woven-surface shader give the folds their light. This is a
+              position-based cloth study, not a textile engineering model.
+            </p>
+            <a
+              class="source-link"
+              href="../../downloads/loom-source.zip"
+              download="rayab-loom-source.zip"
+              data-source
+              >Download the complete working source ↓</a
+            >
+          </div>
+          <div>
+            <pre><code>velocity = (position - previous) * damping;
+next = position + velocity + acceleration * dt * dt;
+
+delta = neighbour.position - point.position;
+correction = delta * (length(delta) - restLength)
+  / length(delta) * 0.5;
+point.position += correction;
+neighbour.position -= correction;</code></pre>
+            <p>
+              The ZIP contains these exact HTML, CSS and JavaScript files, the GLSL shaders, shared
+              runtime, a README and MIT licence. Unzip and open loom/index.html. Runs offline; no
+              libraries, fonts, images or account to fetch.
+            </p>
+          </div>
+        </div>
+      </details>
+      <footer class="footer">
+        <span>Made of code. Meant to be touched.<br />Rayab / Strategy. Craft. Software.</span
+        ><a href="/playground/caustic" target="_top" data-next
+          >Something a little less solid. Enter Caustic ↗</a
+        >
+      </footer>
+    </main>
+  </body>
+</html>

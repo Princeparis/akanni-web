@@ -6,13 +6,14 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/package-studios.mjs && next build",
     "start": "next start",
     "lint": "eslint src tests",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "test:e2e": "playwright test",
-    "test:contact:delivery": "node scripts/verify-contact.mjs"
+    "test:contact:delivery": "node scripts/verify-contact.mjs",
+    "package:studios": "node scripts/package-studios.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

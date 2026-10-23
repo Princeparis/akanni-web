@@ -30,6 +30,7 @@ Install Playwright Chromium with `corepack pnpm@9.8.0 exec playwright install ch
 - `public/brand/rayab/`: supplied Rayab icon, wordmark, and lockup masters, plus matching browser icons. `src/components/Brand.tsx` renders the icon and wordmark with surface-aware colors.
 - `src/data/tools.ts`: six practical tools; `src/data/immersive.ts`: Matter and Pulse; `src/data/experiments.ts`: earlier visual studies.
 - `src/components/immersive/`: independent Three.js/GSAP sculpture studio and Web Audio rhythm instrument. See `docs/immersive-playground.md` for controls, rendering, and exports.
+- `src/data/studios.ts` and `public/experiments/`: Caustic and Loom complete the ten-project collection. Both ship their exact standalone HTML/CSS/JavaScript as source ZIPs. `pnpm package:studios` regenerates them; production builds do this automatically. See [Caustic & Loom](docs/caustic-and-loom.md).
 - `src/data/gallery.ts`: original frames and generated editorial studies.
 - `public/`: original fonts, project artwork, photography, video, music, and résumé; new gallery assets are in `public/assets/generated/`.
 - `docs/design-direction.md`: research sources and visual/interaction decisions.

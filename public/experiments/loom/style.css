@@ -1,0 +1,108 @@
+body {
+  --bg: #eae6dc;
+  --ink: #24241f;
+  --muted: #66665b;
+  --line: #24241f30;
+  --accent: #ce3c25;
+  --accent-ink: #fff6e7;
+  --stage: #dfdbd0;
+  --stage-ink: #33382d;
+}
+.heading h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  letter-spacing: -0.09em;
+}
+.heading h1 sup {
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
+  color: var(--accent);
+}
+.intro p {
+  color: #414338;
+}
+.controls {
+  background: #eeeade;
+}
+.control-title > span:last-child {
+  font-size: 28px;
+}
+.options button {
+  padding: 10px 8px;
+}
+.finishes {
+  gap: 5px;
+}
+.finishes button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  background: transparent !important;
+  color: var(--ink) !important;
+}
+.finishes button[aria-pressed='true'] {
+  border-color: var(--ink);
+  box-shadow: inset 0 -2px var(--ink);
+}
+.swatch {
+  width: 24px;
+  height: 24px;
+  display: block;
+  border-radius: 50%;
+}
+.signal {
+  background: #d53d28;
+}
+.cobalt {
+  background: #2354c4;
+}
+.acid {
+  background: #cfe34e;
+}
+.words-label {
+  margin: 24px 0 0;
+}
+.notes .eyebrow {
+  color: var(--accent);
+}
+.stage-bottom button {
+  background: #eae6dc99;
+}
+.live-dot {
+  background: var(--accent);
+}
+.viewport canvas {
+  cursor: grab;
+}
+.viewport canvas[data-grabbed='true'] {
+  cursor: grabbing;
+}
+.actions .primary:hover {
+  background: #aa2c18;
+}
+.status-row > span {
+  color: #7c3224;
+}
+@media (max-width: 700px) {
+  .stage-top > span:last-child {
+    display: none;
+  }
+  .status-row {
+    flex-direction: column;
+  }
+  .status-row > span {
+    font-size: 8px;
+  }
+  .heading h1 {
+    font-size: clamp(78px, 20vw, 120px);
+  }
+  .intro p {
+    font-size: 13px;
+  }
+  .controls .sliders {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

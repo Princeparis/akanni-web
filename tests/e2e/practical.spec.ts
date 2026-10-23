@@ -31,12 +31,12 @@ test('scientific arithmetic follows precedence, preserves tiny results, and reje
   expect(step.css).toContain('clamp(')
 })
 
-test('eight featured cards open real tools, and the original spring experiment remains available', async ({
+test('ten featured cards open real tools, and the original spring experiment remains available', async ({
   page,
   request,
 }) => {
   await page.goto('/playground')
-  await expect(page.locator('.experiment-card')).toHaveCount(8)
+  await expect(page.locator('.experiment-card')).toHaveCount(10)
   const paths = await page
     .locator('.experiment-card')
     .evaluateAll((links) => links.map((link) => link.getAttribute('href')!))
