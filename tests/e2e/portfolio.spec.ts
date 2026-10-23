@@ -212,7 +212,7 @@ test('sound and contact controls reflect their real state', async ({ page, conte
   await expect(page.locator('audio')).toHaveJSProperty('paused', true)
   await page.getByRole('button', { name: 'Copy email address' }).click()
   await expect(page.getByRole('status')).toHaveText('Email address copied.')
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('akanni@metnov.org')
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('wemzain@gmail.com')
 })
 
 test('inner pages fit narrow and tablet viewports', async ({ page }) => {

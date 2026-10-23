@@ -10,6 +10,7 @@ import { useLenis } from 'lenis/react'
 import { Arrow } from './Icons'
 import { BrandMark } from './Brand'
 import HeaderGlass from './HeaderGlass'
+import { CONTACT_EMAIL } from '@/lib/contact'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -304,8 +305,8 @@ export default function Header() {
             </nav>
           </div>
           <div className="menu-bottom menu-chrome">
-            <a className="mobile-menu-email" href="mailto:akanni@metnov.org">
-              akanni@metnov.org ↗
+            <a className="mobile-menu-email" href={`mailto:${CONTACT_EMAIL}`}>
+              {CONTACT_EMAIL} ↗
             </a>
             <span className="eyebrow">Strategy. Craft. Software.</span>
           </div>

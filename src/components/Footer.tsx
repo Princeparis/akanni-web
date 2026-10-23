@@ -8,6 +8,8 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import Reveal from './Reveal'
+import ContactForm from './ContactForm'
+import { CONTACT_EMAIL } from '@/lib/contact'
 
 export default function Footer() {
   const logo = useRef<HTMLAnchorElement>(null)
@@ -34,7 +36,7 @@ export default function Footer() {
   const [copyError, setCopyError] = useState(false)
   async function copyEmail() {
     try {
-      await navigator.clipboard.writeText('akanni@metnov.org')
+      await navigator.clipboard.writeText(CONTACT_EMAIL)
       setCopied(true)
       setCopyError(false)
     } catch {
@@ -52,7 +54,7 @@ export default function Footer() {
         </a>
       </div>
       <Reveal>
-        <a className="footer-title" href="mailto:akanni@metnov.org">
+        <a className="footer-title" href="#inquiry">
           Let’s
           <br />
           <span>connect.</span>
@@ -65,7 +67,7 @@ export default function Footer() {
           simpler, and better for people today and the generations coming after us.
         </p>
         <div className="footer-email">
-          <a href="mailto:akanni@metnov.org">akanni@metnov.org</a>
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           <button onClick={copyEmail} aria-label="Copy email address">
             {copied ? 'Copied ✓' : 'Copy ↗'}
           </button>
@@ -78,6 +80,7 @@ export default function Footer() {
           </span>
         </div>
       </div>
+      <ContactForm />
       <Link href="/" ref={logo} className="footer-brand" aria-label="Rayab home">
         <BrandWordmark className="footer-brand-wordmark" />
       </Link>

@@ -1,6 +1,6 @@
 # Akanni — Creative Engineer
 
-A portfolio for Yusuff Ridwan Akanni. Next.js 15, React 19, GSAP, and Lenis. All content and imagery are local; no CMS, database, or API credentials are required.
+A portfolio for Yusuff Ridwan Akanni. Next.js 15, React 19, GSAP, and Lenis. All content and imagery are local; no CMS or database is required. Contact delivery uses Gmail SMTP through Nodemailer and needs a server-side Google App Password.
 
 ## Development
 
@@ -33,6 +33,7 @@ Install Playwright Chromium with `corepack pnpm@9.8.0 exec playwright install ch
 - `src/data/gallery.ts`: original frames and generated editorial studies.
 - `public/`: original fonts, project artwork, photography, video, music, and résumé; new gallery assets are in `public/assets/generated/`.
 - `docs/design-direction.md`: research sources and visual/interaction decisions.
+- `src/components/ContactForm.tsx`: three-part inquiry composer; `src/app/api/contact/route.ts`: bounded, validated contact delivery. See [Contact delivery](docs/contact-delivery.md) for Gmail setup and attachment limits.
 
 `NEXT_PUBLIC_SITE_URL` is optional. Set it to the deployed origin to generate absolute metadata and sitemap URLs; without it the sitemap is intentionally empty. No invented production domain is used.
 
@@ -40,4 +41,4 @@ The app builds all seven project pages statically. `next start` serves the produ
 
 ## Vercel
 
-The application pins Node `22.x`, matching the Vercel project setting. Next.js and React use patched releases. The normal build command is `pnpm run build`; no special environment variables or security bypasses are needed. See `docs/vercel-security-fix.md` for the deployment-block diagnosis and dependency decisions.
+The application pins Node `22.x`, matching the Vercel project setting. Next.js and React use patched releases. The normal build command is `pnpm run build`; no security bypasses are needed. Set the server-only `SMTP_PASSWORD` to a Google App Password to enable contact delivery, then redeploy. See `docs/vercel-security-fix.md` for the deployment-block diagnosis and dependency decisions.
