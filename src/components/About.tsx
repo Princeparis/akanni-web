@@ -42,11 +42,12 @@ export default function About() {
         <div className="about-layout">
           <Reveal className="about-photo">
             <Image
-              src="/images/akanni-web.jpg"
+              src="/images/akanni-about.webp"
               alt="Portrait of Yusuff Ridwan Akanni"
-              width={700}
-              height={800}
-              sizes="(max-width: 700px) 100vw, 35vw"
+              width={1122}
+              height={1402}
+              quality={90}
+              sizes="(max-width: 524px) calc(100vw - 44px), (max-width: 760px) 480px, 40vw"
             />
             <div className="photo-caption">
               <span>Yusuff Ridwan</span>
