@@ -34,6 +34,7 @@ This revision restores the original branding and typography while retaining the 
 ## Focused refinements
 
 - The header uses the original icon only. Scroll progress between 40px and 280px contracts the header to a centered 560px floating bar, capped at the viewport width minus 32px. Returning to the top expands it. Reduced motion switches directly between the two layouts.
+- The shrinking header develops a custom WebGL glass lens with refractive edges, soft transmission, and directional highlights in place of its opaque black background and border. Its backdrop is reconstructed from local page media and layout; browser compositing limits are documented in [Header glass](header-glass.md).
 - The menu keeps the existing two-line toggle. A neutral paper sheet, large Machina links, independent masks and rule reveals replace the circular drawer reveal. Escape and navigation wait for the exit animation, focus stays inside the dialog, and background scrolling is locked.
 - Decorative lime is reduced across interface arrows, small labels, service controls, and section surfaces. The footer's original lime remains unchanged, along with the small availability dots and hero asterisk.
 - The playground features eight standalone experiences: six practical creative tools plus the generative flow field and moiré study. The original spring-grid route remains accessible. Tools explain their underlying rules and provide real controls, clipboard output, or downloads. See [Practical playground](practical-playground.md) for functionality and gallery additions.

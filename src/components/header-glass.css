@@ -1,0 +1,67 @@
+.site-header {
+  --glass-progress: 0;
+  isolation: isolate;
+  background: transparent;
+  border: 0;
+}
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(#0b0b0b77, transparent);
+  opacity: calc(1 - var(--glass-progress));
+  pointer-events: none;
+}
+.header-glass {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--glass-progress);
+  border-radius: inherit;
+}
+.header-glass canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.header-glass .header-glass-soft,
+.header-glass[data-glass-mode='canvas'] .header-glass-gpu {
+  display: none;
+}
+.header-glass[data-glass-mode='canvas'] .header-glass-soft {
+  display: block;
+}
+.site-header.is-scrolled {
+  background: transparent;
+  border-color: transparent;
+}
+/* Navigation remains ordinary, sharp HTML above the optical surface. */
+.site-header.is-scrolled .mobile-menu-toggle {
+  border-color: transparent;
+  background: #ffffff08;
+  border-radius: 12px;
+}
+.site-header.is-scrolled .mobile-menu-toggle:hover {
+  background: #ffffff12;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header.is-scrolled {
+    --glass-progress: 1;
+    border-radius: 24px;
+  }
+}
+@media (prefers-contrast: more), (forced-colors: active) {
+  .header-glass {
+    display: none;
+  }
+  .site-header.is-scrolled {
+    background: Canvas;
+    color: CanvasText;
+    outline: 1px solid CanvasText;
+  }
+  .site-header.is-scrolled .header-brand-mark {
+    color: CanvasText;
+  }
+}

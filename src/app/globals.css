@@ -213,8 +213,8 @@ summary::-webkit-details-marker {
   justify-content: space-between;
   gap: 25px;
   z-index: 40;
-  background: linear-gradient(#0b0b0b99, transparent);
-  border: 1px solid transparent;
+  background: transparent;
+  border: 0;
   will-change: width, height;
 }
 .wordmark {
@@ -1870,9 +1870,7 @@ summary::-webkit-details-marker {
 }
 
 .site-header.is-scrolled {
-  background: rgba(11, 11, 11, 0.94);
-  backdrop-filter: blur(16px);
-  border-color: #ffffff26;
+  background: transparent;
 }
 .site-header.is-scrolled .desktop-nav {
   opacity: 0;
@@ -1894,7 +1892,7 @@ summary::-webkit-details-marker {
     height: 68px;
     top: 16px;
     padding: 10px 18px;
-    border-radius: 10px;
+    border-radius: 24px;
   }
 }
 @media (max-width: 760px) {

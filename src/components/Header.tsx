@@ -9,6 +9,7 @@ import { useGSAP } from '@gsap/react'
 import { useLenis } from 'lenis/react'
 import { Arrow } from './Icons'
 import { BrandMark } from './Brand'
+import HeaderGlass from './HeaderGlass'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -46,6 +47,7 @@ export default function Header() {
             paddingLeft: () => (innerWidth <= 760 ? 22 : innerWidth * 0.04),
             paddingRight: () => (innerWidth <= 760 ? 22 : innerWidth * 0.04),
             borderRadius: 0,
+            '--glass-progress': 0,
           },
           {
             width: () => Math.min(innerWidth - 32, 560),
@@ -53,7 +55,8 @@ export default function Header() {
             height: 68,
             paddingLeft: 18,
             paddingRight: 18,
-            borderRadius: 10,
+            borderRadius: 24,
+            '--glass-progress': 1,
             ease: 'none',
             scrollTrigger: { start: 40, end: 280, scrub: 0.5, invalidateOnRefresh: true },
           },
@@ -162,6 +165,7 @@ export default function Header() {
   return (
     <>
       <header ref={header} className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
+        <HeaderGlass target={header} route={pathname} paused={open} />
         <Link href="/" className="wordmark" aria-label="Rayab home">
           <BrandMark className="header-brand-mark" />
         </Link>
