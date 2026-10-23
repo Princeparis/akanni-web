@@ -657,206 +657,6 @@ summary::-webkit-details-marker {
   height: 22px;
   color: var(--ink);
 }
-/* The work unfolds through a pinned, scroll-driven filmstrip. */
-.selected-work {
-  background: #0b0b0b;
-}
-.work-intro {
-  padding-bottom: 40px;
-}
-.work-intro h2 {
-  font-size: clamp(44px, 6.6vw, 105px);
-}
-.work-intro-note {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-top: 40px;
-  gap: 30px;
-}
-.work-intro-note p {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--muted);
-}
-.work-stage-top {
-  display: flex;
-  justify-content: space-between;
-  margin: 35px 4vw 30px;
-  border-top: 1px solid var(--line);
-  padding-top: 24px;
-  color: var(--muted);
-}
-.film-rail {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 55px 35px;
-  padding: 0 4vw;
-}
-.film-image {
-  display: block;
-  position: relative;
-  aspect-ratio: 1.8;
-  overflow: hidden;
-  background: #1b1b1b;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 24px) 0,
-    100% 24px,
-    100% 100%,
-    24px 100%,
-    0 calc(100% - 24px)
-  );
-}
-.film-image img {
-  object-fit: cover;
-  transition: filter 0.5s;
-}
-.film-image:after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 1px solid #fff2;
-  pointer-events: none;
-}
-.film-image-index {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font-family: var(--font-big);
-  font-size: 45px;
-  line-height: 1;
-  color: white;
-  mix-blend-mode: difference;
-}
-.film-image-cta {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.85);
-  width: 115px;
-  height: 115px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 13px;
-  background: var(--ink);
-  color: #0b0b0b;
-  font-size: 10px;
-  text-transform: uppercase;
-  opacity: 0;
-  transition:
-    opacity 0.4s,
-    transform 0.4s;
-}
-.film-image-cta svg {
-  width: 22px;
-}
-.film-image:hover .film-image-cta,
-.film-image:focus-visible .film-image-cta {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-.film-caption {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 25px;
-  margin-top: 22px;
-}
-.film-caption .eyebrow {
-  color: var(--muted);
-  font-size: 8px;
-}
-.film-caption h3 {
-  font-size: clamp(25px, 3.2vw, 50px);
-  letter-spacing: -0.06em;
-  text-transform: uppercase;
-  margin-top: 8px;
-}
-.film-arrow {
-  width: 45px;
-  height: 45px;
-  border: 1px solid var(--line);
-  display: grid;
-  place-items: center;
-  transition:
-    color 0.3s,
-    background 0.3s;
-}
-.film-arrow:hover {
-  background: var(--ink);
-  color: #000;
-}
-.film-arrow svg {
-  width: 23px;
-}
-.work-film-progress {
-  height: 1px;
-  margin: 28px 4vw 0;
-  background: var(--line);
-}
-.work-film-progress span {
-  height: 1px;
-  display: block;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left;
-}
-.work-stage-bottom {
-  display: flex;
-  justify-content: space-between;
-  margin: 16px 4vw 0;
-  color: var(--muted);
-}
-.work-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 25px;
-  padding-top: 45px;
-  padding-bottom: 85px;
-}
-.selected-work[data-pinned='true'] .work-pin {
-  height: 100svh;
-  min-height: 740px;
-  overflow: hidden;
-  padding-top: 90px;
-  background: #0b0b0b;
-}
-.selected-work[data-pinned='true'] .work-stage-top {
-  margin-top: 15px;
-  margin-bottom: 24px;
-  padding-top: 18px;
-}
-.selected-work[data-pinned='true'] .film-rail {
-  display: flex;
-  gap: 3vw;
-  width: max-content;
-  padding: 0 4vw;
-  will-change: transform;
-}
-.selected-work[data-pinned='true'] .film-card {
-  width: 72vw;
-  max-width: 1200px;
-  flex-shrink: 0;
-}
-.selected-work[data-pinned='true'] .film-image {
-  height: calc(100svh - 330px);
-  min-height: 380px;
-  aspect-ratio: auto;
-}
-.selected-work[data-pinned='true'] .film-caption h3 {
-  font-size: 40px;
-}
-.selected-work[data-pinned='true'] .film-caption {
-  margin-top: 17px;
-}
-.selected-work[data-pinned='true'] .work-film-progress {
-  margin-top: 22px;
-}
 /* Archive, biography, and details share the same brand system. */
 .project-grid {
   display: grid;
@@ -1551,9 +1351,6 @@ summary::-webkit-details-marker {
   .hero-title {
     font-size: 11vw;
   }
-  .selected-work[data-pinned='true'] .film-image {
-    height: calc(100svh - 380px);
-  }
 }
 @media (max-width: 1150px) {
   .site-header {
@@ -1586,9 +1383,6 @@ summary::-webkit-details-marker {
   .footer-credit {
     flex-direction: column;
     gap: 8px;
-  }
-  .selected-work[data-pinned='true'] .film-caption h3 {
-    font-size: 34px;
   }
 }
 @media (max-width: 760px) {
@@ -1725,85 +1519,6 @@ summary::-webkit-details-marker {
   .discipline-strip svg {
     width: 16px;
     height: 16px;
-  }
-  .work-intro {
-    padding-bottom: 22px;
-  }
-  .work-intro h2 {
-    font-size: clamp(30px, 6.65vw, 50px);
-    letter-spacing: -0.055em;
-  }
-  .work-intro-note {
-    display: block;
-    margin-top: 30px;
-  }
-  .work-intro-note > .eyebrow {
-    font-size: 7px;
-  }
-  .work-intro-note p {
-    font-size: 13px;
-    margin-top: 20px;
-  }
-  .work-stage-top {
-    margin: 20px 22px 25px;
-    padding-top: 18px;
-  }
-  .work-stage-top > .eyebrow {
-    font-size: 7px;
-  }
-  .film-rail {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 0 22px;
-  }
-  .film-image {
-    aspect-ratio: 1.35;
-    clip-path: polygon(
-      0 0,
-      calc(100% - 18px) 0,
-      100% 18px,
-      100% 100%,
-      18px 100%,
-      0 calc(100% - 18px)
-    );
-  }
-  .film-image-index {
-    font-size: 32px;
-    left: 15px;
-    top: 15px;
-  }
-  .film-image-cta {
-    display: none;
-  }
-  .film-caption {
-    margin-top: 16px;
-    align-items: center;
-  }
-  .film-caption h3 {
-    font-size: 28px;
-    margin-top: 7px;
-  }
-  .film-caption .eyebrow {
-    font-size: 7px;
-  }
-  .film-arrow {
-    width: 40px;
-    height: 40px;
-  }
-  .film-arrow svg {
-    width: 21px;
-  }
-  .work-film-progress,
-  .work-stage-bottom {
-    display: none;
-  }
-  .work-bottom {
-    padding-top: 35px;
-    padding-bottom: 60px;
-  }
-  .work-bottom > .eyebrow {
-    font-size: 7px;
-    max-width: 120px;
   }
   .project-grid {
     grid-template-columns: 1fr;
@@ -2149,8 +1864,7 @@ summary::-webkit-details-marker {
     color: var(--ink);
     -webkit-text-stroke: 0;
   }
-  .hero-video,
-  .film-rail {
+  .hero-video {
     will-change: auto;
   }
 }

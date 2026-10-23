@@ -36,23 +36,32 @@ test('branded intro can be skipped and honors reduced motion', async ({ page }) 
   await expect(page.locator('video')).toHaveJSProperty('paused', true)
 })
 
-test('selected work follows desktop scrolling and falls back to a mobile stack', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 1000 })
-  await page.goto('/')
-  await expect(page.locator('#work')).toHaveAttribute('data-pinned', 'true')
-  await page
-    .locator('.work-pin')
-    .evaluate((e) => window.scrollTo(0, e.getBoundingClientRect().top + scrollY + 1500))
-  await page.waitForTimeout(1200)
-  const transform = await page
-    .locator('.film-rail')
-    .evaluate((e) => new DOMMatrix(getComputedStyle(e).transform).m41)
-  expect(transform).toBeLessThan(-500)
-  await page.setViewportSize({ width: 390, height: 844 })
-  await expect(page.locator('#work')).not.toHaveAttribute('data-pinned', 'true')
-  expect(await page.locator('.film-rail').evaluate((e) => getComputedStyle(e).display)).toBe('grid')
+test('selected work unfolds in place on desktop and mobile', async ({ page }) => {
+  for (const [width, height] of [
+    [1440, 1000],
+    [390, 844],
+  ]) {
+    await page.setViewportSize({ width, height })
+    await page.goto('/')
+    await expect(page.locator('#work')).toHaveAttribute('data-enhanced', 'true')
+    await page.locator('.work-sequence').evaluate((element) => {
+      const start = element.getBoundingClientRect().top + scrollY
+      window.scrollTo(0, start + ((element.clientHeight - innerHeight) * 2) / 3)
+    })
+    await expect(page.getByRole('button', { name: 'Show Metnov', exact: true })).toHaveAttribute(
+      'aria-current',
+      'true',
+    )
+    await expect(page.getByRole('link', { name: 'View Metnov project', exact: true })).toBeVisible()
+    await expect
+      .poll(() =>
+        page
+          .locator('.work-sticky')
+          .evaluate((element) => Math.abs(element.getBoundingClientRect().top)),
+      )
+      .toBeLessThan(2)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  }
 })
 
 test('image optimization serves AVIF and WebP with the patched image processor', async ({

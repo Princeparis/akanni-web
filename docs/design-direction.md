@@ -12,7 +12,7 @@ The first redesign moved too far from the original site's identity. This revisio
 
 - An interactive monochrome wire sculpture introduces the site. A GSAP timeline assembles its contours, rolls masked typography, advances a sequence counter, then opens a circular aperture onto the existing hero. Pointer movement turns the form; holding slows its rotation and pauses the sequence. It plays once per tab session, can be skipped, and yields immediately for reduced motion.
 - Hero typography follows the intro through masked, staggered GSAP entrances; the video eases from a close crop and parallax follows scrolling.
-- Desktop selected work is a pinned horizontal sequence, with image parallax synchronized to the rail and a progress indicator. Touch layouts and reduced-motion users receive a normal project grid/stack.
+- Selected work is a spatial artwork deck: native vertical scrolling tilts each sheet out of view as the next settles into place, with masked title transitions and a direct project index. Phones and tablets use a compact version; reduced motion and short screens receive a normal linked collection. See [Selected work](selected-work.md) for behavior and research.
 - Body text uses GSAP SplitText line masking with automatic re-splitting. Vector logo paths reveal in sequence at the footer. Navigation uses a layered sheet entrance, masked and staggered links, drawn rules, and a choreographed exit.
 - All motion belongs to scoped GSAP contexts and responsive media queries; route cleanup does not kill unrelated scroll triggers.
 
@@ -38,4 +38,4 @@ This revision restores the original branding and typography while retaining the 
 - Decorative lime is reduced across interface arrows, small labels, service controls, and section surfaces. The footer's original lime remains unchanged, along with the small availability dots and hero asterisk.
 - The playground features eight standalone experiences: six practical creative tools plus the generative flow field and moiré study. The original spring-grid route remains accessible. Tools explain their underlying rules and provide real controls, clipboard output, or downloads. See [Practical playground](practical-playground.md) for functionality and gallery additions.
 - Experimental canvases resize for pixel density, pause when outside the viewport or in a hidden tab, and start static for reduced motion. No new runtime packages or external services were added.
-- Homepage content, hero video, introduction sequence, selected-work interactions, photography, local typefaces, original vector geometry, and footer composition are preserved.
+- Homepage content, hero video, introduction sequence, photography, local typefaces, original vector geometry, and footer composition are preserved.
