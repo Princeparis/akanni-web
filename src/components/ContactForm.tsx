@@ -12,6 +12,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Arrow } from './Icons'
+import { ContactAudio } from '@/lib/contact-audio'
 import {
   CONTACT_EMAIL,
   CONTACT_TOPICS,
@@ -35,6 +36,8 @@ export default function ContactForm() {
   const fileInput = useRef<HTMLInputElement>(null)
   const draftId = useRef('')
   const dragDepth = useRef(0)
+  const audio = useRef<ContactAudio | null>(null)
+  const [soundEnabled, setSoundEnabled] = useState(true)
   const [step, setStep] = useState(0)
   const [inquiry, setInquiry] = useState<Inquiry>({ ...EMPTY_INQUIRY })
   const [errors, setErrors] = useState<InquiryErrors>({})
@@ -44,6 +47,39 @@ export default function ContactForm() {
   const [sendError, setSendError] = useState('')
   const [reference, setReference] = useState('')
   const [sentFiles, setSentFiles] = useState(0)
+
+  useEffect(() => {
+    const feedback = new ContactAudio()
+    audio.current = feedback
+    try {
+      const enabled = localStorage.getItem('rayab-contact-sound') !== 'off'
+      setSoundEnabled(enabled)
+      feedback.setEnabled(enabled)
+    } catch {
+      /* Storage is optional. */
+    }
+    const pause = () => {
+      if (document.hidden) feedback.pause()
+    }
+    document.addEventListener('visibilitychange', pause)
+    return () => {
+      document.removeEventListener('visibilitychange', pause)
+      feedback.dispose()
+      audio.current = null
+    }
+  }, [])
+
+  function toggleSound() {
+    const enabled = !soundEnabled
+    setSoundEnabled(enabled)
+    audio.current?.setEnabled(enabled)
+    if (enabled && status === 'sending') audio.current?.arm()
+    try {
+      localStorage.setItem('rayab-contact-sound', enabled ? 'on' : 'off')
+    } catch {
+      /* Optional. */
+    }
+  }
 
   useEffect(() => {
     let frame = 0
@@ -188,6 +224,7 @@ export default function ContactForm() {
       focusHeading()
       return
     }
+    audio.current?.arm()
     const body = new FormData()
     for (const [key, value] of Object.entries(inquiry)) body.set(key, value)
     const trap = event.currentTarget.elements.namedItem('website') as HTMLInputElement | null
@@ -221,6 +258,7 @@ export default function ContactForm() {
       setSentFiles(files.length)
       setFiles([])
       setStatus('sent')
+      audio.current?.play('success')
       focusHeading()
     } catch (error) {
       setStatus('draft')
@@ -229,6 +267,7 @@ export default function ContactForm() {
           ? error.message
           : 'Sending took longer than expected. Your draft is still here—try again, or email me directly.',
       )
+      audio.current?.play('error')
     } finally {
       clearTimeout(timeout)
     }
@@ -255,10 +294,45 @@ export default function ContactForm() {
     >
       <div className="inquiry-topline">
         <span className="eyebrow">Open line / A good place to begin</span>
-        <span className="inquiry-draft-state">
-          <i aria-hidden="true" />
-          {status === 'sent' ? 'Dispatched' : status === 'sending' ? 'Sending' : 'Your draft'}
-        </span>
+        <div className="inquiry-feedback-controls">
+          <button
+            type="button"
+            className="inquiry-sound-toggle"
+            aria-label="Submission sounds"
+            aria-pressed={soundEnabled}
+            onClick={toggleSound}
+            title={soundEnabled ? 'Mute submission sounds' : 'Enable submission sounds'}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M11 5 6 9H3v6h3l5 4V5Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              {soundEnabled ? (
+                <path
+                  d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              ) : (
+                <path
+                  d="m16 9 6 6m0-6-6 6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              )}
+            </svg>
+            Sound {soundEnabled ? 'on' : 'off'}
+          </button>
+          <span className="inquiry-draft-state">
+            <i aria-hidden="true" />
+            {status === 'sent' ? 'Dispatched' : status === 'sending' ? 'Sending' : 'Your draft'}
+          </span>
+        </div>
       </div>
       <div className="inquiry-body">
         <aside className="inquiry-aside">
