@@ -218,6 +218,7 @@ test('audio starts only with entry consent, mutes, resumes, and closes when leav
   await page.getByRole('link', { name: 'Exit', exact: true }).click()
   await expect(page).toHaveURL('/')
   await expect.poll(states).toEqual(['closed'])
+  expect(await page.evaluate(() => document.fullscreenElement)).toBeNull()
 })
 
 test('WebGL failure retains the complete text journey and source notes', async ({ page }) => {
@@ -290,4 +291,66 @@ test('a device without Web Audio still enters the full-screen journey', async ({
   await page.getByRole('button', { name: 'Next chapter', exact: true }).click()
   await expect(page.locator('main')).toHaveAttribute('data-chapter', 'founding')
   expect(errors).toEqual([])
+})
+
+test('Begin enters actual browser fullscreen, dialogs work inside it, and the fullscreen toggle preserves the journey', async ({
+  page,
+}) => {
+  await page.goto('/ibadan')
+  await enterQuietly(page)
+  await expect(page.locator('main')).toHaveAttribute('data-fullscreen', 'true')
+  expect(await page.evaluate(() => document.fullscreenElement?.id)).toBe('main')
+  const bounds = await page.locator('main').boundingBox()
+  const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }))
+  expect(bounds).toEqual({ x: 0, y: 0, ...viewport })
+  await page.getByRole('button', { name: 'Open the field notes' }).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.getByRole('button', { name: 'Close panel' }).click()
+  await page.getByRole('button', { name: 'Exit fullscreen', exact: true }).click()
+  await expect(page.locator('main')).toHaveAttribute('data-fullscreen', 'false')
+  await expect(page.locator('main')).toHaveAttribute('data-chapter', 'land')
+  await page.getByRole('button', { name: 'Enter fullscreen', exact: true }).click()
+  await expect(page.locator('main')).toHaveAttribute('data-fullscreen', 'true')
+  await page.evaluate(() => document.exitFullscreen())
+  await expect(page.getByRole('button', { name: 'Enter fullscreen', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  )
+})
+
+test('a denied fullscreen request retains a usable journey and a retry control', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    HTMLElement.prototype.requestFullscreen = () =>
+      Promise.reject(new DOMException('Denied', 'NotAllowedError'))
+  })
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto('/ibadan')
+  await enterQuietly(page)
+  await expect(page.locator('.ibadan-fullscreen-notice')).toContainText(
+    'could not enter fullscreen',
+  )
+  await expect(page.locator('main')).toHaveAttribute('data-fullscreen', 'false')
+  await page.getByRole('button', { name: 'Dismiss fullscreen notice' }).click()
+  await page.getByRole('button', { name: 'Next chapter', exact: true }).click()
+  await expect(page.locator('main')).toHaveAttribute('data-chapter', 'founding')
+  await expect(page.getByRole('button', { name: 'Enter fullscreen', exact: true })).toBeVisible()
+  expect(errors).toEqual([])
+})
+
+test('phones without a fullscreen API keep an edge-to-edge experience', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(HTMLElement.prototype, 'requestFullscreen', { value: undefined })
+    Object.defineProperty(HTMLElement.prototype, 'webkitRequestFullscreen', { value: undefined })
+  })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/ibadan')
+  await expect(page.getByRole('button', { name: 'Enter fullscreen', exact: true })).toHaveCount(0)
+  await enterQuietly(page)
+  await expect(page.locator('main')).toHaveAttribute('data-fullscreen', 'false')
+  expect(await page.locator('main').boundingBox()).toEqual({ x: 0, y: 0, width: 390, height: 844 })
+  await expect(page.locator('.ibadan-fullscreen-notice')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Next chapter', exact: true })).toBeInViewport()
 })

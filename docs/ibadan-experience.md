@@ -18,6 +18,7 @@ The ink, cream, warm earth, pale violet and blue-grey palette extends the site's
 
 ## Interaction and audio
 
+- Begin requests browser fullscreen directly from the visitor's gesture, after unlocking opted-in audio. A header control enters/exits fullscreen, and native fullscreen-change events keep it correct when the visitor leaves with Esc or browser controls. Fullscreen is limited to the experience's root element and released when it unmounts. Standard and prefixed WebKit APIs are supported; unsupported or denied requests preserve the full-viewport journey without blocking navigation.
 - Scroll, arrow keys, Previous/Next, chapter ticks and a modal index navigate the chapters. Home/End jump to the ends. The closing Next control restarts the journey. Horizontal swipes on the story navigate on touch screens; dragging the canvas rotates the object.
 - Holding still on the canvas disperses the sculpture; release reforms it. The equivalent Release/Gather buttons support keyboards. Inspect centres the sculpture and hides story copy, exposing rotation and reset controls. Escape leaves inspection. Ambient motion can be paused separately from navigation.
 - A gesture on Begin starts the optional original Web Audio soundscape. The entry sound preference and persistent in-session mute button allow silent entry. Sine layers and filtered procedural noise form a low-level, slowly retuned atmosphere. It is not traditional music, a reconstruction or an archival recording.

@@ -6,6 +6,7 @@ import { ibadanChapters, ibadanEdition, ibadanReferences } from '@/data/ibadan'
 import { BrandMark } from '@/components/Brand'
 import { IbadanAudio } from './ibadan-audio'
 import type { IbadanScene } from './ibadan-scene'
+import { useIbadanFullscreen } from './use-ibadan-fullscreen'
 import './ibadan.css'
 
 function SoundIcon({ on }: { on: boolean }) {
@@ -32,6 +33,8 @@ function SoundIcon({ on }: { on: boolean }) {
 }
 
 export default function IbadanExperience() {
+  const root = useRef<HTMLElement>(null)
+  const fullscreen = useIbadanFullscreen(root)
   const host = useRef<HTMLDivElement>(null)
   const scene = useRef<IbadanScene | null>(null)
   const audio = useRef<IbadanAudio | null>(null)
@@ -182,6 +185,8 @@ export default function IbadanExperience() {
         if (!playing)
           setAudioNotice('Sound is unavailable on this device. The journey continues silently.')
       })
+    // Keep both audio unlock and fullscreen inside the visitor's entry gesture.
+    void fullscreen.enter()
     requestAnimationFrame(() => story.current?.focus({ preventScroll: true }))
   }
   const toggleSound = () => {
@@ -202,6 +207,7 @@ export default function IbadanExperience() {
 
   return (
     <main
+      ref={root}
       id="main"
       className={`ibadan-app${started ? ' has-entered' : ''}${inspect ? ' is-inspecting' : ''}${reduced ? ' is-reduced' : ''}`}
       style={
@@ -213,6 +219,7 @@ export default function IbadanExperience() {
       data-lenis-prevent
       data-chapter={current.id}
       data-ready={ready}
+      data-fullscreen={fullscreen.fullscreen}
       tabIndex={-1}
       onWheel={(event) => {
         if (
@@ -248,6 +255,29 @@ export default function IbadanExperience() {
           Ibadan <i /> A living memory
         </span>
         <div className="ibadan-header-actions">
+          {fullscreen.supported && (
+            <button
+              onClick={() => void fullscreen.toggle()}
+              aria-label={fullscreen.fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              aria-pressed={fullscreen.fullscreen}
+              title={fullscreen.fullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d={
+                    fullscreen.fullscreen
+                      ? 'M3 9h6V3m6 0v6h6M3 15h6v6m6 0v-6h6'
+                      : 'M9 3H3v6m12-6h6v6M3 15v6h6m6 0h6v-6'
+                  }
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span>{fullscreen.fullscreen ? 'Windowed' : 'Fullscreen'}</span>
+            </button>
+          )}
           {started && (
             <button
               onClick={toggleSound}
@@ -296,6 +326,9 @@ export default function IbadanExperience() {
               {soundPreference ? 'Soundscape on' : 'Soundscape off'}
             </button>
           </div>
+          {fullscreen.supported && (
+            <span className="ibadan-fullscreen-hint">Opens fullscreen · Esc to return</span>
+          )}
           <span className="ibadan-edition">{ibadanEdition.status}</span>
         </section>
       ) : (
@@ -438,7 +471,15 @@ export default function IbadanExperience() {
           )}
         </div>
       )}
-      {audioNotice && (
+      {fullscreen.notice && (
+        <p className="ibadan-fullscreen-notice" role="status">
+          {fullscreen.notice}
+          <button onClick={fullscreen.dismiss} aria-label="Dismiss fullscreen notice">
+            ×
+          </button>
+        </p>
+      )}
+      {audioNotice && !fullscreen.notice && (
         <p className="ibadan-audio-notice" role="status">
           {audioNotice}
           <button onClick={() => setAudioNotice('')} aria-label="Dismiss audio notice">
