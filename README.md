@@ -32,7 +32,7 @@ Install Playwright Chromium with `corepack pnpm@9.8.0 exec playwright install ch
 - `src/components/immersive/`: independent Three.js/GSAP sculpture studio and Web Audio rhythm instrument. See `docs/immersive-playground.md` for controls, rendering, and exports.
 - `src/data/studios.ts` and `public/experiments/`: Caustic and Loom complete the ten-project collection. Both ship their exact standalone HTML/CSS/JavaScript as source ZIPs. `pnpm package:studios` regenerates them; production builds do this automatically. See [Caustic & Loom](docs/caustic-and-loom.md).
 - `src/data/gallery.ts`: original frames and generated editorial studies.
-- `/ibadan`: native full-screen particle history journey, linked from the main navigation. Narrative and reference reading live in `src/data/ibadan.ts`; historical source verification is pending because the cloud network blocked retrieval. See [Ibadan experience](docs/ibadan-experience.md).
+- `/ibadan`: a full-screen spatial history with six acts, eighteen episodes and deeper arrival, Efunsetan and Mbari scenes. The homepage has a centred invitation; `src/data/ibadan.ts` and `ibadan-sources.ts` preserve the owner-supplied research, evidence status and source limits. See [Ibadan experience](docs/ibadan-experience.md) and [asset plan](docs/ibadan-asset-plan.md).
 - `public/`: original fonts, project artwork, photography, video, music, and résumé; new gallery assets are in `public/assets/generated/`.
 - `docs/design-direction.md`: research sources and visual/interaction decisions.
 - `src/components/ContactForm.tsx`: three-part inquiry composer; `src/app/api/contact/route.ts`: bounded, validated contact delivery. See [Contact delivery](docs/contact-delivery.md) for Gmail setup and attachment limits.

@@ -18,6 +18,8 @@ export default function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [sound, setSound] = useState(false)
+  const [menuPreview, setMenuPreview] = useState(0)
+  const [menuProgress, setMenuProgress] = useState(0)
   const header = useRef<HTMLElement>(null)
   const audio = useRef<HTMLAudioElement>(null)
   const menu = useRef<HTMLDialogElement>(null)
@@ -163,6 +165,14 @@ export default function Header() {
     { href: '/playground', label: 'Playground', active: pathname.startsWith('/playground') },
     { href: '/ibadan', label: 'Ibadan', active: pathname === '/ibadan' },
   ]
+  const menuDescriptions = [
+    'Products, identities and experiences, made with intention.',
+    'The person, the practice and the things beyond the screen.',
+    'A few frames from the world through my eyes.',
+    'Working instruments for curious hands and restless minds.',
+    'A city made and remade. A spatial history of the people of Ibadan.',
+    'A good conversation is a good place to begin.',
+  ]
 
   return (
     <>
@@ -219,6 +229,7 @@ export default function Header() {
         id="mobile-navigation"
         aria-label="Site navigation"
         className="mobile-navigation"
+        data-lenis-prevent
         onKeyDown={(event) => {
           if (event.key !== 'Tab') return
           const focusable = menu.current?.querySelectorAll<HTMLElement>(
@@ -245,7 +256,18 @@ export default function Header() {
         }}
       >
         <div className="menu-underlay" aria-hidden="true" />
-        <div className="menu-sheet">
+        <div
+          className="menu-sheet"
+          data-lenis-prevent
+          onScroll={(event) => {
+            const element = event.currentTarget
+            const distance = element.scrollHeight - element.clientHeight
+            setMenuProgress(distance > 0 ? element.scrollTop / distance : 1)
+          }}
+        >
+          <div className="menu-scroll-progress" aria-hidden="true">
+            <i style={{ transform: `scaleY(${menuProgress})` }} />
+          </div>
           <div className="mobile-menu-top menu-chrome">
             <Link
               href="/"
@@ -269,11 +291,10 @@ export default function Header() {
           </div>
           <div className="menu-body">
             <div className="menu-aside menu-chrome">
-              <span className="eyebrow">A little navigation</span>
-              <p>
-                Good things
-                <br />
-                are a click away.
+              <span className="eyebrow">Explore / 0{menuPreview + 1}</span>
+              <p className="menu-live-preview" key={menuPreview}>
+                {menuPreview < links.length ? links[menuPreview].label : 'Let’s talk'}
+                <span>{menuDescriptions[menuPreview]}</span>
               </p>
               <span className="menu-aside-note">
                 Independent creative engineer
@@ -287,6 +308,9 @@ export default function Header() {
                   key={link.href}
                   className="mobile-nav-link"
                   href={link.href}
+                  onPointerEnter={() => setMenuPreview(i)}
+                  onFocus={() => setMenuPreview(i)}
+                  data-preview={menuPreview === i}
                   onClick={(event) => {
                     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
                     event.preventDefault()

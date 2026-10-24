@@ -9,6 +9,7 @@ export class IbadanAudio {
   private disposed = false
   private wanted = false
   private chapter = 0
+  private ducked = false
 
   async start() {
     if (this.disposed) return false
@@ -78,7 +79,7 @@ export class IbadanAudio {
         now = this.context.currentTime
       gain.cancelScheduledValues(now)
       gain.setValueAtTime(gain.value, now)
-      gain.linearRampToValueAtTime(0.65, now + 1.8)
+      gain.linearRampToValueAtTime(this.ducked ? 0.12 : 0.55, now + 1.8)
       return this.context.state === 'running'
     } catch {
       return false
@@ -96,6 +97,12 @@ export class IbadanAudio {
         1.8,
       ),
     )
+  }
+
+  setDucked(ducked: boolean) {
+    this.ducked = ducked
+    if (!this.context || !this.master || !this.wanted) return
+    this.master.gain.setTargetAtTime(ducked ? 0.12 : 0.55, this.context.currentTime, 0.3)
   }
 
   pause() {

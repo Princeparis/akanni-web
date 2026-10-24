@@ -5,6 +5,7 @@ import About from '@/components/About'
 import Reveal from '@/components/Reveal'
 import MagneticLink from '@/components/MagneticLink'
 import { Asterisk } from '@/components/Icons'
+import IbadanInvitation from '@/components/ibadan/IbadanInvitation'
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
       </div>
       <SelectedWork />
       <About />
+      <IbadanInvitation />
       <section className="visual-teaser section-pad">
         <span className="eyebrow">An eye for the unexpected</span>
         <Reveal>

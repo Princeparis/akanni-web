@@ -1,0 +1,138 @@
+.ibadan-invitation {
+  position: relative;
+  isolation: isolate;
+  min-height: 740px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #0b0f0b;
+  margin: 20px 0 0;
+  padding: 100px 24px;
+  text-align: center;
+}
+.ibadan-invitation-world {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  opacity: 0.55;
+  transition: transform 1.3s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+.ibadan-invitation::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse, #0b0f0bc7 20%, transparent 75%),
+    linear-gradient(0deg, #0b0b0b, transparent 25%, transparent 85%, #0b0b0b);
+}
+.ibadan-invitation:hover .ibadan-invitation-world {
+  transform: scale(1.035);
+}
+.ibadan-invitation-copy {
+  max-width: 850px;
+}
+.ibadan-invitation .eyebrow {
+  color: #c1ad88;
+  font-size: 9px;
+}
+.ibadan-invitation h2 {
+  font-size: clamp(45px, 5.3vw, 78px);
+  line-height: 1.08;
+  text-transform: none;
+  letter-spacing: -0.055em;
+  margin: 26px 0;
+}
+.ibadan-invitation em {
+  font-family: var(--font-kyoto);
+  font-style: italic;
+  color: #d3b995;
+}
+.ibadan-invitation p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #b7b9a9;
+}
+.ibadan-invitation-enter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+  width: 250px;
+  min-height: 60px;
+  padding: 12px 18px;
+  margin: 34px auto 0;
+  background: #ddcaa9;
+  color: #1a2319;
+  font-size: 12px;
+}
+.ibadan-invitation-enter > span {
+  font-size: 26px;
+  transition: transform 0.3s;
+}
+.ibadan-invitation-enter:hover > span {
+  transform: translate(3px, -3px);
+}
+.ibadan-invitation-meta {
+  display: block;
+  color: #919986;
+  font-size: 9px;
+  margin-top: 22px;
+  line-height: 1.7;
+}
+.ibadan-invitation-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  background: #0a0d0b;
+  display: grid;
+  place-items: center;
+  animation: ibadan-portal-open 0.65s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+.ibadan-invitation-veil span {
+  font-family: var(--font-kyoto);
+  font-style: italic;
+  font-size: clamp(60px, 12vw, 150px);
+  color: #c8b08b;
+}
+@keyframes ibadan-portal-open {
+  from {
+    clip-path: circle(0 at 50% 65%);
+  }
+  to {
+    clip-path: circle(150vmax at 50% 65%);
+  }
+}
+@media (max-width: 760px) {
+  .ibadan-invitation {
+    min-height: 630px;
+    padding: 75px 22px;
+  }
+  .ibadan-invitation h2 {
+    font-size: 42px;
+  }
+  .ibadan-invitation p {
+    font-size: 14px;
+  }
+  .ibadan-invitation .eyebrow {
+    font-size: 8px;
+  }
+  .ibadan-invitation-world {
+    width: 190%;
+    left: -45%;
+    max-width: none;
+  }
+  .ibadan-invitation-enter {
+    min-height: 56px;
+    width: 238px;
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ibadan-invitation * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

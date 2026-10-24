@@ -1,65 +1,103 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { ibadanChapters, ibadanEdition, ibadanReferences } from '@/data/ibadan'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ibadanActs, ibadanChapters, ibadanEdition, ibadanSources } from '@/data/ibadan'
 import { BrandMark } from '@/components/Brand'
 import { IbadanAudio } from './ibadan-audio'
 import type { IbadanScene } from './ibadan-scene'
 import { useIbadanFullscreen } from './use-ibadan-fullscreen'
+import { useIbadanNarration } from './use-ibadan-narration'
+import { buildIbadanWorld } from './world-geometry'
 import './ibadan.css'
 
-function SoundIcon({ on }: { on: boolean }) {
+type Panel = 'journey' | 'evidence' | 'people' | 'audio' | null
+function Icon({ name }: { name: 'sound' | 'screen' | 'menu' | 'close' | 'voice' }) {
+  const paths = {
+    sound: 'M4 9h3l5-4v14l-5-4H4V9Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14',
+    screen: 'M9 3H3v6m12-6h6v6M3 15v6h6m6 0h6v-6',
+    menu: 'M4 7h16M4 12h10M4 17h16',
+    close: 'm6 6 12 12M6 18 18 6',
+    voice: 'M9 5a3 3 0 0 1 6 0v7a3 3 0 0 1-6 0V5Zm-3 6v1a6 6 0 0 0 12 0v-1m-6 7v4m-4 0h8',
+  }
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M11 5 6 9H3v6h3l5 4V5Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-      />
-      {on ? (
-        <path
-          d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinecap="round"
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={paths[name]} />
+    </svg>
+  )
+}
+function Preview({ form }: { form: (typeof ibadanChapters)[number]['form'] }) {
+  const world = useMemo(() => buildIbadanWorld(form, 1100), [form])
+  return (
+    <svg className="ibadan-world-preview" viewBox="0 0 600 320" aria-hidden="true">
+      {Array.from(world.kinds, (kind, i) => (
+        <circle
+          key={i}
+          cx={300 + (world.positions[i * 3] - world.positions[i * 3 + 2]) * 15}
+          cy={
+            220 +
+            (world.positions[i * 3] + world.positions[i * 3 + 2]) * 4 -
+            world.positions[i * 3 + 1] * 30
+          }
+          r={kind === 2 ? 1.05 : 0.6}
+          fill={kind === 2 ? '#f3e6cf' : '#a9875d'}
+          opacity={kind === 0 ? 0.25 : 0.8}
         />
-      ) : (
-        <path d="m16 9 6 6m0-6-6 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      )}
+      ))}
     </svg>
   )
 }
 
 export default function IbadanExperience() {
-  const root = useRef<HTMLElement>(null)
+  const root = useRef<HTMLElement>(null),
+    host = useRef<HTMLDivElement>(null),
+    scene = useRef<IbadanScene | null>(null),
+    audio = useRef<IbadanAudio | null>(null)
+  const dialog = useRef<HTMLDialogElement>(null),
+    heading = useRef<HTMLHeadingElement>(null),
+    readerHost = useRef<HTMLElement>(null)
+  const active = useRef(0),
+    entered = useRef(false),
+    soundWanted = useRef(true),
+    wheel = useRef({ distance: 0, last: 0 }),
+    openingTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [phase, setPhase] = useState<'cover' | 'opening' | 'story'>('cover'),
+    [chapter, setChapter] = useState(0),
+    [view, setView] = useState(-1)
+  const [ready, setReady] = useState(false),
+    [failed, setFailed] = useState(false),
+    [retry, setRetry] = useState(0),
+    [reduced, setReduced] = useState(false),
+    [paused, setPaused] = useState(false)
+  const [reader, setReader] = useState(false),
+    [sound, setSound] = useState(false),
+    [soundPreference, setSoundPreference] = useState(true),
+    [notice, setNotice] = useState('')
+  const [panel, setPanel] = useState<Panel>(null),
+    [expandedAct, setExpandedAct] = useState(1),
+    [preview, setPreview] = useState(0)
   const fullscreen = useIbadanFullscreen(root)
-  const host = useRef<HTMLDivElement>(null)
-  const scene = useRef<IbadanScene | null>(null)
-  const audio = useRef<IbadanAudio | null>(null)
-  const dialog = useRef<HTMLDialogElement>(null)
-  const story = useRef<HTMLHeadingElement>(null)
-  const active = useRef(0)
-  const entered = useRef(false)
-  const soundWanted = useRef(true)
-  const lastWheel = useRef(0)
-  const wheelDistance = useRef(0)
-  const touch = useRef<{ x: number; y: number } | null>(null)
-  const [started, setStarted] = useState(false)
-  const [chapter, setChapter] = useState(0)
-  const [ready, setReady] = useState(false)
-  const [failed, setFailed] = useState(false)
-  const [retry, setRetry] = useState(0)
-  const [sound, setSound] = useState(false)
-  const [soundPreference, setSoundPreference] = useState(true)
-  const [audioNotice, setAudioNotice] = useState('')
-  const [reduced, setReduced] = useState(false)
-  const [paused, setPaused] = useState(false)
-  const [inspect, setInspect] = useState(false)
-  const [released, setReleased] = useState(false)
-  const [panel, setPanel] = useState<'chapters' | 'notes' | null>(null)
-  const current = ibadanChapters[chapter]
+  const current = ibadanChapters[chapter],
+    act = ibadanActs[current.act - 1],
+    perspective = view >= 0 ? current.viewpoints[view] : null
+  const narration = useIbadanNarration(current.narration, (speaking) =>
+    audio.current?.setDucked(speaking),
+  )
+  const sources = ibadanSources.filter((source) =>
+    current.historicalClaims.some((claim) => claim.sourceIds.includes(source.id)),
+  )
+  const previewChapter = ibadanChapters[preview]
+  const started = phase !== 'cover'
 
   useEffect(() => {
     const ambience = new IbadanAudio()
@@ -75,9 +113,9 @@ export default function IbadanExperience() {
       document.removeEventListener('visibilitychange', visibility)
       ambience.dispose()
       audio.current = null
+      if (openingTimer.current) clearTimeout(openingTimer.current)
     }
   }, [])
-
   useEffect(() => {
     const media = matchMedia('(prefers-reduced-motion: reduce)')
     const update = () => {
@@ -88,11 +126,10 @@ export default function IbadanExperience() {
     media.addEventListener('change', update)
     return () => media.removeEventListener('change', update)
   }, [])
-
   useEffect(() => {
     let cancelled = false
-    setFailed(false)
     setReady(false)
+    setFailed(false)
     void import('./ibadan-scene')
       .then(({ createIbadanScene }) => {
         if (cancelled || !host.current) return
@@ -100,17 +137,23 @@ export default function IbadanExperience() {
           const engine = createIbadanScene(host.current, () => {
             setFailed(true)
             setReady(false)
+            if (entered.current) setReader(true)
           })
           scene.current = engine
           engine.setReduced(matchMedia('(prefers-reduced-motion: reduce)').matches)
-          if (entered.current) engine.setChapter(active.current)
+          engine.setEntered(entered.current)
+          engine.setChapter(active.current)
           setReady(true)
         } catch {
           setFailed(true)
+          if (entered.current) setReader(true)
         }
       })
       .catch(() => {
-        if (!cancelled) setFailed(true)
+        if (!cancelled) {
+          setFailed(true)
+          if (entered.current) setReader(true)
+        }
       })
     return () => {
       cancelled = true
@@ -118,82 +161,86 @@ export default function IbadanExperience() {
       scene.current = null
     }
   }, [retry])
-
+  useEffect(
+    () => scene.current?.setPaused(paused || reader || Boolean(panel)),
+    [paused, reader, panel, ready],
+  )
+  useEffect(() => scene.current?.setVisible(!reader), [reader, ready])
   useEffect(() => {
-    scene.current?.setInspect(inspect)
-  }, [inspect, ready])
+    scene.current?.setView(perspective?.focus || 'place')
+  }, [perspective, ready])
   useEffect(() => {
-    scene.current?.setPaused(paused)
-  }, [paused, ready])
-  useEffect(() => {
-    scene.current?.release(released)
-  }, [released, ready])
-
+    if (panel) dialog.current?.showModal()
+    else dialog.current?.close()
+  }, [panel])
   const go = useCallback((index: number) => {
     const next = Math.max(0, Math.min(ibadanChapters.length - 1, index))
     if (next === active.current) return
     active.current = next
     setChapter(next)
-    setReleased(false)
+    setView(-1)
+    setPreview(next)
+    setExpandedAct(ibadanChapters[next].act)
     scene.current?.setChapter(next)
     audio.current?.setChapter(next)
+    readerHost.current?.scrollTo({ top: 0 })
   }, [])
-
   useEffect(() => {
     if (!started) return
-    const keydown = (event: KeyboardEvent) => {
-      if (dialog.current?.open) return
-      if (event.key === 'Escape') {
-        setInspect(false)
-        setReleased(false)
+    const keys = (event: KeyboardEvent) => {
+      if (dialog.current?.open || (event.target as HTMLElement).closest('button,a,input,select'))
         return
-      }
-      if ((event.target as HTMLElement).closest('button, a, input')) return
-      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      if (event.key === 'ArrowRight') {
         event.preventDefault()
         go(active.current + 1)
       }
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      if (event.key === 'ArrowLeft') {
         event.preventDefault()
         go(active.current - 1)
       }
-      if (event.key === 'Home') {
+      if (!reader && event.key === 'Home') {
         event.preventDefault()
         go(0)
       }
-      if (event.key === 'End') {
+      if (!reader && event.key === 'End') {
         event.preventDefault()
         go(ibadanChapters.length - 1)
       }
     }
-    document.addEventListener('keydown', keydown)
-    return () => document.removeEventListener('keydown', keydown)
-  }, [started, go])
-
-  useEffect(() => {
-    if (panel) dialog.current?.showModal()
-    else dialog.current?.close()
-  }, [panel])
-
-  const begin = () => {
+    document.addEventListener('keydown', keys)
+    return () => document.removeEventListener('keydown', keys)
+  }, [started, go, reader])
+  const begin = (textOnly = false) => {
+    if (entered.current) return
     entered.current = true
-    setStarted(true)
-    scene.current?.setChapter(0)
-    if (soundWanted.current)
+    setReader(textOnly || failed)
+    setPhase(reduced || textOnly || failed ? 'story' : 'opening')
+    scene.current?.setEntered(true)
+    if (!textOnly && soundWanted.current)
       void audio.current?.start().then((playing) => {
         setSound(playing)
         if (!playing)
-          setAudioNotice('Sound is unavailable on this device. The journey continues silently.')
+          setNotice(
+            'The atmosphere could not start on this device. You can continue with the text and scene.',
+          )
       })
-    // Keep both audio unlock and fullscreen inside the visitor's entry gesture.
+    else {
+      soundWanted.current = false
+      setSoundPreference(false)
+    }
     void fullscreen.enter()
-    requestAnimationFrame(() => story.current?.focus({ preventScroll: true }))
+    openingTimer.current = setTimeout(
+      () => {
+        setPhase('story')
+        heading.current?.focus({ preventScroll: true })
+      },
+      reduced || textOnly ? 0 : 1500,
+    )
   }
   const toggleSound = () => {
     const wanted = started ? !sound : !soundWanted.current
     soundWanted.current = wanted
     setSoundPreference(wanted)
-    setAudioNotice('')
     if (!started) return
     if (!wanted) {
       audio.current?.stop()
@@ -201,297 +248,353 @@ export default function IbadanExperience() {
     } else
       void audio.current?.start().then((playing) => {
         setSound(playing)
-        if (!playing) setAudioNotice('Audio could not start. You can continue silently.')
+        if (!playing) setNotice('Atmosphere is unavailable. The journey remains fully usable.')
       })
+  }
+  const openJourney = () => {
+    setPreview(chapter)
+    setExpandedAct(current.act)
+    setPanel('journey')
+  }
+  const evidence = () => setPanel('evidence')
+  const selectView = (index: number) => {
+    setView(index)
+    scene.current?.setView(index < 0 ? 'place' : current.viewpoints[index].focus)
   }
 
   return (
     <main
       ref={root}
       id="main"
-      className={`ibadan-app${started ? ' has-entered' : ''}${inspect ? ' is-inspecting' : ''}${reduced ? ' is-reduced' : ''}`}
-      style={
-        {
-          '--ibadan-accent': current.accent,
-          '--ibadan-chapters': ibadanChapters.length,
-        } as CSSProperties
-      }
-      data-lenis-prevent
+      className={`ibadan-app phase-${phase}${reader ? ' is-reader' : ''}${reduced ? ' is-reduced' : ''}`}
       data-chapter={current.id}
       data-ready={ready}
       data-fullscreen={fullscreen.fullscreen}
+      data-lenis-prevent
       tabIndex={-1}
       onWheel={(event) => {
         if (
-          !started ||
+          phase !== 'story' ||
           panel ||
-          inspect ||
+          reader ||
           event.ctrlKey ||
+          (event.target as HTMLElement).closest('[data-native-scroll]') ||
           Math.abs(event.deltaX) > Math.abs(event.deltaY)
         )
           return
         const now = performance.now()
-        if (now - lastWheel.current < 1100) return
-        wheelDistance.current += event.deltaY
-        if (Math.abs(wheelDistance.current) > 95) {
-          go(active.current + Math.sign(wheelDistance.current))
-          lastWheel.current = now
-          wheelDistance.current = 0
+        if (now - wheel.current.last < 1400) return
+        wheel.current.distance += event.deltaY
+        if (Math.abs(wheel.current.distance) > 120) {
+          go(active.current + Math.sign(wheel.current.distance))
+          wheel.current = { distance: 0, last: now }
         }
       }}
     >
       <div className="ibadan-atmosphere" aria-hidden="true" />
-      <div className="ibadan-stage" ref={host} aria-hidden={failed} />
-      <div className="ibadan-vignette" aria-hidden="true" />
-      <div className="ibadan-grain" aria-hidden="true" />
+      <div className="ibadan-stage" ref={host} aria-hidden={reader || failed} />
+      <div className="ibadan-light" aria-hidden="true" />
       <header className="ibadan-header">
-        <Link href="/" className="ibadan-brand" aria-label="Return to Rayab portfolio">
+        <Link href="/" aria-label="Return to Rayab portfolio" className="ibadan-brand">
           <BrandMark />
           <span>
-            Rayab<span>Places we carry / 001</span>
+            Places we carry<small>A project by Rayab</small>
           </span>
         </Link>
-        <span className="ibadan-header-title">
-          Ibadan <i /> A living memory
-        </span>
+        {started && (
+          <button className="ibadan-act-label" onClick={openJourney}>
+            <span>Act {String(current.act).padStart(2, '0')}</span>
+            {act.title}
+          </button>
+        )}
         <div className="ibadan-header-actions">
+          {started && (
+            <>
+              <button
+                aria-label={reader ? 'Return to spatial edition' : 'Open text edition'}
+                onClick={() => setReader(!reader)}
+                aria-pressed={reader}
+              >
+                <span>Read</span>
+                <b aria-hidden="true">Aa</b>
+              </button>
+              <button
+                onClick={toggleSound}
+                aria-label={sound ? 'Mute Ibadan atmosphere' : 'Enable Ibadan atmosphere'}
+                aria-pressed={sound}
+              >
+                <Icon name="sound" />
+              </button>
+            </>
+          )}
           {fullscreen.supported && (
             <button
               onClick={() => void fullscreen.toggle()}
               aria-label={fullscreen.fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
               aria-pressed={fullscreen.fullscreen}
-              title={fullscreen.fullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d={
-                    fullscreen.fullscreen
-                      ? 'M3 9h6V3m6 0v6h6M3 15h6v6m6 0v-6h6'
-                      : 'M9 3H3v6m12-6h6v6M3 15v6h6m6 0h6v-6'
-                  }
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>{fullscreen.fullscreen ? 'Windowed' : 'Fullscreen'}</span>
+              <Icon name="screen" />
             </button>
           )}
           {started && (
             <button
-              onClick={toggleSound}
-              aria-label={sound ? 'Mute Ibadan soundscape' : 'Enable Ibadan soundscape'}
-              aria-pressed={sound}
+              onClick={openJourney}
+              aria-label="Open journey menu"
+              className="ibadan-menu-button"
             >
-              <SoundIcon on={sound} />
-              <span>Sound {sound ? 'on' : 'off'}</span>
+              <span>Journey</span>
+              <Icon name="menu" />
             </button>
           )}
-          <Link href="/" className="ibadan-exit">
-            Exit <span aria-hidden="true">↗</span>
+          <Link href="/" className="ibadan-exit" aria-label="Exit Ibadan experience">
+            Exit ↗
           </Link>
         </div>
       </header>
 
-      {!started ? (
-        <section className="ibadan-intro" aria-labelledby="ibadan-title">
-          <span className="ibadan-eyebrow ibadan-intro-kicker">
-            <i /> A place. A people. A living memory.
-          </span>
+      {phase !== 'story' && (
+        <section
+          className={`ibadan-cover${phase === 'opening' ? ' is-leaving' : ''}`}
+          aria-labelledby="ibadan-title"
+        >
+          <span className="ibadan-eyebrow">Ìbàdàn / A spatial history in six acts</span>
           <h1 id="ibadan-title">
-            Ìbàdàn
-            <span>
-              A city, carried
-              <br />
-              in <em>memory.</em>
+            <span>Ìbàdàn</span>
+            <span className="ibadan-cover-subtitle">
+              A city made. And <em>remade.</em>
             </span>
           </h1>
           <p>
-            From the first gathering to a city still becoming.
+            Who gets to build a city,
             <br />
-            History, held in a thousand points of light.
+            and whose work does the city remember?
           </p>
-          <div className="ibadan-entry-actions">
-            <button className="ibadan-enter" onClick={begin}>
-              Begin the journey <span aria-hidden="true">↗</span>
+          <div className="ibadan-cover-actions">
+            <button className="ibadan-enter" onClick={() => begin()} disabled={phase === 'opening'}>
+              Enter the story <span aria-hidden="true">↗</span>
             </button>
-            <button
-              className="ibadan-entry-sound"
-              onClick={toggleSound}
-              aria-label="Entry soundscape"
-              aria-pressed={soundPreference}
-            >
-              <SoundIcon on={soundPreference} />
-              {soundPreference ? 'Soundscape on' : 'Soundscape off'}
-            </button>
-          </div>
-          {fullscreen.supported && (
-            <span className="ibadan-fullscreen-hint">Opens fullscreen · Esc to return</span>
-          )}
-          <span className="ibadan-edition">{ibadanEdition.status}</span>
-        </section>
-      ) : (
-        <>
-          <section
-            className="ibadan-story"
-            aria-labelledby="ibadan-chapter-title"
-            onTouchStart={(event) => {
-              touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }
-            }}
-            onTouchEnd={(event) => {
-              if (!touch.current) return
-              const dx = event.changedTouches[0].clientX - touch.current.x,
-                dy = event.changedTouches[0].clientY - touch.current.y
-              if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5)
-                go(active.current + (dx < 0 ? 1 : -1))
-              touch.current = null
-            }}
-          >
-            <div className="ibadan-story-copy" key={current.id}>
-              <span className="ibadan-eyebrow">
-                <span className="ibadan-chapter-number">
-                  {String(chapter + 1).padStart(2, '0')}
-                </span>{' '}
-                / {current.period}
-              </span>
-              <h2 id="ibadan-chapter-title" ref={story} tabIndex={-1}>
-                {current.title.split('\n').map((line) => (
-                  <span key={line}>{line}</span>
-                ))}
-              </h2>
-              <p>{current.text}</p>
-              <button className="ibadan-text-action" onClick={() => setPanel('notes')}>
-                Open the field notes <span aria-hidden="true">↗</span>
-              </button>
-            </div>
-          </section>
-          <div className="ibadan-object-label">
-            <span className="ibadan-eyebrow">In the particle archive</span>
-            <strong>{current.object}</strong>
-            <span>Drag to turn · Hold to disperse</span>
-          </div>
-          <div className="ibadan-scene-controls" aria-label="Sculpture controls">
-            <button onClick={() => setInspect(!inspect)} aria-pressed={inspect}>
-              {inspect ? 'Return to story' : 'Inspect object'}{' '}
-              <span aria-hidden="true">{inspect ? '−' : '+'}</span>
-            </button>
-            <button onClick={() => setReleased(!released)} aria-pressed={released}>
-              {released ? 'Gather particles' : 'Release particles'}{' '}
-              <span aria-hidden="true">⤢</span>
-            </button>
-            {inspect && (
-              <>
-                <button onClick={() => scene.current?.rotate(-1)} aria-label="Rotate object left">
-                  ↶
-                </button>
-                <button onClick={() => scene.current?.rotate(1)} aria-label="Rotate object right">
-                  ↷
-                </button>
-                <button onClick={() => scene.current?.reset()}>Reset view</button>
-              </>
-            )}
-            <button
-              onClick={() => setPaused(!paused)}
-              aria-pressed={paused}
-              aria-label={paused ? 'Resume ambient motion' : 'Pause ambient motion'}
-            >
-              {paused ? 'Play' : 'Pause'} <span aria-hidden="true">{paused ? '▷' : 'Ⅱ'}</span>
-            </button>
-          </div>
-          <nav className="ibadan-timeline" aria-label="Ibadan chapters">
-            <div className="ibadan-timeline-heading">
-              <span className="ibadan-eyebrow">A journey in {ibadanChapters.length} chapters</span>
-              <button onClick={() => setPanel('chapters')}>
-                Chapter index <span aria-hidden="true">⊞</span>
-              </button>
-            </div>
-            <ol>
-              {ibadanChapters.map((item, index) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => go(index)}
-                    aria-label={`Chapter ${index + 1}: ${item.label}`}
-                    aria-current={chapter === index ? 'step' : undefined}
-                  >
-                    <span className="ibadan-tick">
-                      <i />
-                    </span>
-                    <span className="ibadan-timeline-label">{item.label}</span>
-                    <small>{String(index + 1).padStart(2, '0')}</small>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </nav>
-          <footer className="ibadan-bottom">
-            <span className="ibadan-travel-hint">
-              Scroll to travel <span aria-hidden="true">↓</span>
-              <span>or use ← →</span>
-            </span>
             <div>
               <button
-                onClick={() => go(chapter - 1)}
-                disabled={chapter === 0}
-                aria-label="Previous chapter"
+                onClick={toggleSound}
+                aria-label="Entry atmosphere"
+                aria-pressed={soundPreference}
               >
-                ←
+                <Icon name="sound" />
+                Atmosphere {soundPreference ? 'on' : 'off'}
               </button>
-              <span aria-live="polite" aria-atomic="true">
-                {String(chapter + 1).padStart(2, '0')}{' '}
-                <i>/ {String(ibadanChapters.length).padStart(2, '0')}</i>
-                <span className="sr-only">{current.label}</span>
-              </span>
-              <button
-                onClick={() => go(chapter === ibadanChapters.length - 1 ? 0 : chapter + 1)}
-                aria-label={
-                  chapter === ibadanChapters.length - 1 ? 'Restart the journey' : 'Next chapter'
-                }
-              >
-                {chapter === ibadanChapters.length - 1 ? '↺' : '→'}
-              </button>
+              <button onClick={() => begin(true)}>Read without 3D ↗</button>
             </div>
-            <button className="ibadan-edition-button" onClick={() => setPanel('notes')}>
-              About this edition ↗
+          </div>
+          <span className="ibadan-cover-note">
+            Historical evidence. Human viewpoints. Interpretive spaces.
+          </span>
+        </section>
+      )}
+
+      {started && (
+        <>
+          {reader ? (
+            <article
+              className="ibadan-reader"
+              ref={readerHost}
+              data-native-scroll
+              data-lenis-prevent
+              aria-label="Text edition"
+            >
+              <div className="ibadan-reader-inner">
+                <span className="ibadan-eyebrow">
+                  {current.dateLabel} / {current.locations[0].name}
+                </span>
+                <h1 ref={heading} tabIndex={-1}>
+                  {current.title}
+                </h1>
+                <p className="ibadan-reader-question">{current.question}</p>
+                <p>{current.text}</p>
+                <h2>People & relationships</h2>
+                <ul className="ibadan-people-list">
+                  {current.people.map((person) => (
+                    <li key={person.name}>
+                      <span>{person.historicalOrComposite}</span>
+                      <h3>{person.name}</h3>
+                      <p>{person.role}</p>
+                    </li>
+                  ))}
+                </ul>
+                <h2>Follow a viewpoint</h2>
+                {current.viewpoints.map((point) => (
+                  <section key={point.id}>
+                    <h3>{point.label}</h3>
+                    <p>{point.text}</p>
+                  </section>
+                ))}
+                <h2>Narration transcript</h2>
+                <p>{current.narration}</p>
+                <button className="ibadan-inline-action" onClick={evidence}>
+                  Evidence, sources & interpretation ↗
+                </button>
+                <p className="ibadan-reader-interpretation">
+                  {current.assets[0].verificationStatus}
+                </p>
+              </div>
+            </article>
+          ) : (
+            <>
+              <div className="ibadan-spatial-label">
+                <span>{current.locations[0].name}</span>
+                <span>Interpretive space · composite figures</span>
+              </div>
+              <section
+                className="ibadan-caption"
+                aria-labelledby="ibadan-chapter-title"
+                data-native-scroll
+                data-lenis-prevent
+              >
+                <div className="ibadan-caption-meta">
+                  <span>{current.dateLabel}</span>
+                  <button onClick={evidence}>
+                    {current.historicalClaims[0].evidenceStatus} <span aria-hidden="true">↗</span>
+                  </button>
+                </div>
+                <h2 ref={heading} tabIndex={-1} id="ibadan-chapter-title">
+                  {current.title}
+                </h2>
+                <p className="ibadan-question">
+                  {perspective ? perspective.title : current.question}
+                </p>
+                <p className="ibadan-caption-text" key={`${chapter}-${view}`}>
+                  {perspective ? perspective.text : current.text}
+                </p>
+                <div className="ibadan-viewpoints" aria-label="Story viewpoints">
+                  <button aria-pressed={view === -1} onClick={() => selectView(-1)}>
+                    The story
+                  </button>
+                  {current.viewpoints.map((point, index) => (
+                    <button
+                      key={point.id}
+                      onClick={() => selectView(index)}
+                      aria-pressed={view === index}
+                    >
+                      {point.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="ibadan-caption-links">
+                  <button onClick={() => setPanel('people')}>People & relationships ↗</button>
+                  <button onClick={evidence}>
+                    Read the evidence <span aria-hidden="true">↗</span>
+                  </button>
+                  {narration.supported && (
+                    <button
+                      onClick={narration.speaking ? narration.stop : narration.play}
+                      aria-pressed={narration.enabled}
+                    >
+                      <Icon name="voice" />
+                      {narration.speaking ? 'Stop narration' : 'Listen to the story'}
+                    </button>
+                  )}
+                </div>
+              </section>
+            </>
+          )}
+          <nav className="ibadan-act-rail" aria-label="Six acts">
+            {ibadanActs.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => go(ibadanChapters.findIndex((episode) => episode.act === item.id))}
+                aria-current={current.act === item.id ? 'step' : undefined}
+              >
+                <span>{String(item.id).padStart(2, '0')}</span>
+                <strong>{item.title}</strong>
+                <i />
+              </button>
+            ))}
+          </nav>
+          <footer className="ibadan-bottom">
+            <button
+              onClick={() => go(chapter - 1)}
+              disabled={chapter === 0}
+              aria-label="Previous chapter"
+            >
+              ←
+            </button>
+            <button
+              className="ibadan-chapter-counter"
+              onClick={openJourney}
+              aria-label="Open chapter index"
+            >
+              <span>
+                {String(chapter + 1).padStart(2, '0')} / {ibadanChapters.length}
+              </span>
+              <span>{current.title}</span>
+            </button>
+            <button
+              onClick={() => go(chapter === ibadanChapters.length - 1 ? 0 : chapter + 1)}
+              aria-label={
+                chapter === ibadanChapters.length - 1 ? 'Restart the journey' : 'Next chapter'
+              }
+            >
+              {chapter === ibadanChapters.length - 1 ? '↺' : '→'}
+            </button>
+            <button
+              className="ibadan-motion"
+              onClick={() => setPaused(!paused)}
+              aria-label={paused ? 'Resume ambient motion' : 'Pause ambient motion'}
+              aria-pressed={paused}
+            >
+              {paused ? 'Motion paused' : 'Motion on'}
+            </button>
+            <button className="ibadan-audio-settings" onClick={() => setPanel('audio')}>
+              Sound & voice
             </button>
           </footer>
         </>
       )}
 
-      {(!ready || failed) && (
-        <div className={`ibadan-render-status${failed ? ' is-fallback' : ''}`} role="status">
-          {failed ? (
-            <>
-              <span>The particle view is unavailable on this device.</span>
-              <span>The complete text journey and chapter controls still work.</span>
-              <button onClick={() => setRetry(retry + 1)}>Retry the particle view ↗</button>
-            </>
-          ) : (
-            'Gathering the particles…'
-          )}
-        </div>
+      {!ready && !failed && (
+        <span className="ibadan-loading" role="status">
+          Opening the landscape…
+        </span>
       )}
-      {fullscreen.notice && (
-        <p className="ibadan-fullscreen-notice" role="status">
-          {fullscreen.notice}
-          <button onClick={fullscreen.dismiss} aria-label="Dismiss fullscreen notice">
+      {failed && !reader && (
+        <button
+          className="ibadan-fallback"
+          onClick={() => (started ? setReader(true) : begin(true))}
+        >
+          The text edition is ready for this device ↗
+        </button>
+      )}
+      {(notice || fullscreen.notice || narration.notice) && (
+        <p className="ibadan-notice" role="status">
+          {fullscreen.notice || narration.notice || notice}
+          <button
+            aria-label="Dismiss notice"
+            onClick={() => {
+              setNotice('')
+              fullscreen.dismiss()
+              narration.dismiss()
+            }}
+          >
             ×
           </button>
         </p>
       )}
-      {audioNotice && !fullscreen.notice && (
-        <p className="ibadan-audio-notice" role="status">
-          {audioNotice}
-          <button onClick={() => setAudioNotice('')} aria-label="Dismiss audio notice">
-            ×
-          </button>
-        </p>
+      {reader && failed && (
+        <button
+          className="ibadan-retry"
+          onClick={() => {
+            setRetry(retry + 1)
+            setReader(false)
+          }}
+        >
+          Retry spatial edition ↗
+        </button>
       )}
 
       <dialog
-        className="ibadan-dialog"
         ref={dialog}
+        className={`ibadan-dialog${panel === 'journey' ? ' is-index' : ''}`}
         aria-labelledby="ibadan-panel-title"
+        data-lenis-prevent
         onClose={() => setPanel(null)}
         onCancel={() => setPanel(null)}
         onClick={(event) => {
@@ -499,7 +602,7 @@ export default function IbadanExperience() {
         }}
         onKeyDown={(event) => {
           if (event.key !== 'Tab') return
-          const buttons = dialog.current?.querySelectorAll<HTMLElement>('button, a[href]')
+          const buttons = dialog.current?.querySelectorAll<HTMLElement>('button,a[href],select')
           if (!buttons?.length) return
           const first = buttons[0],
             last = buttons[buttons.length - 1]
@@ -512,74 +615,220 @@ export default function IbadanExperience() {
           }
         }}
       >
-        <div className="ibadan-panel" data-lenis-prevent>
+        <div className="ibadan-panel" data-native-scroll data-lenis-prevent>
           <div className="ibadan-panel-top">
-            <span className="ibadan-eyebrow">Ibadan / A living memory</span>
+            <span className="ibadan-eyebrow">Ibadan / A city made and remade</span>
             <button onClick={() => setPanel(null)} aria-label="Close panel">
-              Close ×
+              <Icon name="close" />
+              Close
             </button>
           </div>
-          <h2 id="ibadan-panel-title">
-            {panel === 'chapters' ? 'Find your way.' : 'A closer look.'}
-          </h2>
-          {panel === 'chapters' ? (
+          {panel === 'journey' ? (
             <>
-              <p>Follow the journey, or enter wherever your curiosity takes you.</p>
-              <ol className="ibadan-chapter-index">
-                {ibadanChapters.map((item, index) => (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => {
-                        go(index)
-                        setPanel(null)
-                      }}
-                      aria-current={chapter === index ? 'step' : undefined}
-                    >
-                      <small>{String(index + 1).padStart(2, '0')}</small>
-                      <span>
-                        {item.label}
-                        <small>{item.period}</small>
-                      </span>
-                      <span aria-hidden="true">↗</span>
-                    </button>
-                  </li>
-                ))}
-              </ol>
+              <div className="ibadan-menu-heading">
+                <h2 id="ibadan-panel-title">
+                  Find your
+                  <br />
+                  <em>own way.</em>
+                </h2>
+                <p>
+                  Six acts. Eighteen episodes.
+                  <br />
+                  One city, made through many lives.
+                </p>
+              </div>
+              <div className="ibadan-journey-layout">
+                <nav className="ibadan-journey-list" aria-label="Journey chapters">
+                  {ibadanActs.map((item) => (
+                    <section key={item.id}>
+                      <button
+                        className="ibadan-act-toggle"
+                        onClick={() => setExpandedAct(expandedAct === item.id ? 0 : item.id)}
+                        aria-expanded={expandedAct === item.id}
+                      >
+                        <span>0{item.id}</span>
+                        <span>
+                          {item.title}
+                          <small>{item.years}</small>
+                        </span>
+                        <b>{expandedAct === item.id ? '−' : '+'}</b>
+                      </button>
+                      {expandedAct === item.id && (
+                        <ol>
+                          {ibadanChapters.map((episode, index) =>
+                            episode.act === item.id ? (
+                              <li key={episode.id}>
+                                <button
+                                  onClick={() => {
+                                    go(index)
+                                    setPanel(null)
+                                  }}
+                                  onPointerEnter={() => setPreview(index)}
+                                  onFocus={() => setPreview(index)}
+                                  aria-current={chapter === index ? 'step' : undefined}
+                                >
+                                  <small>{episode.dateLabel}</small>
+                                  <span>{episode.title}</span>
+                                  <span aria-hidden="true">↗</span>
+                                </button>
+                              </li>
+                            ) : null,
+                          )}
+                        </ol>
+                      )}
+                    </section>
+                  ))}
+                </nav>
+                <aside className="ibadan-menu-preview" aria-live="polite">
+                  <span className="ibadan-eyebrow">
+                    {previewChapter.dateLabel} / Act {previewChapter.act}
+                  </span>
+                  <Preview form={previewChapter.form} />
+                  <h3>{previewChapter.title}</h3>
+                  <p>{previewChapter.question}</p>
+                  <span>{previewChapter.locations[0].name}</span>
+                  <button
+                    onClick={() => {
+                      go(preview)
+                      setPanel(null)
+                    }}
+                  >
+                    Enter this episode ↗
+                  </button>
+                </aside>
+              </div>
+              <div className="ibadan-menu-end">
+                <span>Begin anywhere. Follow the consequences.</span>
+                <button onClick={() => setPanel('evidence')}>Sources & interpretation ↗</button>
+              </div>
             </>
           ) : (
             <>
               <span className="ibadan-eyebrow">
-                {current.period} / {current.object}
+                {current.dateLabel} / {current.locations[0].name}
               </span>
-              <h3>{current.title.replace('\n', ' ')}</h3>
-              <p>{current.note}</p>
-              <p>{current.detail}</p>
-              <div className="ibadan-reference-reading">
-                <span className="ibadan-eyebrow">Reference reading · verification pending</span>
-                <ul>
-                  {ibadanReferences
-                    .filter((reference) =>
-                      (current.references as readonly string[]).includes(reference.id),
-                    )
-                    .map((reference) => (
-                      <li key={reference.id}>
-                        <a href={reference.url} target="_blank" rel="noopener noreferrer">
-                          {reference.title} ↗
-                        </a>
-                        <span>{reference.scope}</span>
+              <h2 id="ibadan-panel-title">
+                {panel === 'people'
+                  ? 'People make the city.'
+                  : panel === 'audio'
+                    ? 'A story to hear.'
+                    : 'What we know.'}
+              </h2>
+              {panel === 'people' ? (
+                <>
+                  <p>{current.question}</p>
+                  <ul className="ibadan-people-list">
+                    {current.people.map((person) => (
+                      <li key={person.name}>
+                        <span>{person.historicalOrComposite}</span>
+                        <h3>{person.name}</h3>
+                        <p>{person.role}</p>
                       </li>
                     ))}
-                </ul>
-              </div>
-              <div className="ibadan-curation-note">
-                <span className="ibadan-eyebrow">About this edition</span>
-                <p>{ibadanEdition.notice}</p>
-                <p>
-                  All forms are original procedural illustrations. The ambience is composed in the
-                  browser. No archival image, recording or externally hosted model is presented as
-                  an authentic historical asset.
-                </p>
-              </div>
+                  </ul>
+                  <p className="ibadan-small-note">
+                    Anonymous figures in the particle scene are composites. They are not
+                    authenticated portraits of the named historical people.
+                  </p>
+                  <button className="ibadan-inline-action" onClick={evidence}>
+                    See the historical evidence ↗
+                  </button>
+                </>
+              ) : panel === 'audio' ? (
+                <>
+                  <p>
+                    The atmosphere is original sound design. Narration is a modern reading, not an
+                    archival voice or a historical quotation.
+                  </p>
+                  <button className="ibadan-settings-action" onClick={toggleSound}>
+                    <Icon name="sound" />
+                    Atmosphere {sound ? 'on' : 'off'}
+                  </button>
+                  {narration.supported ? (
+                    <>
+                      <button
+                        className="ibadan-settings-action"
+                        onClick={narration.speaking ? narration.stop : narration.play}
+                      >
+                        <Icon name="voice" />
+                        {narration.speaking ? 'Stop narration' : 'Read this episode aloud'}
+                      </button>
+                      <label className="ibadan-voice-label">
+                        Narration voice
+                        <select
+                          value={narration.voiceName}
+                          onChange={(event) => narration.selectVoice(event.target.value)}
+                        >
+                          <option value="">Preferred available English voice</option>
+                          {narration.voices.map((voice) => (
+                            <option key={voice.name} value={voice.name}>
+                              {voice.name} · {voice.lang}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <p className="ibadan-small-note">
+                        Uses voices available on your device. Nigerian English is preferred when
+                        installed, followed by other available African English voices. No voice or
+                        accent is claimed when your device does not provide it.
+                      </p>
+                    </>
+                  ) : (
+                    <p>This device has no speech reader. The transcript below remains available.</p>
+                  )}
+                  <h3>Transcript</h3>
+                  <p>{current.narration}</p>
+                </>
+              ) : (
+                <>
+                  <p className="ibadan-evidence-question">{current.question}</p>
+                  {current.historicalClaims.map((claim, index) => (
+                    <section className="ibadan-claim" key={index}>
+                      <span className="ibadan-evidence-label">{claim.evidenceStatus}</span>
+                      <p>{claim.text}</p>
+                      <span className="ibadan-source-ids">{claim.sourceIds.join(' · ')}</span>
+                    </section>
+                  ))}
+                  {current.id === 'efunsetan' && (
+                    <section className="ibadan-representation">
+                      <h3>History is not the same as drama.</h3>
+                      <p>
+                        Adeboye’s scholarship examines how stage and screen have shaped Efunsetan’s
+                        public image. This scene preserves her commercial and political agency while
+                        acknowledging enslavement. It does not borrow a film’s plot, private
+                        thoughts or dialogue as biography.
+                      </p>
+                      <span>S06</span>
+                    </section>
+                  )}
+                  <h3>What is reconstructed?</h3>
+                  <p>{current.assets[0].verificationStatus}</p>
+                  <ul className="ibadan-uncertainties">
+                    {current.uncertainties.map((gap) => (
+                      <li key={gap}>{gap}</li>
+                    ))}
+                  </ul>
+                  <h3>Sources for this episode</h3>
+                  <ol className="ibadan-sources">
+                    {sources.map((source) => (
+                      <li key={source.id}>
+                        <span>{source.id}</span>
+                        <h4>{source.title}</h4>
+                        <p>{source.consultation}</p>
+                        {source.urls.map((url, index) => (
+                          <a key={url} href={url} target="_blank" rel="noopener noreferrer">
+                            Read source{source.urls.length > 1 ? ` ${index + 1}` : ''} ↗
+                          </a>
+                        ))}
+                      </li>
+                    ))}
+                  </ol>
+                  <details className="ibadan-method">
+                    <summary>About the research & interpretation</summary>
+                    <p>{ibadanEdition.notice}</p>
+                  </details>
+                </>
+              )}
             </>
           )}
         </div>
