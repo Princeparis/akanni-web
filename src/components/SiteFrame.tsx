@@ -5,7 +5,8 @@ import Header from './Header'
 import Footer from './Footer'
 
 export default function SiteFrame({ children }: { children: ReactNode }) {
-  const standalone = usePathname().startsWith('/playground/')
+  const pathname = usePathname()
+  const standalone = pathname.startsWith('/playground/') || pathname === '/ibadan'
   return standalone ? (
     children
   ) : (

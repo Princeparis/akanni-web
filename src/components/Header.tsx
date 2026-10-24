@@ -161,6 +161,7 @@ export default function Header() {
     { href: '/#about', label: 'About me', active: false },
     { href: '/gallery', label: 'Visual diary', active: pathname === '/gallery' },
     { href: '/playground', label: 'Playground', active: pathname.startsWith('/playground') },
+    { href: '/ibadan', label: 'Ibadan', active: pathname === '/ibadan' },
   ]
 
   return (
