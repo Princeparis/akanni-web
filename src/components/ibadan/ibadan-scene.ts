@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { ibadanChapters, type IbadanFocus } from '@/data/ibadan'
-import { ibadanGallery } from '@/data/ibadan-gallery'
+import { ibadanGallery, type IbadanSculpture } from '@/data/ibadan-gallery'
 import { createGalleryLibrary } from './gallery-models'
+import { createParticleCloud } from './particle-surface'
 
-/** A locally hosted, physically lit sculpture gallery. No remote model service. */
+/** Detailed local models rendered entirely as surface particles. */
 export async function createIbadanScene(host: HTMLElement, onLost: () => void) {
   const loader = new GLTFLoader()
   const models = await Promise.all([
@@ -24,12 +24,60 @@ export async function createIbadanScene(host: HTMLElement, onLost: () => void) {
     if (!geometry) throw new Error('Portrait model has no geometry')
     return geometry
   }
-  const library = createGalleryLibrary({ woman: head(models[0].scene), man: head(models[1].scene) })
+  const sources = createGalleryLibrary({ woman: head(models[0].scene), man: head(models[1].scene) })
+  const mobile = host.clientWidth < 760
+  const particleCount = mobile ? 65000 : 120000
+  const clouds = new Map<IbadanSculpture, ReturnType<typeof createParticleCloud>>()
+  const library = {
+    get(type: IbadanSculpture) {
+      let cloud = clouds.get(type)
+      if (!cloud) {
+        // Keep only four point buffers; active transition layers retain their data.
+        if (clouds.size >= 4) {
+          for (const [key, previous] of clouds) {
+            if (previous.group.parent) continue
+            previous.geometry.dispose()
+            previous.material.dispose()
+            previous.depthMaterial.dispose()
+            clouds.delete(key)
+            break
+          }
+        }
+        cloud = createParticleCloud(
+          sources.get(type),
+          particleCount,
+          1829,
+          host.clientHeight,
+          Math.min(devicePixelRatio, mobile ? 1.35 : 1.75),
+        )
+        clouds.set(type, cloud)
+      } else {
+        clouds.delete(type)
+        clouds.set(type, cloud)
+      }
+      return cloud.group
+    },
+    opacity(group: THREE.Group, value: number) {
+      clouds.get(group.name as IbadanSculpture)!.material.uniforms.uOpacity.value = value
+    },
+    resize() {
+      for (const cloud of clouds.values()) cloud.material.uniforms.uHeight.value = host.clientHeight
+    },
+    dispose() {
+      for (const cloud of clouds.values()) {
+        cloud.geometry.dispose()
+        cloud.material.dispose()
+        cloud.depthMaterial.dispose()
+      }
+      clouds.clear()
+      sources.dispose()
+    },
+  }
   let renderer: THREE.WebGLRenderer
   try {
     renderer = new THREE.WebGLRenderer({
       alpha: true,
-      antialias: true,
+      antialias: false,
       powerPreference: 'high-performance',
       preserveDrawingBuffer: false,
     })
@@ -37,68 +85,23 @@ export async function createIbadanScene(host: HTMLElement, onLost: () => void) {
     library.dispose()
     throw error
   }
-  const mobile = host.clientWidth < 760
   renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.35 : 1.75))
   renderer.setClearColor(0x10110e, 0)
-  renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.05
-  renderer.shadowMap.enabled = true
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap
+  renderer.toneMapping = THREE.NoToneMapping
   const canvas = renderer.domElement
   canvas.className = 'ibadan-canvas'
   canvas.setAttribute('role', 'img')
   canvas.setAttribute(
     'aria-label',
-    'Solid 3D historical sculpture. Drag to turn the object; use the inspect controls for a closer view. Artistic portraits are not authenticated likenesses.',
+    'Detailed 3D particle model. Particles follow the surfaces of facial features, clothing and historical objects. Drag to turn or inspect the model. Portraits are artistic interpretations.',
   )
   host.appendChild(canvas)
-  host.dataset.renderer = 'sculpture'
+  host.dataset.renderer = 'particles'
+  host.dataset.particleCount = String(particleCount)
   host.dataset.scene = 'origins'
   host.dataset.view = 'place'
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 70)
-  const pmrem = new THREE.PMREMGenerator(renderer)
-  const room = new RoomEnvironment()
-  const environment = pmrem.fromScene(room, 0.04)
-  scene.environment = environment.texture
-  scene.environmentIntensity = 0.65
-  room.dispose()
-  pmrem.dispose()
-  scene.add(new THREE.HemisphereLight('#efd9ac', '#17241d', 0.9))
-  const key = new THREE.SpotLight('#ffe0ad', 55, 35, 0.58, 0.85, 1.5)
-  key.position.set(-3.5, 7, 6)
-  key.target.position.set(0, 1.5, 0)
-  key.castShadow = true
-  key.shadow.mapSize.setScalar(mobile ? 1024 : 2048)
-  key.shadow.bias = -0.00025
-  key.shadow.normalBias = 0.025
-  scene.add(key, key.target)
-  const rim = new THREE.DirectionalLight('#c2d5bc', 2.0)
-  rim.position.set(3, 4, -4)
-  scene.add(rim)
-  const fill = new THREE.DirectionalLight('#d2ad79', 0.65)
-  fill.position.set(4, 2, 5)
-  scene.add(fill)
-  const shadowCanvas = document.createElement('canvas')
-  shadowCanvas.width = shadowCanvas.height = 128
-  const shadowContext = shadowCanvas.getContext('2d')!
-  const gradient = shadowContext.createRadialGradient(64, 64, 8, 64, 64, 64)
-  gradient.addColorStop(0, 'rgba(0,0,0,.65)')
-  gradient.addColorStop(0.45, 'rgba(0,0,0,.35)')
-  gradient.addColorStop(1, 'rgba(0,0,0,0)')
-  shadowContext.fillStyle = gradient
-  shadowContext.fillRect(0, 0, 128, 128)
-  const shadowTexture = new THREE.CanvasTexture(shadowCanvas)
-  const floorGeometry = new THREE.PlaneGeometry(6, 6)
-  const floorMaterial = new THREE.MeshBasicMaterial({
-    map: shadowTexture,
-    transparent: true,
-    depthWrite: false,
-  })
-  const floor = new THREE.Mesh(floorGeometry, floorMaterial)
-  floor.rotation.x = -Math.PI / 2
-  floor.position.y = -0.185
-  scene.add(floor)
 
   let chapter = 0,
     entered = false,
@@ -210,6 +213,8 @@ export async function createIbadanScene(host: HTMLElement, onLost: () => void) {
     host.dataset.moving = String(
       progress < 1 || cameraTravel < 1 || Math.abs(turn - targetTurn) > 0.001,
     )
+    library.opacity(current, reduced ? 1 : 0.25 + 0.75 * ease)
+    if (outgoing) library.opacity(outgoing, 1 - ease)
     renderer.render(scene, camera)
     // Render on demand. No endless orbit or particle churn when a visitor reads.
     if (progress < 1 || cameraTravel < 1 || (!reduced && Math.abs(turn - targetTurn) > 0.001))
@@ -240,6 +245,7 @@ export async function createIbadanScene(host: HTMLElement, onLost: () => void) {
   const resize = () => {
     if (!host.clientWidth || !host.clientHeight) return
     renderer.setSize(host.clientWidth, host.clientHeight)
+    library.resize()
     camera.aspect = host.clientWidth / host.clientHeight
     pose()
     cameraPosition.copy(toPosition)
@@ -360,11 +366,6 @@ export async function createIbadanScene(host: HTMLElement, onLost: () => void) {
       canvas.removeEventListener('webglcontextlost', contextLost)
       scene.clear()
       library.dispose()
-      floorGeometry.dispose()
-      floorMaterial.dispose()
-      shadowTexture.dispose()
-      key.shadow.map?.dispose()
-      environment.dispose()
       renderer.dispose()
       renderer.forceContextLoss()
       canvas.remove()

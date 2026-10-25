@@ -151,7 +151,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: 'Before 1829',
         reference: 'Supplied brief, sections 3–6; S01, S02',
         verificationStatus:
@@ -233,7 +234,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: 'c.1829',
         reference: 'Supplied brief, sections 3–6; S02, S03',
         verificationStatus:
@@ -320,7 +322,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1830s',
         reference: 'Supplied brief, sections 3–6; S03',
         verificationStatus:
@@ -407,7 +410,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1840',
         reference: 'Supplied brief, sections 3–6; S03',
         verificationStatus:
@@ -494,7 +498,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1851 onward',
         reference: 'Supplied brief, sections 3–6; S04, S23',
         verificationStatus:
@@ -581,7 +586,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1860–1862',
         reference: 'Supplied brief, sections 3–6; S05',
         verificationStatus:
@@ -668,7 +674,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1860s–1874',
         reference: 'Supplied brief, sections 3–6; S06',
         verificationStatus:
@@ -755,7 +762,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1877–1893',
         reference: 'Supplied brief, sections 3–6; S07',
         verificationStatus:
@@ -842,7 +850,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '15 August 1893',
         reference: 'Supplied brief, sections 3–6; S08, S09',
         verificationStatus:
@@ -929,7 +938,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1898–1901',
         reference: 'Supplied brief, sections 3–6; S10, S11',
         verificationStatus:
@@ -1011,7 +1021,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1929',
         reference: 'Supplied brief, sections 3–6; S12',
         verificationStatus:
@@ -1093,7 +1104,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1948–1962',
         reference: 'Supplied brief, sections 3–6; S15',
         verificationStatus:
@@ -1175,7 +1187,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '31 October 1959',
         reference: 'Supplied brief, sections 3–6; S13, S14',
         verificationStatus:
@@ -1267,7 +1280,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1961',
         reference: 'Supplied brief, sections 3–6; S17',
         verificationStatus:
@@ -1349,7 +1363,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1962–1966',
         reference: 'Supplied brief, sections 3–6; S18, S19',
         verificationStatus:
@@ -1431,7 +1446,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1964–1965',
         reference: 'Supplied brief, sections 3–6; S16',
         verificationStatus:
@@ -1513,7 +1529,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '1976 onward',
         reference: 'Supplied brief, sections 3–6; S20, S21',
         verificationStatus:
@@ -1595,7 +1612,8 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
+        description:
+          'Detailed surface models rendered as particles; interpretive portraits and illustrative objects',
         period: '26 August 2011 → an open present',
         reference: 'Supplied brief, sections 3–6; S22',
         verificationStatus:

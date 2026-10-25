@@ -30,8 +30,8 @@
 }
 .ibadan-atmosphere {
   background:
-    radial-gradient(ellipse at 72% 40%, #6c563b55, transparent 55%),
-    linear-gradient(125deg, #171d16, #10110e 80%);
+    radial-gradient(ellipse at 72% 40%, #756b4b24, transparent 55%),
+    linear-gradient(125deg, #11170f, #0c100c 80%);
 }
 .ibadan-atmosphere::after {
   content: '';

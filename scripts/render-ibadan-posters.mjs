@@ -12,17 +12,18 @@ let browser
 try {
   for (const name of ['three.module.js', 'three.core.js'])
     await copyFile(path.join(root, 'node_modules/three/build', name), path.join(directory, name))
-  await copyFile(
-    path.join(root, 'node_modules/three/examples/jsm/environments/RoomEnvironment.js'),
-    path.join(directory, 'RoomEnvironment.js'),
-  )
-  const source = await readFile(path.join(root, 'src/components/ibadan/gallery-models.ts'), 'utf8')
-  await writeFile(
-    path.join(directory, 'models.js'),
-    ts.transpileModule(source, {
-      compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 },
-    }).outputText,
-  )
+  for (const [sourceName, outputName] of [
+    ['gallery-models', 'models'],
+    ['particle-surface', 'particle-surface'],
+  ]) {
+    const source = await readFile(path.join(root, `src/components/ibadan/${sourceName}.ts`), 'utf8')
+    await writeFile(
+      path.join(directory, `${outputName}.js`),
+      ts.transpileModule(source, {
+        compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 },
+      }).outputText,
+    )
+  }
   await copyFile(path.join(root, 'scripts/ibadan-poster.html'), path.join(directory, 'index.html'))
   browser = await chromium.launch({
     executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,

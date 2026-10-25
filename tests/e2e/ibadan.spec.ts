@@ -2,6 +2,8 @@ import { test, expect, type Page } from '@playwright/test'
 import { mkdir, readFile } from 'node:fs/promises'
 import { ibadanActs, ibadanChapters, ibadanSources } from '../../src/data/ibadan'
 import { ibadanGallery } from '../../src/data/ibadan-gallery'
+import * as THREE from 'three'
+import { sampleModelSurface } from '../../src/components/ibadan/particle-surface'
 
 async function enterQuietly(page: Page) {
   await page.getByRole('button', { name: 'Entry atmosphere' }).click()
@@ -67,7 +69,7 @@ test('the supplied chronology and evidence remain coherent, complete and attribu
   ).toBe(true)
 })
 
-test('solid portrait models have usable topology and retained CC0 provenance', async () => {
+test('portrait source models have usable topology and retained CC0 provenance', async () => {
   for (const name of ['iyalode-study', 'commander-study']) {
     const bytes = await readFile(`public/ibadan/models/${name}.glb`)
     expect(bytes.toString('utf8', 0, 4)).toBe('glTF')
@@ -103,6 +105,38 @@ test('solid portrait models have usable topology and retained CC0 provenance', a
   }
 })
 
+test('particles follow transformed triangle area, preserve normals and exclude display bases', () => {
+  const root = new THREE.Group()
+  root.position.set(1, 2, 3)
+  root.scale.setScalar(2)
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute([0, 0, 0, 2, 0, 0, 0, 2, 0, 10, 0, 0, 11, 0, 0, 10, 1, 0], 3),
+  )
+  geometry.computeVertexNormals()
+  const material = new THREE.MeshStandardMaterial()
+  root.add(new THREE.Mesh(geometry, material))
+  const baseGeometry = new THREE.BoxGeometry(100, 100, 100)
+  const base = new THREE.Mesh(baseGeometry, material)
+  base.userData.presentation = true
+  root.add(base)
+  const sample = sampleModelSurface(root, 6000)
+  expect(sample.positions).toEqual(sampleModelSurface(root, 6000).positions)
+  let large = 0
+  for (let i = 0; i < 6000; i++) {
+    if (sample.positions[i * 3] < 8) large++
+  }
+  expect(large / 6000).toBeGreaterThan(0.77)
+  expect(large / 6000).toBeLessThan(0.83)
+  expect([...sample.positions].every(Number.isFinite)).toBe(true)
+  expect([...sample.positions].filter((_, i) => i % 3 === 2).every((z) => z === 3)).toBe(true)
+  expect([...sample.normals].filter((_, i) => i % 3 === 2).every((z) => z > 0.999)).toBe(true)
+  geometry.dispose()
+  baseGeometry.dispose()
+  material.dispose()
+})
+
 test('entry is centred, cinematic, full screen, and retains real browser fullscreen controls', async ({
   page,
 }) => {
@@ -116,8 +150,8 @@ test('entry is centred, cinematic, full screen, and retains real browser fullscr
     .getByRole('button', { name: 'Enter the story', exact: true })
     .boundingBox())!
   expect(Math.abs(bounds.x + bounds.width / 2 - 720)).toBeLessThan(2)
-  await mkdir('artifacts/ibadan-gallery', { recursive: true })
-  await page.screenshot({ path: 'artifacts/ibadan-gallery/entry-desktop.png' })
+  await mkdir('artifacts/ibadan-particles', { recursive: true })
+  await page.screenshot({ path: 'artifacts/ibadan-particles/entry-desktop.png' })
   await page.getByRole('button', { name: 'Entry atmosphere' }).click()
   await page.getByRole('button', { name: 'Enter the story', exact: true }).click()
   await expect(page.locator('main')).toHaveClass(/phase-opening/)
@@ -264,7 +298,7 @@ test('small phones, portrait tablets and landscape retain centred entry and read
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await mkdir('artifacts/ibadan-gallery', { recursive: true })
+  await mkdir('artifacts/ibadan-particles', { recursive: true })
   for (const [width, height] of [
     [320, 568],
     [390, 844],
@@ -291,7 +325,7 @@ test('small phones, portrait tablets and landscape retain centred entry and read
     const text = (await page.locator('.ibadan-caption-text').boundingBox())!
     const caption = (await page.locator('.ibadan-caption').boundingBox())!
     expect(text.y + 19).toBeLessThan(caption.y + caption.height)
-    await page.screenshot({ path: `artifacts/ibadan-gallery/arrival-${width}.png` })
+    await page.screenshot({ path: `artifacts/ibadan-particles/arrival-${width}.png` })
   }
 })
 
@@ -450,7 +484,7 @@ test('the homepage has a centred invitation and a transition into the experience
   await expect(page.locator('.ibadan-invitation-veil')).toBeVisible()
   await expect(page).toHaveURL('/ibadan')
   await expect(page.locator('main')).toHaveClass(/phase-story/)
-  await expect(page.locator('.ibadan-stage')).toHaveAttribute('data-renderer', 'sculpture')
+  await expect(page.locator('.ibadan-stage')).toHaveAttribute('data-renderer', 'particles')
 })
 
 test('touch scrolling reaches the global menu footer while Lenis keeps the underlying page still', async ({
@@ -489,7 +523,7 @@ test('touch scrolling reaches the global menu footer while Lenis keeps the under
   await context.close()
 })
 
-test('the sculpture can be inspected, turned by controls and touch, and closed without losing chronology', async ({
+test('the particle model can be inspected, turned by controls and touch, and closed without losing chronology', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -497,14 +531,14 @@ test('the sculpture can be inspected, turned by controls and touch, and closed w
   await enterQuietly(page)
   await episode(page, 'efunsetan')
   const stage = page.locator('.ibadan-stage')
-  await expect(stage).toHaveAttribute('data-renderer', 'sculpture')
-  await page.getByRole('button', { name: 'Inspect the sculpture', exact: false }).click()
-  await expect(page.getByRole('region', { name: 'Sculpture inspection' })).toContainText(
+  await expect(stage).toHaveAttribute('data-renderer', 'particles')
+  await page.getByRole('button', { name: 'Inspect the model', exact: false }).click()
+  await expect(page.getByRole('region', { name: 'Model inspection' })).toContainText(
     'not an authenticated likeness',
   )
-  await page.getByRole('button', { name: 'Rotate sculpture right', exact: true }).click()
+  await page.getByRole('button', { name: 'Rotate model right', exact: true }).click()
   const first = await stage.getAttribute('data-turned')
-  await page.getByRole('button', { name: 'Rotate sculpture right', exact: true }).click()
+  await page.getByRole('button', { name: 'Rotate model right', exact: true }).click()
   expect(await stage.getAttribute('data-turned')).not.toBe(first)
   const box = (await page.locator('canvas').boundingBox())!
   await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.4)

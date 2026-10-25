@@ -488,7 +488,7 @@ export default function IbadanExperience() {
             <>
               <div className="ibadan-spatial-label">
                 <span>{current.locations[0].name}</span>
-                <span>Historical narrative / Sculptural interpretation</span>
+                <span>Particle models / Historical narrative</span>
               </div>
               <div className="ibadan-exhibit-label">
                 <span className="ibadan-eyebrow">
@@ -497,25 +497,25 @@ export default function IbadanExperience() {
                 <strong>{exhibit.subject}</strong>
                 <span>{exhibit.medium}</span>
                 <button onClick={() => setInspecting(true)}>
-                  Inspect the sculpture <span aria-hidden="true">↗</span>
+                  Inspect the model <span aria-hidden="true">↗</span>
                 </button>
               </div>
               {inspecting && (
-                <section className="ibadan-inspection" aria-label="Sculpture inspection">
+                <section className="ibadan-inspection" aria-label="Model inspection">
                   <span className="ibadan-eyebrow">A closer look</span>
                   <h2>{exhibit.subject}</h2>
                   <p>{exhibit.note}</p>
                   <div className="ibadan-inspect-controls">
                     <button
                       onClick={() => scene.current?.rotate(-Math.PI / 6)}
-                      aria-label="Rotate sculpture left"
+                      aria-label="Rotate model left"
                     >
                       ↶
                     </button>
                     <span>Drag to turn</span>
                     <button
                       onClick={() => scene.current?.rotate(Math.PI / 6)}
-                      aria-label="Rotate sculpture right"
+                      aria-label="Rotate model right"
                     >
                       ↷
                     </button>
@@ -667,7 +667,7 @@ export default function IbadanExperience() {
 
       {!ready && !failed && (
         <span className="ibadan-loading" role="status">
-          Opening the gallery…
+          Forming the particles…
         </span>
       )}
       {failed && !reader && (
@@ -844,7 +844,7 @@ export default function IbadanExperience() {
                     ))}
                   </ul>
                   <p className="ibadan-small-note">
-                    The bronze portraits are artistic character studies. Their facial features and
+                    The particle portraits are artistic character studies. Their facial features and
                     clothing are not authenticated likenesses or costume evidence. Anonymous figures
                     are composites.
                   </p>
@@ -919,7 +919,7 @@ export default function IbadanExperience() {
                       <span>S06</span>
                     </section>
                   )}
-                  <h3>The sculpture & its interpretation</h3>
+                  <h3>The model & its interpretation</h3>
                   <p>{exhibit.note}</p>
                   <p className="ibadan-small-note">
                     Portrait base geometry is adapted from CC0 MakeHuman graphical data. Clothing,

@@ -4,8 +4,8 @@ import type { IbadanSculpture } from '@/data/ibadan-gallery'
 type Material = THREE.MeshStandardMaterial
 export type GalleryLibrary = ReturnType<typeof createGalleryLibrary>
 
-// Every displayed surface is a lit triangle mesh. The portrait geometry is an
-// offline CC0-derived study; clothes, objects and architectural details are original.
+// Detailed source surfaces for particle sampling. These meshes are never displayed
+// as solid sculptures. Portrait data is CC0-derived; other modelling is original.
 export function createGalleryLibrary(heads: {
   woman: THREE.BufferGeometry
   man: THREE.BufferGeometry
@@ -75,6 +75,16 @@ export function createGalleryLibrary(heads: {
     clearcoatRoughness: 0.12,
   })
   const materials = [bronze, dark, gold, ebony, paper, stone, glass]
+  for (const [material, color] of [
+    [bronze, '#c8b899'],
+    [dark, '#9cb8a5'],
+    [gold, '#e6cfa3'],
+    [ebony, '#b7a583'],
+    [paper, '#e8ddc4'],
+    [stone, '#7b8978'],
+    [glass, '#a7c6ba'],
+  ] as const)
+    material.userData.particleColor = color
   const geometries = new Set<THREE.BufferGeometry>([heads.woman, heads.man])
   const mesh = (
     group: THREE.Group,
@@ -147,8 +157,9 @@ export function createGalleryLibrary(heads: {
       m,
     )
   const plinth = (g: THREE.Group, radius = 1.35) => {
-    cylinder(g, radius, radius * 0.98, 0.18, stone, 0, -0.08)
-    cylinder(g, radius * 1.015, radius * 1.015, 0.035, bronze, 0, 0.025)
+    cylinder(g, radius, radius * 0.98, 0.18, stone, 0, -0.08).userData.presentation = true
+    cylinder(g, radius * 1.015, radius * 1.015, 0.035, bronze, 0, 0.025).userData.presentation =
+      true
   }
   const cloth = (g: THREE.Group, feminine: boolean) => {
     const positions: number[] = [],
@@ -263,7 +274,7 @@ export function createGalleryLibrary(heads: {
     const g = new THREE.Group()
     plinth(g, 1.12)
     cloth(g, feminine)
-    mesh(g, feminine ? heads.woman : heads.man, bronze)
+    mesh(g, feminine ? heads.woman : heads.man, bronze).userData.portrait = true
     // Inset metallic eyes retain the anatomical eyelids of the source mesh.
     for (const side of [-1, 1]) {
       const eye = sphere(

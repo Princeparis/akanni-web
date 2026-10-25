@@ -4,7 +4,7 @@ import IbadanExperience from '@/components/ibadan/IbadanExperience'
 export const metadata: Metadata = {
   title: 'Ibadan: A City Made and Remade',
   description:
-    'A spatial history of Ibadan through people, places and consequences. Six acts, eighteen episodes, and an interactive gallery of 3D portraits, objects and architecture by Rayab.',
+    'A spatial history of Ibadan through people, places and consequences. Six acts, eighteen episodes, and detailed particle portraits, objects and architecture by Rayab.',
   robots: { index: false, follow: true },
 }
 

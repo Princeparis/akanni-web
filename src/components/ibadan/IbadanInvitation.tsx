@@ -20,7 +20,7 @@ export default function IbadanInvitation() {
     <section className="ibadan-invitation" aria-labelledby="ibadan-invitation-title">
       <Image
         src="/ibadan/posters/iyalode.webp"
-        alt="An interpretive bronze portrait from the Ibadan experience"
+        alt="A detailed particle portrait from the Ibadan experience"
         width={900}
         height={900}
         className="ibadan-invitation-world"
