@@ -1,0 +1,49 @@
+{
+  "retrieved": "2026-10-25",
+  "upstream": "makehumancommunity/makehuman",
+  "licence": "CC0-1.0, bundled graphical data only; no application code imported",
+  "files": [
+    {
+      "path": "makehuman/data/3dobjs/base.obj",
+      "url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/3dobjs/base.obj",
+      "sha256": "8e761e6624b8f54536409135d1636da63b32486a90d4897f84e121d144f6fb4c",
+      "bytes": 1749303
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-female-young.target",
+      "url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/african-female-young.target",
+      "sha256": "92d61eeb3c164b421fd5a7c3537ee45e7e1a51de4d49bf312e19c3df2be1d8fc",
+      "bytes": 411735
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-female-old.target",
+      "url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/african-female-old.target",
+      "sha256": "c165e7caf01aaf45511ebc78a441c8c73ead13231af1a8c6666941345f088b61",
+      "bytes": 408823
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-male-young.target",
+      "url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/african-male-young.target",
+      "sha256": "894abc1fbb3d28543a51fef16f89d5d4bdf9aa2e1534413339811a3d47818b7d",
+      "bytes": 406170
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-male-old.target",
+      "url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/african-male-old.target",
+      "sha256": "59ec94956b3525dbb30238d1239b2bce52adc3bfae091f12cd85d2570aa1933c",
+      "bytes": 411367
+    },
+    {
+      "path": "LICENSE.ASSETS.md",
+      "url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/LICENSE.ASSETS.md",
+      "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c",
+      "bytes": 6962
+    },
+    {
+      "path": "LICENSE.md",
+      "url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/LICENSE.md",
+      "sha256": "edd99571ca62698f78c943fd4fffb159a413c315fa0d4819d3cec5cadaf8b4f1",
+      "bytes": 3598
+    }
+  ]
+}

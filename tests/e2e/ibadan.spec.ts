@@ -1,8 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
-import { createHash } from 'node:crypto'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import { ibadanActs, ibadanChapters, ibadanSources } from '../../src/data/ibadan'
-import { buildIbadanWorld } from '../../src/components/ibadan/world-geometry'
+import { ibadanGallery } from '../../src/data/ibadan-gallery'
 
 async function enterQuietly(page: Page) {
   await page.getByRole('button', { name: 'Entry atmosphere' }).click()
@@ -68,21 +67,39 @@ test('the supplied chronology and evidence remain coherent, complete and attribu
   ).toBe(true)
 })
 
-test('spatial scenes contain people, material subjects and relationships, with deterministic finite samples', () => {
-  const fingerprints = new Set<string>()
-  for (const form of new Set(ibadanChapters.map((chapter) => chapter.form))) {
-    const world = buildIbadanWorld(form, 1800)
-    expect([...world.positions].every(Number.isFinite)).toBe(true)
-    expect(Math.max(...world.positions.map(Math.abs))).toBeLessThan(30)
-    expect(world.kinds).toContain(2)
-    expect(world.positions).toEqual(buildIbadanWorld(form, 1800).positions)
-    fingerprints.add(createHash('sha256').update(Buffer.from(world.positions.buffer)).digest('hex'))
+test('solid portrait models have usable topology and retained CC0 provenance', async () => {
+  for (const name of ['iyalode-study', 'commander-study']) {
+    const bytes = await readFile(`public/ibadan/models/${name}.glb`)
+    expect(bytes.toString('utf8', 0, 4)).toBe('glTF')
+    expect(bytes.readUInt32LE(4)).toBe(2)
+    expect(bytes.readUInt32LE(8)).toBe(bytes.length)
+    const jsonLength = bytes.readUInt32LE(12)
+    const document = JSON.parse(bytes.toString('utf8', 20, 20 + jsonLength))
+    const positions = document.accessors[0],
+      triangles = document.accessors[2]
+    expect(positions.count).toBeGreaterThan(16000)
+    expect(triangles.count / 3).toBeGreaterThan(30000)
+    expect(document.asset.copyright).toContain('not an authenticated likeness')
+    const binary = 20 + jsonLength + 8
+    const positionView = document.bufferViews[positions.bufferView]
+    const finite = Array.from({ length: positions.count * 3 }, (_, i) =>
+      bytes.readFloatLE(binary + positionView.byteOffset + i * 4),
+    ).every(Number.isFinite)
+    expect(finite).toBe(true)
+    const indexView = document.bufferViews[triangles.bufferView]
+    const validIndices = Array.from({ length: triangles.count }, (_, i) =>
+      bytes.readUInt32LE(binary + indexView.byteOffset + i * 4),
+    ).every((value) => value < positions.count)
+    expect(validIndices).toBe(true)
   }
-  expect(fingerprints.size).toBe(new Set(ibadanChapters.map((chapter) => chapter.form)).size)
-  for (const form of ['arrival', 'market', 'mbari'] as const) {
-    const world = buildIbadanWorld(form, 1800)
-    expect(world.kinds).toContain(3)
-    expect(world.kinds).toContain(4)
+  expect(await readFile('public/ibadan/models/MAKEHUMAN-CC0.txt', 'utf8')).toContain('CC0')
+  expect(Object.keys(ibadanGallery)).toEqual(ibadanChapters.map((chapter) => chapter.id))
+  expect(new Set(Object.values(ibadanGallery).map((item) => item.sculpture)).size).toBe(14)
+  for (const exhibit of Object.values(ibadanGallery)) {
+    expect(
+      (await readFile(`public/ibadan/posters/${exhibit.sculpture}.webp`)).length,
+    ).toBeGreaterThan(1000)
+    expect(exhibit.note.length).toBeGreaterThan(60)
   }
 })
 
@@ -99,8 +116,8 @@ test('entry is centred, cinematic, full screen, and retains real browser fullscr
     .getByRole('button', { name: 'Enter the story', exact: true })
     .boundingBox())!
   expect(Math.abs(bounds.x + bounds.width / 2 - 720)).toBeLessThan(2)
-  await mkdir('artifacts/ibadan-remade', { recursive: true })
-  await page.screenshot({ path: 'artifacts/ibadan-remade/entry-desktop.png' })
+  await mkdir('artifacts/ibadan-gallery', { recursive: true })
+  await page.screenshot({ path: 'artifacts/ibadan-gallery/entry-desktop.png' })
   await page.getByRole('button', { name: 'Entry atmosphere' }).click()
   await page.getByRole('button', { name: 'Enter the story', exact: true }).click()
   await expect(page.locator('main')).toHaveClass(/phase-opening/)
@@ -155,7 +172,7 @@ test('Efunsetan has commerce, coercion and political agency with scholarship dis
   await expect(page.getByRole('dialog')).toContainText('S06')
 })
 
-test('Mbari is a recognisable artistic gathering with distinct participant viewpoints', async ({
+test('Mbari connects a composite artist to its historical participants with distinct participant viewpoints', async ({
   page,
 }) => {
   await page.goto('/ibadan')
@@ -247,7 +264,7 @@ test('small phones, portrait tablets and landscape retain centred entry and read
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await mkdir('artifacts/ibadan-remade', { recursive: true })
+  await mkdir('artifacts/ibadan-gallery', { recursive: true })
   for (const [width, height] of [
     [320, 568],
     [390, 844],
@@ -271,7 +288,10 @@ test('small phones, portrait tablets and landscape retain centred entry and read
     ).toBe(true)
     await expect(page.getByRole('button', { name: 'Next chapter', exact: true })).toBeInViewport()
     await page.getByRole('button', { name: 'Next chapter', exact: true }).click()
-    await page.screenshot({ path: `artifacts/ibadan-remade/arrival-${width}.png` })
+    const text = (await page.locator('.ibadan-caption-text').boundingBox())!
+    const caption = (await page.locator('.ibadan-caption').boundingBox())!
+    expect(text.y + 19).toBeLessThan(caption.y + caption.height)
+    await page.screenshot({ path: `artifacts/ibadan-gallery/arrival-${width}.png` })
   }
 })
 
@@ -429,7 +449,8 @@ test('the homepage has a centred invitation and a transition into the experience
   await invitation.click()
   await expect(page.locator('.ibadan-invitation-veil')).toBeVisible()
   await expect(page).toHaveURL('/ibadan')
-  await expect(page.getByRole('button', { name: 'Enter the story', exact: true })).toBeVisible()
+  await expect(page.locator('main')).toHaveClass(/phase-story/)
+  await expect(page.locator('.ibadan-stage')).toHaveAttribute('data-renderer', 'sculpture')
 })
 
 test('touch scrolling reaches the global menu footer while Lenis keeps the underlying page still', async ({
@@ -466,4 +487,70 @@ test('touch scrolling reaches the global menu footer while Lenis keeps the under
   expect(await page.evaluate(() => scrollY)).toBe(initial)
   await expect(page.getByRole('button', { name: 'Close navigation menu' })).toBeInViewport()
   await context.close()
+})
+
+test('the sculpture can be inspected, turned by controls and touch, and closed without losing chronology', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/ibadan')
+  await enterQuietly(page)
+  await episode(page, 'efunsetan')
+  const stage = page.locator('.ibadan-stage')
+  await expect(stage).toHaveAttribute('data-renderer', 'sculpture')
+  await page.getByRole('button', { name: 'Inspect the sculpture', exact: false }).click()
+  await expect(page.getByRole('region', { name: 'Sculpture inspection' })).toContainText(
+    'not an authenticated likeness',
+  )
+  await page.getByRole('button', { name: 'Rotate sculpture right', exact: true }).click()
+  const first = await stage.getAttribute('data-turned')
+  await page.getByRole('button', { name: 'Rotate sculpture right', exact: true }).click()
+  expect(await stage.getAttribute('data-turned')).not.toBe(first)
+  const box = (await page.locator('canvas').boundingBox())!
+  await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.4)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.4, { steps: 6 })
+  await page.mouse.up()
+  await page.mouse.wheel(0, 500)
+  await expect(page.locator('main')).toHaveAttribute('data-chapter', 'efunsetan')
+  expect(await stage.getAttribute('data-turned')).not.toBe(first)
+  await page.getByRole('button', { name: 'Back to the story', exact: false }).click()
+  await expect(page.locator('main')).toHaveAttribute('data-chapter', 'efunsetan')
+  await expect(page.locator('.ibadan-caption')).toBeVisible()
+  await page.getByRole('button', { name: 'Read the evidence', exact: true }).click()
+  await expect(page.getByRole('dialog')).toContainText('CC0 MakeHuman')
+})
+
+test('the eighteen-stop timeline and phone scrubber travel directly through the full chronology', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/ibadan')
+  await enterQuietly(page)
+  const timeline = page.getByRole('navigation', { name: 'Historical timeline' })
+  for (const chapter of ibadanChapters) {
+    await timeline
+      .getByRole('button', { name: `${chapter.dateLabel}: ${chapter.title}`, exact: true })
+      .click()
+    await expect(page.locator('main')).toHaveAttribute('data-chapter', chapter.id)
+    await expect(page.locator('.ibadan-stage')).toHaveAttribute('data-scene', chapter.id)
+  }
+  await page.setViewportSize({ width: 390, height: 844 })
+  const slider = page.getByRole('slider', { name: 'Travel through the Ibadan timeline' })
+  await slider.focus()
+  await slider.press('Home')
+  await expect(page.locator('main')).toHaveAttribute('data-chapter', 'origins')
+  await slider.press('End')
+  await expect(page.locator('main')).toHaveAttribute('data-chapter', 'water')
+  await slider.press('ArrowLeft')
+  await expect(page.locator('main')).toHaveAttribute('data-chapter', 'state')
+})
+
+test('a model download failure keeps the complete reading journey available', async ({ page }) => {
+  await page.route('**/ibadan/models/*.glb', (route) => route.abort())
+  await page.goto('/ibadan')
+  await page.getByRole('button', { name: 'Enter the story', exact: true }).click()
+  await expect(page.getByRole('article', { name: 'Text edition' })).toBeVisible()
+  await episode(page, 'mapo')
+  await expect(page.getByRole('article', { name: 'Text edition' })).toContainText('1929')
 })

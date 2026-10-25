@@ -136,3 +136,79 @@
     animation: none !important;
   }
 }
+/* The same sculpture and wordmark carry the visitor into the full-screen stage. */
+.ibadan-invitation {
+  min-height: 850px;
+  padding: 350px 24px 70px;
+  background: #10140e;
+}
+.ibadan-invitation-world {
+  width: 800px;
+  height: 800px;
+  max-width: none;
+  object-fit: contain;
+  inset: -60px auto auto 50%;
+  transform: translateX(-50%);
+  opacity: 1;
+  mix-blend-mode: lighten;
+}
+.ibadan-invitation:hover .ibadan-invitation-world {
+  transform: translateX(-50%) scale(1.04);
+}
+.ibadan-invitation::after {
+  background: linear-gradient(0deg, #0b0b0b 2%, #10140ed9 24%, transparent 68%, #0b0b0b);
+}
+.ibadan-invitation-copy {
+  width: 100%;
+}
+.ibadan-invitation-copy > .eyebrow {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 55px;
+}
+.ibadan-invitation h2 {
+  margin: 10px 0 20px;
+}
+.ibadan-invitation h2 > span {
+  display: block;
+  font-size: clamp(80px, 12vw, 172px);
+  font-weight: 400;
+  letter-spacing: -0.065em;
+}
+.ibadan-invitation h2 > small {
+  display: block;
+  font-size: clamp(22px, 3vw, 37px);
+  font-weight: 400;
+  margin-top: 20px;
+  letter-spacing: -0.04em;
+  line-height: 1.4;
+}
+.ibadan-invitation p {
+  font-size: 14px;
+}
+@media (max-width: 760px) {
+  .ibadan-invitation {
+    min-height: 700px;
+    padding: 310px 22px 55px;
+  }
+  .ibadan-invitation-world {
+    width: 630px;
+    height: 630px;
+    inset: -30px auto auto 50%;
+  }
+  .ibadan-invitation h2 > span {
+    font-size: 26vw;
+  }
+  .ibadan-invitation h2 > small {
+    font-size: 22px;
+    max-width: 280px;
+    margin: 17px auto 0;
+  }
+  .ibadan-invitation p {
+    font-size: 13px;
+  }
+  .ibadan-invitation-meta {
+    font-size: 8px;
+  }
+}

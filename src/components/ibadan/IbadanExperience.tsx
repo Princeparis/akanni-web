@@ -1,14 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Image from 'next/image'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ibadanActs, ibadanChapters, ibadanEdition, ibadanSources } from '@/data/ibadan'
 import { BrandMark } from '@/components/Brand'
 import { IbadanAudio } from './ibadan-audio'
 import type { IbadanScene } from './ibadan-scene'
 import { useIbadanFullscreen } from './use-ibadan-fullscreen'
 import { useIbadanNarration } from './use-ibadan-narration'
-import { buildIbadanWorld } from './world-geometry'
+import { ibadanGallery } from '@/data/ibadan-gallery'
 import './ibadan.css'
 
 type Panel = 'journey' | 'evidence' | 'people' | 'audio' | null
@@ -36,25 +37,16 @@ function Icon({ name }: { name: 'sound' | 'screen' | 'menu' | 'close' | 'voice' 
     </svg>
   )
 }
-function Preview({ form }: { form: (typeof ibadanChapters)[number]['form'] }) {
-  const world = useMemo(() => buildIbadanWorld(form, 1100), [form])
+function Preview({ id }: { id: string }) {
   return (
-    <svg className="ibadan-world-preview" viewBox="0 0 600 320" aria-hidden="true">
-      {Array.from(world.kinds, (kind, i) => (
-        <circle
-          key={i}
-          cx={300 + (world.positions[i * 3] - world.positions[i * 3 + 2]) * 15}
-          cy={
-            220 +
-            (world.positions[i * 3] + world.positions[i * 3 + 2]) * 4 -
-            world.positions[i * 3 + 1] * 30
-          }
-          r={kind === 2 ? 1.05 : 0.6}
-          fill={kind === 2 ? '#f3e6cf' : '#a9875d'}
-          opacity={kind === 0 ? 0.25 : 0.8}
-        />
-      ))}
-    </svg>
+    <Image
+      className="ibadan-world-preview"
+      src={`/ibadan/posters/${ibadanGallery[id].sculpture}.webp`}
+      alt=""
+      width={600}
+      height={600}
+      unoptimized
+    />
   )
 }
 
@@ -65,7 +57,8 @@ export default function IbadanExperience() {
     audio = useRef<IbadanAudio | null>(null)
   const dialog = useRef<HTMLDialogElement>(null),
     heading = useRef<HTMLHeadingElement>(null),
-    readerHost = useRef<HTMLElement>(null)
+    readerHost = useRef<HTMLElement>(null),
+    captionHost = useRef<HTMLElement>(null)
   const active = useRef(0),
     entered = useRef(false),
     soundWanted = useRef(true),
@@ -74,6 +67,7 @@ export default function IbadanExperience() {
   const [phase, setPhase] = useState<'cover' | 'opening' | 'story'>('cover'),
     [chapter, setChapter] = useState(0),
     [view, setView] = useState(-1)
+  const [inspecting, setInspecting] = useState(false)
   const [ready, setReady] = useState(false),
     [failed, setFailed] = useState(false),
     [retry, setRetry] = useState(0),
@@ -97,8 +91,19 @@ export default function IbadanExperience() {
     current.historicalClaims.some((claim) => claim.sourceIds.includes(source.id)),
   )
   const previewChapter = ibadanChapters[preview]
+  const exhibit = ibadanGallery[current.id]
   const started = phase !== 'cover'
+  const homeArrival = useRef(false)
 
+  useEffect(() => {
+    if (sessionStorage.getItem('ibadan-enter-from-home') !== 'true') return
+    sessionStorage.removeItem('ibadan-enter-from-home')
+    homeArrival.current = true
+    entered.current = true
+    soundWanted.current = false
+    setSoundPreference(false)
+    setPhase('opening')
+  }, [])
   useEffect(() => {
     const ambience = new IbadanAudio()
     audio.current = ambience
@@ -131,28 +136,49 @@ export default function IbadanExperience() {
     setReady(false)
     setFailed(false)
     void import('./ibadan-scene')
-      .then(({ createIbadanScene }) => {
+      .then(async ({ createIbadanScene }) => {
         if (cancelled || !host.current) return
         try {
-          const engine = createIbadanScene(host.current, () => {
+          const engine = await createIbadanScene(host.current, () => {
             setFailed(true)
             setReady(false)
             if (entered.current) setReader(true)
           })
+          if (cancelled) {
+            engine.destroy()
+            return
+          }
           scene.current = engine
           engine.setReduced(matchMedia('(prefers-reduced-motion: reduce)').matches)
           engine.setEntered(entered.current)
           engine.setChapter(active.current)
           setReady(true)
+          if (homeArrival.current) {
+            homeArrival.current = false
+            openingTimer.current = setTimeout(
+              () => {
+                setPhase('story')
+                heading.current?.focus({ preventScroll: true })
+              },
+              matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1500,
+            )
+          }
         } catch {
+          if (cancelled) return
           setFailed(true)
-          if (entered.current) setReader(true)
+          if (entered.current) {
+            setReader(true)
+            setPhase('story')
+          }
         }
       })
       .catch(() => {
         if (!cancelled) {
           setFailed(true)
-          if (entered.current) setReader(true)
+          if (entered.current) {
+            setReader(true)
+            setPhase('story')
+          }
         }
       })
     return () => {
@@ -166,6 +192,7 @@ export default function IbadanExperience() {
     [paused, reader, panel, ready],
   )
   useEffect(() => scene.current?.setVisible(!reader), [reader, ready])
+  useEffect(() => scene.current?.setInspection(inspecting), [inspecting, ready])
   useEffect(() => {
     scene.current?.setView(perspective?.focus || 'place')
   }, [perspective, ready])
@@ -178,18 +205,21 @@ export default function IbadanExperience() {
     if (next === active.current) return
     active.current = next
     setChapter(next)
+    setInspecting(false)
     setView(-1)
     setPreview(next)
     setExpandedAct(ibadanChapters[next].act)
     scene.current?.setChapter(next)
     audio.current?.setChapter(next)
     readerHost.current?.scrollTo({ top: 0 })
+    captionHost.current?.scrollTo({ top: 0 })
   }, [])
   useEffect(() => {
     if (!started) return
     const keys = (event: KeyboardEvent) => {
       if (dialog.current?.open || (event.target as HTMLElement).closest('button,a,input,select'))
         return
+      if (event.key === 'Escape') setInspecting(false)
       if (event.key === 'ArrowRight') {
         event.preventDefault()
         go(active.current + 1)
@@ -259,6 +289,7 @@ export default function IbadanExperience() {
   const evidence = () => setPanel('evidence')
   const selectView = (index: number) => {
     setView(index)
+    captionHost.current?.scrollTo({ top: 0 })
     scene.current?.setView(index < 0 ? 'place' : current.viewpoints[index].focus)
   }
 
@@ -266,7 +297,7 @@ export default function IbadanExperience() {
     <main
       ref={root}
       id="main"
-      className={`ibadan-app phase-${phase}${reader ? ' is-reader' : ''}${reduced ? ' is-reduced' : ''}`}
+      className={`ibadan-app phase-${phase}${reader ? ' is-reader' : ''}${reduced ? ' is-reduced' : ''}${inspecting ? ' is-inspecting' : ''}`}
       data-chapter={current.id}
       data-ready={ready}
       data-fullscreen={fullscreen.fullscreen}
@@ -277,6 +308,7 @@ export default function IbadanExperience() {
           phase !== 'story' ||
           panel ||
           reader ||
+          inspecting ||
           event.ctrlKey ||
           (event.target as HTMLElement).closest('[data-native-scroll]') ||
           Math.abs(event.deltaX) > Math.abs(event.deltaY)
@@ -298,7 +330,7 @@ export default function IbadanExperience() {
         <Link href="/" aria-label="Return to Rayab portfolio" className="ibadan-brand">
           <BrandMark />
           <span>
-            Places we carry<small>A project by Rayab</small>
+            The Ibadan archive<small>A project by Rayab</small>
           </span>
         </Link>
         {started && (
@@ -312,7 +344,10 @@ export default function IbadanExperience() {
             <>
               <button
                 aria-label={reader ? 'Return to spatial edition' : 'Open text edition'}
-                onClick={() => setReader(!reader)}
+                onClick={() => {
+                  setReader(!reader)
+                  setInspecting(false)
+                }}
                 aria-pressed={reader}
               >
                 <span>Read</span>
@@ -324,6 +359,13 @@ export default function IbadanExperience() {
                 aria-pressed={sound}
               >
                 <Icon name="sound" />
+              </button>
+              <button
+                className="ibadan-header-settings"
+                onClick={() => setPanel('audio')}
+                aria-label="Sound and narration settings"
+              >
+                <Icon name="voice" />
               </button>
             </>
           )}
@@ -352,22 +394,27 @@ export default function IbadanExperience() {
         </div>
       </header>
 
+      {started && !reader && (
+        <div className="ibadan-era" key={current.id} aria-hidden="true">
+          <span>{exhibit.year}</span>
+        </div>
+      )}
       {phase !== 'story' && (
         <section
           className={`ibadan-cover${phase === 'opening' ? ' is-leaving' : ''}`}
           aria-labelledby="ibadan-title"
         >
-          <span className="ibadan-eyebrow">Ìbàdàn / A spatial history in six acts</span>
+          <span className="ibadan-eyebrow">An interactive history / By a son of the city</span>
           <h1 id="ibadan-title">
             <span>Ìbàdàn</span>
             <span className="ibadan-cover-subtitle">
-              A city made. And <em>remade.</em>
+              A city. A people. <em>A living history.</em>
             </span>
           </h1>
           <p>
-            Who gets to build a city,
+            Step into the lives, objects and ideas
             <br />
-            and whose work does the city remember?
+            that made the city I call home.
           </p>
           <div className="ibadan-cover-actions">
             <button className="ibadan-enter" onClick={() => begin()} disabled={phase === 'opening'}>
@@ -386,7 +433,7 @@ export default function IbadanExperience() {
             </div>
           </div>
           <span className="ibadan-cover-note">
-            Historical evidence. Human viewpoints. Interpretive spaces.
+            Six acts. Eighteen moments. Centuries of becoming.
           </span>
         </section>
       )}
@@ -441,16 +488,56 @@ export default function IbadanExperience() {
             <>
               <div className="ibadan-spatial-label">
                 <span>{current.locations[0].name}</span>
-                <span>Interpretive space · composite figures</span>
+                <span>Historical narrative / Sculptural interpretation</span>
               </div>
+              <div className="ibadan-exhibit-label">
+                <span className="ibadan-eyebrow">
+                  On display / {String(chapter + 1).padStart(2, '0')}
+                </span>
+                <strong>{exhibit.subject}</strong>
+                <span>{exhibit.medium}</span>
+                <button onClick={() => setInspecting(true)}>
+                  Inspect the sculpture <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+              {inspecting && (
+                <section className="ibadan-inspection" aria-label="Sculpture inspection">
+                  <span className="ibadan-eyebrow">A closer look</span>
+                  <h2>{exhibit.subject}</h2>
+                  <p>{exhibit.note}</p>
+                  <div className="ibadan-inspect-controls">
+                    <button
+                      onClick={() => scene.current?.rotate(-Math.PI / 6)}
+                      aria-label="Rotate sculpture left"
+                    >
+                      ↶
+                    </button>
+                    <span>Drag to turn</span>
+                    <button
+                      onClick={() => scene.current?.rotate(Math.PI / 6)}
+                      aria-label="Rotate sculpture right"
+                    >
+                      ↷
+                    </button>
+                    <button onClick={() => scene.current?.reset()}>Reset view</button>
+                  </div>
+                  <button className="ibadan-inspect-close" onClick={() => setInspecting(false)}>
+                    Back to the story <span aria-hidden="true">↗</span>
+                  </button>
+                </section>
+              )}
               <section
                 className="ibadan-caption"
+                ref={captionHost}
+                data-view={view}
                 aria-labelledby="ibadan-chapter-title"
                 data-native-scroll
                 data-lenis-prevent
               >
                 <div className="ibadan-caption-meta">
-                  <span>{current.dateLabel}</span>
+                  <span>
+                    {current.dateLabel} <i /> Chapter {String(chapter + 1).padStart(2, '0')}
+                  </span>
                   <button onClick={evidence}>
                     {current.historicalClaims[0].evidenceStatus} <span aria-hidden="true">↗</span>
                   </button>
@@ -494,20 +581,48 @@ export default function IbadanExperience() {
                   )}
                 </div>
               </section>
+              <span className="ibadan-read-cue" aria-hidden="true">
+                Scroll the story ↓
+              </span>
             </>
           )}
-          <nav className="ibadan-act-rail" aria-label="Six acts">
-            {ibadanActs.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => go(ibadanChapters.findIndex((episode) => episode.act === item.id))}
-                aria-current={current.act === item.id ? 'step' : undefined}
-              >
-                <span>{String(item.id).padStart(2, '0')}</span>
-                <strong>{item.title}</strong>
-                <i />
-              </button>
-            ))}
+          <nav className="ibadan-timeline" aria-label="Historical timeline">
+            <div className="ibadan-timeline-heading">
+              <span>Travel through time</span>
+              <span>
+                {act.title} <i> / Act 0{current.act}</i>
+              </span>
+              <button onClick={openJourney}>All chapters ↗</button>
+            </div>
+            <div className="ibadan-timeline-track">
+              <div
+                className="ibadan-timeline-progress"
+                style={{ width: `${(chapter / (ibadanChapters.length - 1)) * 100}%` }}
+              />
+              {ibadanChapters.map((episode, index) => (
+                <button
+                  key={episode.id}
+                  onClick={() => go(index)}
+                  aria-label={`${episode.dateLabel}: ${episode.title}`}
+                  aria-current={chapter === index ? 'step' : undefined}
+                  className={index < chapter ? 'is-past' : ''}
+                >
+                  <i />
+                  <span>{ibadanGallery[episode.id].year}</span>
+                  <strong>{episode.title}</strong>
+                </button>
+              ))}
+            </div>
+            <input
+              className="ibadan-time-slider"
+              type="range"
+              min="0"
+              max={ibadanChapters.length - 1}
+              value={chapter}
+              onChange={(event) => go(Number(event.target.value))}
+              aria-label="Travel through the Ibadan timeline"
+              aria-valuetext={`${current.dateLabel}: ${current.title}`}
+            />
           </nav>
           <footer className="ibadan-bottom">
             <button
@@ -552,7 +667,7 @@ export default function IbadanExperience() {
 
       {!ready && !failed && (
         <span className="ibadan-loading" role="status">
-          Opening the landscape…
+          Opening the gallery…
         </span>
       )}
       {failed && !reader && (
@@ -595,7 +710,9 @@ export default function IbadanExperience() {
         className={`ibadan-dialog${panel === 'journey' ? ' is-index' : ''}`}
         aria-labelledby="ibadan-panel-title"
         data-lenis-prevent
-        onClose={() => setPanel(null)}
+        onClose={() => {
+          if (!dialog.current?.open) setPanel(null)
+        }}
         onCancel={() => setPanel(null)}
         onClick={(event) => {
           if (event.target === event.currentTarget) setPanel(null)
@@ -683,7 +800,7 @@ export default function IbadanExperience() {
                   <span className="ibadan-eyebrow">
                     {previewChapter.dateLabel} / Act {previewChapter.act}
                   </span>
-                  <Preview form={previewChapter.form} />
+                  <Preview id={previewChapter.id} />
                   <h3>{previewChapter.title}</h3>
                   <p>{previewChapter.question}</p>
                   <span>{previewChapter.locations[0].name}</span>
@@ -727,8 +844,9 @@ export default function IbadanExperience() {
                     ))}
                   </ul>
                   <p className="ibadan-small-note">
-                    Anonymous figures in the particle scene are composites. They are not
-                    authenticated portraits of the named historical people.
+                    The bronze portraits are artistic character studies. Their facial features and
+                    clothing are not authenticated likenesses or costume evidence. Anonymous figures
+                    are composites.
                   </p>
                   <button className="ibadan-inline-action" onClick={evidence}>
                     See the historical evidence ↗
@@ -801,6 +919,13 @@ export default function IbadanExperience() {
                       <span>S06</span>
                     </section>
                   )}
+                  <h3>The sculpture & its interpretation</h3>
+                  <p>{exhibit.note}</p>
+                  <p className="ibadan-small-note">
+                    Portrait base geometry is adapted from CC0 MakeHuman graphical data. Clothing,
+                    objects and architectural models are original work. No historical person was
+                    scanned.
+                  </p>
                   <h3>What is reconstructed?</h3>
                   <p>{current.assets[0].verificationStatus}</p>
                   <ul className="ibadan-uncertainties">

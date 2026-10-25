@@ -1,16 +1,15 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { buildIbadanWorld } from './world-geometry'
+import { useEffect, useRef, useState } from 'react'
 import './invitation.css'
 
 export default function IbadanInvitation() {
   const router = useRouter(),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [leaving, setLeaving] = useState(false)
-  const world = useMemo(() => buildIbadanWorld('arrival', 2400), [])
   useEffect(
     () => () => {
       if (timer.current) clearTimeout(timer.current)
@@ -19,27 +18,21 @@ export default function IbadanInvitation() {
   )
   return (
     <section className="ibadan-invitation" aria-labelledby="ibadan-invitation-title">
-      <svg viewBox="0 0 1200 600" className="ibadan-invitation-world" aria-hidden="true">
-        {Array.from(world.kinds, (kind, i) => (
-          <circle
-            key={i}
-            cx={600 + (world.positions[i * 3] - world.positions[i * 3 + 2]) * 28}
-            cy={
-              350 +
-              (world.positions[i * 3] + world.positions[i * 3 + 2]) * 8 -
-              world.positions[i * 3 + 1] * 49
-            }
-            r={kind === 2 ? 1.5 : 0.85}
-            fill={kind === 2 ? '#f0dfc0' : '#bb9c6d'}
-            opacity={kind === 0 ? 0.25 : 0.8}
-          />
-        ))}
-      </svg>
+      <Image
+        src="/ibadan/posters/iyalode.webp"
+        alt="An interpretive bronze portrait from the Ibadan experience"
+        width={900}
+        height={900}
+        className="ibadan-invitation-world"
+        unoptimized
+      />
       <div className="ibadan-invitation-copy">
         <span className="eyebrow">Places we carry / A personal project</span>
         <h2 id="ibadan-invitation-title">
-          Ìbàdàn.
-          <br />A city made <em>and remade.</em>
+          <span>Ìbàdàn.</span>
+          <small>
+            A city. A people. <em>A living history.</em>
+          </small>
         </h2>
         <p>
           The people, the choices, the histories.
@@ -50,6 +43,7 @@ export default function IbadanInvitation() {
           href="/ibadan"
           onClick={(event) => {
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            sessionStorage.setItem('ibadan-enter-from-home', 'true')
             if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
             event.preventDefault()
             if (leaving) return
@@ -60,7 +54,7 @@ export default function IbadanInvitation() {
           Enter the Ibadan story <span aria-hidden="true">↗</span>
         </Link>
         <span className="ibadan-invitation-meta">
-          Six acts · Eighteen episodes · A spatial history
+          Six acts · Eighteen moments · An interactive 3D history
         </span>
       </div>
       {leaving && (

@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #11150f;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script type="importmap">
+      { "imports": { "three": "./three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <script type="module">
+      import * as T from 'three'
+      import { RoomEnvironment } from './RoomEnvironment.js'
+      import { createGalleryLibrary } from './models.js'
+      async function head(name) {
+        const b = await (await fetch('/ibadan/models/' + name + '.glb')).arrayBuffer()
+        const n = new DataView(b).getUint32(12, true),
+          doc = JSON.parse(new TextDecoder().decode(new Uint8Array(b, 20, n))),
+          start = 20 + n + 8
+        const g = new T.BufferGeometry()
+        for (const [name, index] of Object.entries(doc.meshes[0].primitives[0].attributes)) {
+          const a = doc.accessors[index],
+            v = doc.bufferViews[a.bufferView]
+          g.setAttribute(
+            name === 'POSITION' ? 'position' : 'normal',
+            new T.BufferAttribute(new Float32Array(b, start + v.byteOffset, a.count * 3), 3),
+          )
+        }
+        const a = doc.accessors[2],
+          v = doc.bufferViews[a.bufferView]
+        g.setIndex(new T.BufferAttribute(new Uint32Array(b, start + v.byteOffset, a.count), 1))
+        return g
+      }
+      const library = createGalleryLibrary({
+        woman: await head('iyalode-study'),
+        man: await head('commander-study'),
+      })
+      const renderer = new T.WebGLRenderer({ antialias: true, alpha: true })
+      renderer.setSize(900, 900)
+      renderer.setPixelRatio(1)
+      renderer.toneMapping = T.ACESFilmicToneMapping
+      renderer.toneMappingExposure = 1.05
+      document.body.appendChild(renderer.domElement)
+      const scene = new T.Scene(),
+        camera = new T.PerspectiveCamera(32, 1, 0.1, 60)
+      const pmrem = new T.PMREMGenerator(renderer),
+        room = new RoomEnvironment()
+      scene.environment = pmrem.fromScene(room, 0.04).texture
+      scene.environmentIntensity = 0.65
+      scene.add(new T.HemisphereLight('#efd9ac', '#17241d', 0.9))
+      const key = new T.SpotLight('#ffe0ad', 55, 35, 0.58, 0.85, 1.5)
+      key.position.set(-3.5, 7, 6)
+      key.target.position.set(0, 1.5, 0)
+      scene.add(key, key.target)
+      const rim = new T.DirectionalLight('#c2d5bc', 2)
+      rim.position.set(3, 4, -4)
+      scene.add(rim)
+      const fill = new T.DirectionalLight('#d2ad79', 0.65)
+      fill.position.set(4, 2, 5)
+      scene.add(fill)
+      let active
+      window.show = (type) => {
+        if (active) scene.remove(active)
+        active = library.get(type)
+        active.rotation.y = -0.35
+        scene.add(active)
+        const bounds = new T.Box3().setFromObject(active),
+          size = bounds.getSize(new T.Vector3()),
+          center = bounds.getCenter(new T.Vector3())
+        const distance = Math.max(size.y, size.x) * 2.5
+        camera.position.set(0, center.y + 0.9, distance)
+        camera.lookAt(center)
+        renderer.render(scene, camera)
+        document.body.dataset.model = type
+      }
+      document.body.dataset.ready = 'true'
+    </script>
+  </body>
+</html>

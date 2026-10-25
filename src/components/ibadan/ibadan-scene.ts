@@ -1,184 +1,218 @@
 import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { ibadanChapters, type IbadanFocus } from '@/data/ibadan'
-import { buildIbadanWorld, type Point3 } from './world-geometry'
+import { ibadanGallery } from '@/data/ibadan-gallery'
+import { createGalleryLibrary } from './gallery-models'
 
-const vertex = `
-attribute float aKind;
-uniform float uPixelRatio;
-uniform float uTime;
-uniform float uFocus;
-varying vec3 vColor;
-varying float vAlpha;
-void main(){
- vec4 mv=modelViewMatrix*vec4(position,1.);
- gl_Position=projectionMatrix*mv;
- gl_PointSize=clamp(uPixelRatio*(aKind==2.?2.3:2.35)*12./-mv.z,1.,5.5);
- vec3 earth=vec3(.67,.48,.30), cream=vec3(.95,.86,.69), blue=vec3(.39,.63,.68);
- vColor=aKind==2.?cream:(aKind==5.?blue:(aKind==4.?vec3(.88,.65,.35):earth));
- float focus=uFocus==0.?1.:(uFocus==1.?(aKind==2.?1.35:.30):(aKind>=4.?1.4:.36));
- float strength=aKind==0.?.20:(aKind==2.?.65:(aKind==4.?.65:.52));
- vAlpha=strength*focus*(.91+.09*sin(position.x*17.+position.z*11.+uTime*.4));
- vAlpha*=1.-smoothstep(18.,40.,-mv.z);
-}`
-const fragment = `
-uniform float uOpacity;
-varying vec3 vColor;
-varying float vAlpha;
-void main(){float d=length(gl_PointCoord-.5)*2.;if(d>1.)discard;gl_FragColor=vec4(vColor,exp(-d*d*4.)*vAlpha*uOpacity);}`
-
-type Pose = { position: Point3; target: Point3 }
-export function createIbadanScene(host: HTMLElement, onLost: () => void) {
-  const mobile = host.clientWidth < 900,
-    count = mobile ? 30000 : 68000
-  const renderer = new THREE.WebGLRenderer({
-    alpha: true,
-    antialias: false,
-    powerPreference: 'high-performance',
-  })
-  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 1.75))
-  renderer.setClearColor(0x090b0a, 0)
+/** A locally hosted, physically lit sculpture gallery. No remote model service. */
+export async function createIbadanScene(host: HTMLElement, onLost: () => void) {
+  const loader = new GLTFLoader()
+  const models = await Promise.all([
+    loader.loadAsync('/ibadan/models/iyalode-study.glb'),
+    loader.loadAsync('/ibadan/models/commander-study.glb'),
+  ])
+  const head = (root: THREE.Object3D) => {
+    let geometry: THREE.BufferGeometry | undefined
+    root.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        geometry = child.geometry
+        const materials = Array.isArray(child.material) ? child.material : [child.material]
+        materials.forEach((material) => material.dispose())
+      }
+    })
+    if (!geometry) throw new Error('Portrait model has no geometry')
+    return geometry
+  }
+  const library = createGalleryLibrary({ woman: head(models[0].scene), man: head(models[1].scene) })
+  let renderer: THREE.WebGLRenderer
+  try {
+    renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: false,
+    })
+  } catch (error) {
+    library.dispose()
+    throw error
+  }
+  const mobile = host.clientWidth < 760
+  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.35 : 1.75))
+  renderer.setClearColor(0x10110e, 0)
+  renderer.toneMapping = THREE.ACESFilmicToneMapping
+  renderer.toneMappingExposure = 1.05
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap
   const canvas = renderer.domElement
   canvas.className = 'ibadan-canvas'
   canvas.setAttribute('role', 'img')
   canvas.setAttribute(
     'aria-label',
-    'Interpretive particle environment with composite human figures. Choose a viewpoint to explore people, places and consequences. Drag gently to look around.',
+    'Solid 3D historical sculpture. Drag to turn the object; use the inspect controls for a closer view. Artistic portraits are not authenticated likenesses.',
   )
   host.appendChild(canvas)
+  host.dataset.renderer = 'sculpture'
   host.dataset.scene = 'origins'
   host.dataset.view = 'place'
-  const scene = new THREE.Scene(),
-    camera = new THREE.PerspectiveCamera(46, 1, 0.1, 80)
-  const makeLayer = () => {
-    const geometry = new THREE.BufferGeometry()
-    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3))
-    geometry.setAttribute('aKind', new THREE.BufferAttribute(new Float32Array(count), 1))
-    const material = new THREE.ShaderMaterial({
-      vertexShader: vertex,
-      fragmentShader: fragment,
-      uniforms: {
-        uPixelRatio: { value: renderer.getPixelRatio() },
-        uOpacity: { value: 0 },
-        uFocus: { value: 0 },
-        uTime: { value: 0 },
-      },
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    })
-    const points = new THREE.Points(geometry, material)
-    points.frustumCulled = false
-    scene.add(points)
-    return { geometry, material }
-  }
-  const layers = [makeLayer(), makeLayer()]
-  let active = 0,
-    chapter = 0,
-    focus: IbadanFocus = 'place',
+  const scene = new THREE.Scene()
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 70)
+  const pmrem = new THREE.PMREMGenerator(renderer)
+  const room = new RoomEnvironment()
+  const environment = pmrem.fromScene(room, 0.04)
+  scene.environment = environment.texture
+  scene.environmentIntensity = 0.65
+  room.dispose()
+  pmrem.dispose()
+  scene.add(new THREE.HemisphereLight('#efd9ac', '#17241d', 0.9))
+  const key = new THREE.SpotLight('#ffe0ad', 55, 35, 0.58, 0.85, 1.5)
+  key.position.set(-3.5, 7, 6)
+  key.target.position.set(0, 1.5, 0)
+  key.castShadow = true
+  key.shadow.mapSize.setScalar(mobile ? 1024 : 2048)
+  key.shadow.bias = -0.00025
+  key.shadow.normalBias = 0.025
+  scene.add(key, key.target)
+  const rim = new THREE.DirectionalLight('#c2d5bc', 2.0)
+  rim.position.set(3, 4, -4)
+  scene.add(rim)
+  const fill = new THREE.DirectionalLight('#d2ad79', 0.65)
+  fill.position.set(4, 2, 5)
+  scene.add(fill)
+  const shadowCanvas = document.createElement('canvas')
+  shadowCanvas.width = shadowCanvas.height = 128
+  const shadowContext = shadowCanvas.getContext('2d')!
+  const gradient = shadowContext.createRadialGradient(64, 64, 8, 64, 64, 64)
+  gradient.addColorStop(0, 'rgba(0,0,0,.65)')
+  gradient.addColorStop(0.45, 'rgba(0,0,0,.35)')
+  gradient.addColorStop(1, 'rgba(0,0,0,0)')
+  shadowContext.fillStyle = gradient
+  shadowContext.fillRect(0, 0, 128, 128)
+  const shadowTexture = new THREE.CanvasTexture(shadowCanvas)
+  const floorGeometry = new THREE.PlaneGeometry(6, 6)
+  const floorMaterial = new THREE.MeshBasicMaterial({
+    map: shadowTexture,
+    transparent: true,
+    depthWrite: false,
+  })
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial)
+  floor.rotation.x = -Math.PI / 2
+  floor.position.y = -0.185
+  scene.add(floor)
+
+  let chapter = 0,
     entered = false,
     reduced = false,
     paused = false,
-    disposed = false,
+    visible = true,
     lost = false,
-    visible = true
-  let frame = 0,
+    disposed = false,
+    inspection = false,
+    frame = 0,
     previous = 0,
-    elapsed = 0,
-    travel = 1,
-    fade = 1,
-    oldOpacity = 1
+    progress = 1,
+    focus: IbadanFocus = 'place',
+    direction = 1,
+    turn = -0.2,
+    targetTurn = -0.2,
+    cameraTravel = 1
+  let current = library.get('iyalode'),
+    outgoing: THREE.Group | null = null
+  scene.add(current)
   let dragging: { x: number; y: number } | null = null
-  let lookX = 0,
-    lookY = 0
-  let start: Pose = { position: [0, 1.1, 8.5], target: [0, 0.8, 1] },
-    destination: Pose = { ...start }
-  const currentPosition = new THREE.Vector3(...start.position),
-    currentTarget = new THREE.Vector3(...start.target)
-  const cache = new Map<string, ReturnType<typeof buildIbadanWorld>>()
-  const load = (index: number, layer: number) => {
-    const form = ibadanChapters[index].form
-    let world = cache.get(form)
-    if (!world) {
-      world = buildIbadanWorld(form, count)
-      if (cache.size > 4) cache.delete(cache.keys().next().value!)
-      cache.set(form, world)
-    }
-    const target = layers[layer].geometry
-    ;(target.attributes.position.array as Float32Array).set(world.positions)
-    ;(target.attributes.aKind.array as Float32Array).set(world.kinds)
-    target.attributes.position.needsUpdate = true
-    target.attributes.aKind.needsUpdate = true
+  const cameraPosition = new THREE.Vector3(0, 2.6, 11)
+  const cameraTarget = new THREE.Vector3(0, 1.75, 0)
+  let fromPosition = cameraPosition.clone(),
+    fromTarget = cameraTarget.clone()
+  const toPosition = cameraPosition.clone(),
+    toTarget = cameraTarget.clone()
+  const narrow = () => host.clientWidth < 760 || host.clientHeight > host.clientWidth
+  const pose = () => {
+    const portrait = narrow()
+    const shortPhone = portrait && host.clientHeight < 700
+    const bounds = new THREE.Box3().setFromObject(current)
+    const size = bounds.getSize(new THREE.Vector3())
+    const center = bounds.getCenter(new THREE.Vector3())
+    const heightFraction = entered
+      ? portrait
+        ? shortPhone
+          ? 0.29
+          : 0.36
+        : 0.57
+      : portrait
+        ? 0.43
+        : 0.55
+    const widthFraction = portrait ? 0.84 : entered ? 0.4 : 0.65
+    const halfFov = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    const distance =
+      Math.max(
+        size.y / (2 * halfFov * heightFraction),
+        size.x / (2 * halfFov * camera.aspect * widthFraction),
+      ) +
+      size.z * 0.12
+    const zoom = inspection ? (portrait ? 0.78 : 0.88) : focus === 'people' ? 0.93 : 1
+    const targetY = center.y - current.position.y
+    toPosition.set(0, entered ? 2.9 : 2.5, distance * zoom)
+    toTarget.set(0, targetY, 0)
+    camera.clearViewOffset()
+    camera.setViewOffset(
+      host.clientWidth,
+      host.clientHeight,
+      inspection
+        ? portrait
+          ? 0
+          : host.clientWidth * 0.12
+        : entered && !portrait
+          ? -host.clientWidth * 0.225
+          : 0,
+      portrait
+        ? host.clientHeight * (entered ? (inspection ? 0.13 : 0.18) : 0.13)
+        : host.clientHeight * (inspection ? 0.02 : entered ? 0.1 : 0.025),
+      host.clientWidth,
+      host.clientHeight,
+    )
+    camera.updateProjectionMatrix()
   }
-  load(0, active)
-  layers[active].material.uniforms.uOpacity.value = 1
-  const pose = (): Pose => {
-    const narrow = host.clientWidth < 760 || host.clientHeight > host.clientWidth
-    if (!entered) return { position: narrow ? [0, 2.0, 15.5] : [0, 1.1, 8.5], target: [0, 0.8, 1] }
-    const form = ibadanChapters[chapter].form
-    if (form === 'mbari') {
-      if (focus === 'people')
-        return { position: narrow ? [2, 3.8, 16] : [2.2, 2.7, 9.6], target: [0, 1, -1.5] }
-      if (focus === 'routes')
-        return { position: narrow ? [-2, 5, 18] : [-6, 3.6, 11], target: [0, 0.8, -0.5] }
-      return { position: narrow ? [3.2, 5.4, 18.5] : [6.8, 5, 12.5], target: [1, 0.8, -0.5] }
-    }
-    if (form === 'market') {
-      if (focus === 'people')
-        return { position: narrow ? [1.8, 4.2, 17] : [5.7, 3.3, 10.3], target: [0.1, 1, 0.7] }
-      if (focus === 'routes')
-        return { position: narrow ? [-2.5, 6, 19] : [-7, 6.1, 12], target: [0, 0.6, -0.3] }
-    }
-    if (form === 'regional')
-      return { position: narrow ? [1, 10, 19] : [7, 11, 13], target: [0, 0, -1] }
-    if (focus === 'people')
-      return { position: narrow ? [1.5, 4, 16.5] : [4.8, 3, 9.8], target: [0, 1, 1] }
-    if (focus === 'routes')
-      return { position: narrow ? [-2, 7, 19] : [-7.5, 7.2, 12.5], target: [0, 0.2, -0.8] }
-    return {
-      position: narrow ? [2.5, 5.6, 19.5] : [7.8, 5.3, 13],
-      target: [0, form === 'tower' ? 2 : 0.8, -1],
-    }
+  const reframe = () => {
+    fromPosition = cameraPosition.clone()
+    fromTarget = cameraTarget.clone()
+    pose()
+    cameraTravel = reduced ? 1 : 0
   }
-  const transition = () => {
-    start = {
-      position: currentPosition.toArray() as Point3,
-      target: currentTarget.toArray() as Point3,
-    }
-    destination = pose()
-    travel = reduced ? 1 : 0
-    host.dataset.moving = String(!reduced)
+  const finish = () => {
+    if (outgoing) scene.remove(outgoing)
+    outgoing = null
+    current.position.set(0, 0, 0)
   }
-  const render = () => renderer.render(scene, camera)
   const draw = (now: number) => {
     frame = 0
-    if (disposed || lost || !visible) return
-    const delta = previous ? Math.min((now - previous) / 1000, 0.05) : 0
+    if (disposed || lost || !visible || document.hidden) return
+    const dt = previous ? Math.min((now - previous) / 1000, 1.5) : 0
     previous = now
-    if (!paused && !reduced) elapsed += delta
-    travel = Math.min(1, travel + delta / 2.4)
-    fade = Math.min(1, fade + delta / 1.45)
-    const t = travel * travel * (3 - 2 * travel)
-    for (let i = 0; i < 3; i++) {
-      currentPosition.setComponent(
-        i,
-        THREE.MathUtils.lerp(start.position[i], destination.position[i], t),
-      )
-      currentTarget.setComponent(i, THREE.MathUtils.lerp(start.target[i], destination.target[i], t))
+    progress = reduced || paused ? 1 : Math.min(1, progress + dt / 1.15)
+    cameraTravel = reduced || paused ? 1 : Math.min(1, cameraTravel + dt / 1.45)
+    const ease = 1 - Math.pow(1 - progress, 4)
+    const t = 1 - Math.pow(1 - cameraTravel, 3)
+    cameraPosition.lerpVectors(fromPosition, toPosition, t)
+    cameraTarget.lerpVectors(fromTarget, toTarget, t)
+    camera.position.copy(cameraPosition)
+    camera.lookAt(cameraTarget)
+    turn = reduced ? targetTurn : THREE.MathUtils.damp(turn, targetTurn, 9, dt)
+    current.rotation.y = turn + (reduced ? 0 : (1 - ease) * direction * 0.48)
+    current.position.x = reduced ? 0 : (1 - ease) * direction * 4.5
+    current.position.y = reduced ? 0 : -(1 - ease) * 0.28
+    if (outgoing) {
+      outgoing.position.x = -ease * direction * 5
+      outgoing.position.z = -ease * 2
+      outgoing.rotation.y = turn - ease * direction * 0.3
     }
-    camera.position.copy(currentPosition)
-    camera.position.x += lookX
-    camera.position.y += lookY
-    camera.lookAt(currentTarget)
-    const blend = fade * fade * (3 - 2 * fade)
-    layers[active].material.uniforms.uOpacity.value = blend
-    layers[1 - active].material.uniforms.uOpacity.value = oldOpacity * (1 - blend)
-    for (const layer of layers) {
-      layer.material.uniforms.uTime.value = elapsed
-      layer.material.uniforms.uFocus.value = focus === 'people' ? 1 : focus === 'routes' ? 2 : 0
-    }
-    host.dataset.moving = String(travel < 1 || fade < 1)
-    render()
-    if (!document.hidden && ((!paused && !reduced) || travel < 1 || fade < 1))
+    if (progress === 1 && outgoing) finish()
+    host.dataset.moving = String(
+      progress < 1 || cameraTravel < 1 || Math.abs(turn - targetTurn) > 0.001,
+    )
+    renderer.render(scene, camera)
+    // Render on demand. No endless orbit or particle churn when a visitor reads.
+    if (progress < 1 || cameraTravel < 1 || (!reduced && Math.abs(turn - targetTurn) > 0.001))
       frame = requestAnimationFrame(draw)
   }
   const wake = () => {
@@ -186,20 +220,33 @@ export function createIbadanScene(host: HTMLElement, onLost: () => void) {
     previous = 0
     if (!disposed && !lost && visible && !document.hidden) frame = requestAnimationFrame(draw)
   }
-  const resize = () => {
-    const { width, height } = host.getBoundingClientRect()
-    if (!width || !height) return
-    renderer.setSize(width, height)
-    camera.aspect = width / height
-    camera.setViewOffset(width, height, 0, height * (height > width ? 0.17 : 0.11), width, height)
-    camera.updateProjectionMatrix()
-    destination = pose()
-    if (reduced || !entered) {
-      currentPosition.set(...destination.position)
-      currentTarget.set(...destination.target)
-      start = destination
-      travel = 1
+  const show = () => {
+    const next = library.get(
+      entered ? ibadanGallery[ibadanChapters[chapter].id].sculpture : 'iyalode',
+    )
+    if (current !== next) {
+      finish()
+      outgoing = current
+      current = next
+      current.position.set(0, 0, 0)
+      current.rotation.set(0, targetTurn, 0)
+      scene.add(current)
+      progress = reduced ? 1 : 0
+      if (reduced) finish()
     }
+    reframe()
+    wake()
+  }
+  const resize = () => {
+    if (!host.clientWidth || !host.clientHeight) return
+    renderer.setSize(host.clientWidth, host.clientHeight)
+    camera.aspect = host.clientWidth / host.clientHeight
+    pose()
+    cameraPosition.copy(toPosition)
+    cameraTarget.copy(toTarget)
+    fromPosition.copy(toPosition)
+    fromTarget.copy(toTarget)
+    cameraTravel = 1
     wake()
   }
   const observer = new ResizeObserver(resize)
@@ -211,9 +258,9 @@ export function createIbadanScene(host: HTMLElement, onLost: () => void) {
   }
   const move = (event: PointerEvent) => {
     if (!dragging) return
-    lookX = THREE.MathUtils.clamp(lookX - (event.clientX - dragging.x) * 0.006, -1.4, 1.4)
-    lookY = THREE.MathUtils.clamp(lookY + (event.clientY - dragging.y) * 0.004, -0.5, 0.7)
+    targetTurn += (event.clientX - dragging.x) * 0.009
     dragging = { x: event.clientX, y: event.clientY }
+    host.dataset.turned = String(targetTurn.toFixed(2))
     wake()
   }
   const up = () => {
@@ -241,47 +288,58 @@ export function createIbadanScene(host: HTMLElement, onLost: () => void) {
     setEntered(value: boolean) {
       if (entered === value) return
       entered = value
-      transition()
-      wake()
+      show()
     },
     setChapter(index: number) {
-      if (index === chapter) {
-        wake()
-        return
-      }
+      if (chapter === index) return
+      direction = index > chapter ? 1 : -1
       chapter = index
       focus = 'place'
-      lookX = 0
-      lookY = 0
-      oldOpacity = layers[active].material.uniforms.uOpacity.value
-      active = 1 - active
-      load(index, active)
-      fade = reduced ? 1 : 0
+      targetTurn = -0.2
+      inspection = false
       host.dataset.scene = ibadanChapters[index].id
-      transition()
-      wake()
+      host.dataset.view = focus
+      show()
     },
     setView(value: IbadanFocus) {
-      if (focus === value && lookX === 0 && lookY === 0) return
+      if (focus === value) return
       focus = value
-      lookX = 0
-      lookY = 0
       host.dataset.view = value
-      transition()
+      targetTurn = value === 'routes' ? -0.65 : value === 'people' ? 0.08 : -0.2
+      reframe()
+      wake()
+    },
+    setInspection(value: boolean) {
+      inspection = value
+      reframe()
+      wake()
+    },
+    rotate(delta: number) {
+      targetTurn += delta
+      host.dataset.turned = String(targetTurn.toFixed(2))
+      wake()
+    },
+    reset() {
+      targetTurn = -0.2
       wake()
     },
     setReduced(value: boolean) {
       reduced = value
       if (value) {
-        travel = 1
-        fade = 1
-        destination = pose()
-        start = destination
+        progress = cameraTravel = 1
+        finish()
+        turn = targetTurn
       }
       wake()
     },
     setPaused(value: boolean) {
       paused = value
+      if (paused) {
+        progress = cameraTravel = 1
+        finish()
+        turn = targetTurn
+      }
+      host.dataset.paused = String(paused)
       wake()
     },
     setVisible(value: boolean) {
@@ -300,15 +358,17 @@ export function createIbadanScene(host: HTMLElement, onLost: () => void) {
       canvas.removeEventListener('pointercancel', up)
       canvas.removeEventListener('lostpointercapture', up)
       canvas.removeEventListener('webglcontextlost', contextLost)
-      for (const layer of layers) {
-        layer.geometry.dispose()
-        layer.material.dispose()
-      }
-      cache.clear()
+      scene.clear()
+      library.dispose()
+      floorGeometry.dispose()
+      floorMaterial.dispose()
+      shadowTexture.dispose()
+      key.shadow.map?.dispose()
+      environment.dispose()
       renderer.dispose()
       renderer.forceContextLoss()
       canvas.remove()
     },
   }
 }
-export type IbadanScene = ReturnType<typeof createIbadanScene>
+export type IbadanScene = Awaited<ReturnType<typeof createIbadanScene>>

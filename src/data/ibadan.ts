@@ -135,12 +135,12 @@ export const ibadanChapters: IbadanChapter[] = [
         id: 'connections',
         label: 'Follow the consequences',
         title: 'What changes for the people here?',
-        text: 'Keeping different accounts visible makes room for memory without turning disagreement into a fabricated consensus. The landscape is deliberately incomplete: a place held open for more than one beginning.',
+        text: 'Keeping different accounts visible makes room for memory without turning disagreement into a fabricated consensus. The drum is an editorial symbol for memory carried through generations, not a dated relic or evidence for one founding account.',
         focus: 'routes',
       },
     ],
     narration:
-      'Traditions associate earlier Ibadan settlements with Lagelu, migration from Ile-Ife, destruction and resettlement. Their chronologies differ. These inherited accounts are part of the city’s history, rather than a single certain date for the founding of the modern settlement. Keeping different accounts visible makes room for memory without turning disagreement into a fabricated consensus. The landscape is deliberately incomplete: a place held open for more than one beginning.',
+      'Traditions associate earlier Ibadan settlements with Lagelu, migration from Ile-Ife, destruction and resettlement. Their chronologies differ. These inherited accounts are part of the city’s history, rather than a single certain date for the founding of the modern settlement. Keeping different accounts visible makes room for memory without turning disagreement into a fabricated consensus. The drum is an editorial symbol for memory carried through generations, not a dated relic or evidence for one founding account.',
     sceneProposal: {
       spatialAction:
         'Change viewpoint to follow people, institutions and consequences in an interpretive space.',
@@ -151,11 +151,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle landscape environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: 'Before 1829',
         reference: 'Supplied brief, sections 3–6; S01, S02',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -203,21 +203,21 @@ export const ibadanChapters: IbadanChapter[] = [
         id: 'household',
         label: 'Follow a household',
         title: 'What can you carry into a new life?',
-        text: 'Follow the small group approaching the courtyard. This household is a creative composite, not a recovered family biography. Their carried possessions make displacement and the search for shelter visible without inventing an eyewitness account.',
+        text: 'Begin with the carried vessel. The household viewpoint is a creative composite, not a recovered family biography. Their carried possessions make displacement and the search for shelter visible without inventing an eyewitness account.',
         focus: 'people',
       },
       {
         id: 'settlement',
         label: 'Read the settlement',
         title: 'Shelter for whom, security for whom?',
-        text: 'The emerging settlement brought together people seeking refuge and commanders concerned with security. The open courtyard is a schematic way to explore those different needs, not a reconstruction of an identified 1829 compound.',
+        text: 'The emerging settlement brought together people seeking refuge and commanders concerned with security. The object gives an everyday scale to those different needs. It is not a recovered possession or evidence for a specific 1829 compound.',
         focus: 'place',
       },
       {
         id: 'paths',
         label: 'Follow the paths',
         title: 'A beginning made from many arrivals',
-        text: 'Migration and military organisation helped shape the new city. The illuminated paths are an editorial diagram of connection; they are not surveyed routes or evidence that the landscape was previously uninhabited.',
+        text: 'Migration and military organisation helped shape the new city. A carried object helps connect movement to everyday life. It does not establish surveyed routes or prove that the landscape was previously uninhabited.',
         focus: 'routes',
       },
     ],
@@ -233,11 +233,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle arrival environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: 'c.1829',
         reference: 'Supplied brief, sections 3–6; S02, S03',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -304,12 +304,12 @@ export const ibadanChapters: IbadanChapter[] = [
         id: 'connections',
         label: 'Follow the consequences',
         title: 'What changes for the people here?',
-        text: 'Security could create belonging while also concentrating power. Look across the courtyard to see institutions as relationships between people, rather than a procession of heroic rulers.',
+        text: 'Security could create belonging while also concentrating power. Read the portrait alongside the networks of allegiance and dependence that made authority possible. The sculpted face is an artistic interpretation, not a recovered likeness.',
         focus: 'routes',
       },
     ],
     narration:
-      'Rival groups competed for leadership in the early settlement. The ascendancy of Oyo elements and Oluyole helped shape Ibadan’s emerging political order. Leadership grew through relationships among commanders, compound heads and dependants. Security could create belonging while also concentrating power. Look across the courtyard to see institutions as relationships between people, rather than a procession of heroic rulers.',
+      'Rival groups competed for leadership in the early settlement. The ascendancy of Oyo elements and Oluyole helped shape Ibadan’s emerging political order. Leadership grew through relationships among commanders, compound heads and dependants. Security could create belonging while also concentrating power. Read the portrait alongside the networks of allegiance and dependence that made authority possible. The sculpted face is an artistic interpretation, not a recovered likeness.',
     sceneProposal: {
       spatialAction:
         'Change viewpoint to follow people, institutions and consequences in an interpretive space.',
@@ -320,11 +320,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle compound environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1830s',
         reference: 'Supplied brief, sections 3–6; S03',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -407,11 +407,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle regional environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1840',
         reference: 'Supplied brief, sections 3–6; S03',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -494,11 +494,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle school environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1851 onward',
         reference: 'Supplied brief, sections 3–6; S04, S23',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -581,11 +581,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle regional environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1860–1862',
         reference: 'Supplied brief, sections 3–6; S05',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -619,7 +619,7 @@ export const ibadanChapters: IbadanChapter[] = [
     people: [
       {
         name: 'Efunsetan Aniwura',
-        role: 'Iyalode, commercial figure and political actor; no invented portrait or private thoughts',
+        role: 'Iyalode, commercial figure and political actor; artistic portrait not an authenticated likeness, no invented private thoughts',
         historicalOrComposite: 'Historical person',
       },
       {
@@ -638,14 +638,14 @@ export const ibadanChapters: IbadanChapter[] = [
         id: 'commerce',
         label: 'Follow the trade',
         title: 'A commercial world, built through relationships',
-        text: 'The compound connects trade, credit, storage and political influence. Efunsetan’s position as Iyalode and commercial figure gives the scene its historical subject; the bales and paths are schematic illustrations, not an inventory of her property.',
+        text: 'The compound connects trade, credit, storage and political influence. Efunsetan’s position as Iyalode and commercial figure gives the scene its historical subject; the sculptural portrait is an artistic interpretation, not an authenticated likeness or an inventory of her property.',
         focus: 'routes',
       },
       {
         id: 'labour',
         label: 'Look at the labour',
         title: 'Whose work makes wealth possible?',
-        text: 'Enslaved people sustained elite households and production. The figures here are composite human viewpoints, never resources to collect or command. Commercial achievement is shown alongside coercion and constrained choice.',
+        text: 'Enslaved people sustained elite households and production. The story treats people as human subjects, never resources to collect or command. The portrait alone cannot represent every person whose work sustained this economy. Commercial achievement is shown alongside coercion and constrained choice.',
         focus: 'people',
       },
       {
@@ -668,11 +668,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle market environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1860s–1874',
         reference: 'Supplied brief, sections 3–6; S06',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -755,11 +755,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle regional environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1877–1893',
         reference: 'Supplied brief, sections 3–6; S07',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -842,11 +842,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle treaty environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '15 August 1893',
         reference: 'Supplied brief, sections 3–6; S08, S09',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -929,11 +929,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle rail environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1898–1901',
         reference: 'Supplied brief, sections 3–6; S10, S11',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -1011,11 +1011,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle mapo environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1929',
         reference: 'Supplied brief, sections 3–6; S12',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -1093,11 +1093,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle university environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1948–1962',
         reference: 'Supplied brief, sections 3–6; S15',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -1175,11 +1175,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle broadcast environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '31 October 1959',
         reference: 'Supplied brief, sections 3–6; S13, S14',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -1237,26 +1237,26 @@ export const ibadanChapters: IbadanChapter[] = [
         id: 'rehearsal',
         label: 'Enter the rehearsal',
         title: 'An experiment needs a place to happen',
-        text: 'A performer and listeners gather in an interpretive courtyard. Their movement is invented staging. The historical anchor is Mbari’s meeting of literary, visual and performing arts in Ibadan in 1961.',
+        text: 'The composite artist represents participation in a shared cultural world. The face and clothing are original sculptural staging, not an identified participant’s likeness. The historical anchor is Mbari’s meeting of literary, visual and performing arts in Ibadan in 1961.',
         focus: 'people',
       },
       {
         id: 'table',
         label: 'Around the table',
         title: 'Ideas travel between people and media',
-        text: 'The publishing and exhibition table stands for exchange between writers and artists. The displayed forms are original studies, not reproduced Mbari works or quotations attributed to its participants.',
+        text: 'Publishing and exhibition connected writers and artists through a shared public space. The displayed sculpture is an original study, not reproduced Mbari works or quotations attributed to its participants.',
         focus: 'place',
       },
       {
         id: 'audience',
         label: 'Join the audience',
         title: 'A club also makes a public',
-        text: 'Move to the audience side of the courtyard. Artistic exchange depends on people who rehearse, publish, watch, discuss and make space for the next experiment. This shared viewing is a composite reconstruction.',
+        text: 'Consider the audience as well as the artist. Artistic exchange depends on people who rehearse, publish, watch, discuss and make space for the next experiment. This shared viewing is a composite reconstruction.',
         focus: 'routes',
       },
     ],
     narration:
-      'The Mbari Artists’ and Writers’ Club formed in Ibadan in 1961, bringing literary, visual and performing arts together. The V&A locates its premises on Onireke Road near Dugbe. This Ibadan club must be distinguished from Osogbo’s Mbari Mbayo. A rehearsal, a publishing table and an audience reveal different parts of a shared artistic space. The scene uses original abstract studies; it does not reproduce protected artworks or substantial literary passages.',
+      'The Mbari Artists’ and Writers’ Club formed in Ibadan in 1961, bringing literary, visual and performing arts together. The V&A locates its premises on Onireke Road near Dugbe. This Ibadan club must be distinguished from Osogbo’s Mbari Mbayo. Rehearsal, publishing and audiences shaped a shared artistic space. The scene uses an original composite artist study; it does not reproduce protected artworks or substantial literary passages.',
     sceneProposal: {
       spatialAction:
         'Change viewpoint to follow people, institutions and consequences in an interpretive space.',
@@ -1267,15 +1267,15 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle mbari environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1961',
         reference: 'Supplied brief, sections 3–6; S17',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
-      'The courtyard, figures and rehearsal are creative reconstructions. No exact building layout, likeness, conversation or performance is authenticated.',
+      'The composite artist sculpture is a creative reconstruction. No exact building layout, likeness, conversation or performance is authenticated.',
     ],
     accessibilityNotes:
       'The same narrative, people, evidence and viewpoints remain available in the text edition, without WebGL, motion or audio.',
@@ -1349,11 +1349,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle unrest environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1962–1966',
         reference: 'Supplied brief, sections 3–6; S18, S19',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -1431,11 +1431,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle tower environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1964–1965',
         reference: 'Supplied brief, sections 3–6; S16',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -1513,11 +1513,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle city environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '1976 onward',
         reference: 'Supplied brief, sections 3–6; S20, S21',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
@@ -1579,12 +1579,12 @@ export const ibadanChapters: IbadanChapter[] = [
         id: 'connections',
         label: 'Follow the consequences',
         title: 'What changes for the people here?',
-        text: 'The water layer reconnects the ending to the landscape at the beginning. It is a demonstration of relationships, not a calibrated flood simulation. The future remains open to the priorities and memories of the people who live here.',
+        text: 'The water rings around the vessel connect the city’s environmental vulnerability to everyday life. It is a demonstration of relationships, not a calibrated flood simulation. The future remains open to the priorities and memories of the people who live here.',
         focus: 'routes',
       },
     ],
     narration:
-      'Severe flooding on 26 August 2011 exposed the city’s vulnerability. Subsequent planning focused on drainage, infrastructure and flood-risk management. Affected residents, rescuers, engineers and traders belong at the centre of the account. The water layer reconnects the ending to the landscape at the beginning. It is a demonstration of relationships, not a calibrated flood simulation. The future remains open to the priorities and memories of the people who live here.',
+      'Severe flooding on 26 August 2011 exposed the city’s vulnerability. Subsequent planning focused on drainage, infrastructure and flood-risk management. Affected residents, rescuers, engineers and traders belong at the centre of the account. The water rings around the vessel connect the city’s environmental vulnerability to everyday life. It is a demonstration of relationships, not a calibrated flood simulation. The future remains open to the priorities and memories of the people who live here.',
     sceneProposal: {
       spatialAction:
         'Change viewpoint to follow people, institutions and consequences in an interpretive space.',
@@ -1595,11 +1595,11 @@ export const ibadanChapters: IbadanChapter[] = [
     },
     assets: [
       {
-        description: 'Particle water environment and anonymous human figures',
+        description: 'Solid 3D sculptural study; interpretive portraits and illustrative objects',
         period: '26 August 2011 → an open present',
         reference: 'Supplied brief, sections 3–6; S22',
         verificationStatus:
-          'Creative reconstruction. Schematic geometry; figures are composites, not historical portrait likenesses.',
+          'Creative reconstruction. Original sculptural interpretation. Portraits and clothing are not authenticated likenesses or costume evidence; objects are illustrative and architecture is not a measured survey.',
       },
     ],
     uncertainties: [
